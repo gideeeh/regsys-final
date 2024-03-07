@@ -1,12 +1,11 @@
-<x-app-layout>
+@extends('admin.appointments-partials')
+@section('content')
 <x-alert-message />
-<div x-data="{manage: false}" class="p-6">
+<div x-data="{manage: false}">
     <div class="flex gap-4">
-        <div class="w-2/12 bg-white shadow-sm sm:rounded-lg max-h-[80vh]">
         
-        </div>
         <!-- Make response modal? get data from json of appointments. Have appointments be dynamically generated using js and have values in them to attach data when clicking on a specific response -->
-        <div class="w-7/12 bg-white shadow-sm sm:rounded-lg max-h-[80vh] overflow-x-hidden overlow-y-scroll text-xs calendar-scroll p-2">
+        <div class="w-8/12 bg-white shadow-sm sm:rounded-lg max-h-[80vh] overflow-x-hidden overlow-y-scroll text-xs calendar-scroll p-2">
             <div class="flex items-center justify-between">
                 <button @click="manage=true" id="manageAppt" class="bg-slate-500 text-white px-4 py-2 rounded hover:bg-slate-600 transition ease-in-out duration-150">Manage</button>
                 <div class="flex justify-end gap-2">
@@ -16,7 +15,7 @@
             </div>
             <div id='calendar' class="py-4 h-[30vh]"></div>
         </div>
-        <div class="w-3/12 max-h-[80vh] min-h-[80vh] flex flex-col justify-between">
+        <div class="w-4/12 max-h-[80vh] min-h-[80vh] flex flex-col justify-between">
             <div class="bg-white shadow-sm max-h-[39vh] min-h-[39vh] sm:rounded-lg p-2">
                 <h3 class="text-md">Appointments Queue</h3>
                 <div class="mb-2 text-sm">
@@ -146,8 +145,7 @@
         </div>
     </div>
 </div>
-</x-app-layout>
-
+@endsection
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     var calendarEl = document.getElementById('calendar');

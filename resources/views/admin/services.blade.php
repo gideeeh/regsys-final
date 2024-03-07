@@ -1,4 +1,4 @@
-@extends('admin.appointments')
+@extends('admin.appointments-partials')
 @section('content')
 <div x-data='{addService:false, updateService:false, deleteService:false, serviceId: null, selectedServiceName: "", selectedDescription: ""}' @keydown.escape ="addService=false; updateService=false; deleteService=false">
     <x-alert-message />

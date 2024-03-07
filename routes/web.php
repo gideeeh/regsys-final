@@ -137,6 +137,7 @@ Route::middleware(['auth','isAdminUser'])->group(function() {
     Route::post('/admin/functions/sections/assign-schedule',[SectionSubjectsController::class, 'store'])->name('section-subject.store');
 /* Appointments */
     Route::get('admin/appointments/dashboard', [AppointmentsController::class, 'index'])->name('appointments.dashboard');
+    Route::get('admin/appointments/appointments-list', [AppointmentsController::class, 'appointments'])->name('appointments');
     Route::get('admin/appointments/services', [ServicesController::class, 'index'])->name('appointments.services');
     Route::post('admin/appointments/services/create', [ServicesController::class, 'store'])->name('appointments.create');
     Route::patch('admin/appointments/services/update/{service_id}', [ServicesController::class, 'update'])->name('appointments.update');
