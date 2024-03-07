@@ -59,7 +59,7 @@
     <div x-cloak x-show="filterByModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center px-4 z-50">
         <div class="modal-content bg-white p-8 rounded-lg shadow-lg overflow-auto max-w-md w-full" style="display: flex; flex-direction: column; min-height: 85vh; max-height: 90vh;">
             <h2 class="mb-4">Filter By</h2>
-            <div class="flex-grow overflow-auto" style="margin-bottom: 20px; margin-top: auto"> <!-- Adjust margin as needed -->
+            <div class="flex-grow overflow-auto" style="margin-bottom: 20px; margin-top: auto"> 
                 <div class="mb-4 mt-6">
                     <label for="filter_acad_year" class="w-full block text-md font-semibold text-gray-700">Academic Year:</label>
                     <select id="filter_acad_year" name="filter_acad_year" class="w-full text-md border-gray-300 rounded-md shadow-sm" required>
@@ -253,19 +253,19 @@
                             <div class="w-1/2 pl-4">
                                 <div>
                                     <label class="flex items-center space-x-3">
-                                        <input type="checkbox" name="online_days[]" value="Wednesday" class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded">
+                                        <input type="checkbox" name="online_days[]" value="Thursday" class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded">
                                         <span class="text-gray-700">Thursday</span>
                                     </label>
                                 </div>
                                 <div>
                                     <label class="flex items-center space-x-3">
-                                        <input type="checkbox" name="online_days[]" value="Wednesday" class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded">
+                                        <input type="checkbox" name="online_days[]" value="Friday" class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded">
                                         <span class="text-gray-700">Friday</span>
                                     </label>
                                 </div>
                                 <div>
                                     <label class="flex items-center space-x-3">
-                                        <input type="checkbox" name="online_days[]" value="Wednesday" class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded">
+                                        <input type="checkbox" name="online_days[]" value="Saturday" class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded">
                                         <span class="text-gray-700">Saturday</span>
                                     </label>
                                 </div>

@@ -43,6 +43,11 @@ document.addEventListener('DOMContentLoaded', function() {
     var calendarEl = document.getElementById('calendar');
     calendar = new FullCalendar.Calendar(calendarEl, {
         initialView: 'dayGridMonth',
+        headerToolbar: {
+            right: 'prev,next today',
+            center: 'title',
+            left: 'dayGridMonth,dayGridWeek,listWeek'
+        },
         dateClick: function(info) {
             const dateTime = info.dateStr + 'T00:00';
             document.getElementById('startTime').value = dateTime;

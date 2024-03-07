@@ -38,8 +38,8 @@
                 <div>
                     <span class="font-semibold text-sm">Acad Year: </span>
                     <h2 class="text-sky-800">{{ $acad_year->acad_year }}</h2>
-                    <p><strong class="text-slate-600">Date Start:</strong> <span>{{ $acad_year->term_1_start ? \Carbon\Carbon::parse($acad_year->term_1_start)->format('M j, Y') : 'Start date not set' }}</span></p>
-                    <p><strong class="text-red-600">Date End:</strong> <span>{{ $acad_year->term_3_end ? \Carbon\Carbon::parse($acad_year->term_3_end)->format('M j, Y') : 'End date not set' }}</span></p>
+                    <p><strong class="text-slate-600">Start of Class:</strong> <span>{{ $acad_year->term_1_start ? \Carbon\Carbon::parse($acad_year->term_1_start)->format('M j, Y') : 'Start date not set' }}</span></p>
+                    <p><strong class="text-red-600">End of Class:</strong> <span>{{ $acad_year->term_3_end ? \Carbon\Carbon::parse($acad_year->term_3_end)->format('M j, Y') : 'End date not set' }}</span></p>
                 </div>
             </div>
             

@@ -11,6 +11,8 @@
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link rel="shortcut icon" href="{{asset('images/favicon.ico')}}" type="image/x-icon">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+        <link href='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.10.1/main.min.css' rel='stylesheet' />
+
         <!-- Select2 CSS -->
         
         <!-- Select2 JS -->

@@ -126,8 +126,25 @@ tbody tr:hover {
 }
 
 /* Styling the scrollbar */
-.modal-content::-webkit-scrollbar, .nice-scroll::-webkit-scrollbar {
-    width: 0.2em; 
+.modal-content::-webkit-scrollbar, .nice-scroll::-webkit-scrollbar, .calendar-scroll::-webkit-scrollbar {
+    width: 0.3em; 
+}
+
+.calendar-scroll:hover::-webkit-scrollbar-thumb {
+    width: 0.3em;
+    background: #555;
+}
+
+.calendar-scroll::-webkit-scrollbar-track {
+    background: #F3F4F6;
+}
+
+.calendar-scroll::-webkit-scrollbar-thumb {
+    background: #F3F4F6; 
+}
+
+.calendar-scroll::-webkit-scrollbar-thumb:hover {
+    background: #555; 
 }
 
 .modal-content::-webkit-scrollbar-track, .nice-scroll::-webkit-scrollbar-track {
@@ -257,8 +274,9 @@ h3 {
 }
 
 #calendar {
-    min-height: 100vh; /* Adjust as necessary */
-  }
+    min-height: 100vh; 
+}
+
 [x-cloak] { 
     display: none !important; 
 }

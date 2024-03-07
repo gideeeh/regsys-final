@@ -137,11 +137,11 @@
         <div x-cloak x-show="showUpdateModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center px-4 z-50">
             <div class="modal-content bg-white p-8 rounded-lg shadow-lg overflow-auto max-w-md w-full max-h-[80vh]">
                 <h3 class="text-lg font-bold mb-4">Update Program</h3>
-                <form :action="'/admin/functions/program-course-management/subject_catalog/u' pdate/+ selectedId" method="POST" class="space-y-4">
+                <form :action="'/admin/functions/program-course-management/subject_catalog/update/' + selectedId" method="POST" class="space-y-4">
                     @csrf
                     @method('PATCH')
                     <input type="hidden" name="id" x-model="selectedId">
-                    <div>
+                    <div> 
                         <label for="subject_code" class="block text-sm font-medium text-gray-700">Subject Code:</label>
                         <input type="text" id="subject_code" name="subject_code" x-model="selectedSubjectCode" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
                     </div>
