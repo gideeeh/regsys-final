@@ -1,0 +1,6 @@
+first_name,middle_name,last_name,suffix,dept_id,personal_email,school_email
+Walter,Hartwell,White,Sr.,1,wwhite@gmail.com,cs_head@informatics.edu.ph
+Foo,Baz,Bar,,2,foo@gmail.com,foo@informatics.edu.ph
+Sofia,Alonzo,Reyes,,3,sofia@example.com,sofia@example.edu
+Mateo,Santiago,Cruz,,4,mateo@example.com,mateo@example.edu
+Gabriela,Vasquez,Fernandez,,5,gabriela@example.com,gabriela@example.edu

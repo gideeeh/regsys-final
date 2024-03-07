@@ -1,0 +1,14 @@
+first_name,middle_name,last_name,suffix,dept_id,personal_email,school_email
+Liam,Reyes,Perez,,1,liam@example.com,liam@example.edu
+Chloe,Santos,Dela Cruz,,1,chloe@example.com,chloe@example.edu
+Noah,Gonzales,Fernandez,,1,noah@example.com,noah@example.edu
+Olivia,Cruz,Gonzaga,,2,olivia@example.com,olivia@example.edu
+Ethan,Ramirez,Mendoza,,2,ethan@example.com,ethan@example.edu
+Sophia,Villanueva,Garcia,,3,sophia@example.com,sophia@example.edu
+Aiden,Lopez,Martinez,,3,aiden@example.com,aiden@example.edu
+Isabella,Torres,Lim,,3,isabella@example.com,isabella@example.edu
+Mason,Rodriguez,Aquino,,4,mason@example.com,mason@example.edu
+Harper,Flores,Tan,,4,harper@example.com,harper@example.edu
+James,Sanchez,Molina,,5,james@example.com,james@example.edu
+Miles,Miramon,Palma,,5,miles@example.com,miles@example.edu
+Grace,Hora,Batucan,,5,grace@example.com,grace@example.edu
