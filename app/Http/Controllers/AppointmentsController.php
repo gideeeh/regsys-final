@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Appointment;
+use App\Models\ApptMgmtSettings;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -11,12 +12,16 @@ class AppointmentsController extends Controller
 {
     public function index()
     {
-    
+        $settings = ApptMgmtSettings::findOrFail(1);
+        $settings->available_schedules = json_decode($settings->available_schedules, true);
+
         if (Auth::check()) {
             $user = Auth::user();
             
             if ($user->role === 'admin') {
-                return view('admin.appointments-dashboard');
+                return view('admin.appointments-dashboard', [
+                    'settings' => $settings,
+                ]);
             } else if ($user->role === 'user') {
                 return view('user.appointments');
             }

@@ -75,11 +75,10 @@ Route::middleware('auth')->group(function () {
 Route::middleware(['auth','isAdminUser'])->group(function() {
     Route::get('/admin/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
     // Route::get('/admin/dashboard', [ChartController::class, 'barChart']);
-        Route::get('/admin/dashboard/get-articles', [DashboardController::class, 'scrapedNews'])->name('scraped-news.json');
-        Route::get('/admin/dashboard/get-active-classes', [DashboardController::class, 'getActiveClasses'])->name('active-classes.json');
-        Route::get('/admin/dashboard/get-calendar-events', [DashboardController::class, 'calendarEvents'])->name('calendar-events.json');
-        Route::get('/admin/dashboard/get-daily-quote', [ScrapingController::class, 'scrapeDailyQuotes'])->name('daily-quote.json');
-
+    Route::get('/admin/dashboard/get-articles', [DashboardController::class, 'scrapedNews'])->name('scraped-news.json');
+    Route::get('/admin/dashboard/get-active-classes', [DashboardController::class, 'getActiveClasses'])->name('active-classes.json');
+    Route::get('/admin/dashboard/get-calendar-events', [DashboardController::class, 'calendarEvents'])->name('calendar-events.json');
+    Route::get('/admin/dashboard/get-daily-quote', [ScrapingController::class, 'scrapeDailyQuotes'])->name('daily-quote.json');
 
 /* Student Records */
     Route::get('/admin/student-records', [StudentRecordsController::class, 'index'])->name('student-records');
@@ -140,6 +139,7 @@ Route::middleware(['auth','isAdminUser'])->group(function() {
     Route::get('admin/appointments/dashboard', [AppointmentsController::class, 'index'])->name('appointments.dashboard');
     Route::get('admin/appointments/json', [AppointmentsController::class, 'appointmentsCalendarJson'])->name('appointments.json');
     Route::get('admin/appointments/queue-json', [AppointmentsDashboardController::class, 'appointmentsQueue'])->name('appointments.queue');
+    Route::patch('/admin/dashboard/save-appt-mgmt-settings', [AppointmentsDashboardController::class, 'saveMgmtSettings'])->name('appointments.save-mgmt-settings');
     Route::get('admin/appointments/manage/{id}', [AppointmentsController::class, 'manage'])->name('appointments.manage');
     Route::get('admin/appointments/appointments-list', [AppointmentsController::class, 'appointments'])->name('appointments');
     Route::get('admin/appointments/services', [ServicesController::class, 'index'])->name('appointments.services');

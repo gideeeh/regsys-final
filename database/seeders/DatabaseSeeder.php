@@ -29,6 +29,7 @@ class DatabaseSeeder extends Seeder
             // SectionScheduleSeeder::class,
             AdminUserSeeder::class,
             ProgramSubjectSeeder::class,
+            ApptMgmtSettingsTableSeeder::class,
         ]);
         
     }

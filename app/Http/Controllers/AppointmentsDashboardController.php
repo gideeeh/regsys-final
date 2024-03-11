@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Appointment;
+use App\Models\ApptMgmtSettings;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class AppointmentsDashboardController extends Controller
 {
@@ -80,48 +82,44 @@ class AppointmentsDashboardController extends Controller
         return response()->json($appointments);
     }
 
-    public function pendingAppointments()
+    public function saveMgmtSettings(Request $request) 
     {
-        $now = Carbon::now('Asia/Singapore');
-        $oneDayAgo = $now->copy()->subDay();
-        $twoDaysAgo = $now->copy()->subDays(2);
+        try {
+            Log::info('Updating appointment management settings', $request->all());
 
-        $latestEnrollmentsSubquery = DB::table('enrollments')
-            ->selectRaw('student_id, program_id, year_level, enrollment_date, ROW_NUMBER() OVER (PARTITION BY student_id ORDER BY enrollment_date DESC) as rn')
-            ->toSql();
-    
-        $baseQuery = Appointment::query()
-            ->select([
-                'appointments.id',
-                'appointments.user_id',
-                'students.first_name as student_first_name',
-                'students.last_name as student_last_name',
-                'users.email',
-                'students.student_number',
-                'services.service_name',
-                'appointments.status',
-                'appointments.created_at',
-                'appointments.appointment_datetime',
-                DB::raw('programs.program_name, enrollments.year_level, enrollments.enrollment_date')
-            ])
-            ->join('users', 'appointments.user_id', '=', 'users.id')
-            ->join('students', 'users.id', '=', 'students.user_id')
-            ->join('services', 'appointments.service_id', '=', 'services.id')
-            ->leftJoin(DB::raw("({$latestEnrollmentsSubquery}) as enrollments"), 'students.student_id', '=', 'enrollments.student_id')
-            ->where('enrollments.rn', '=', 1)
-            ->join('programs', 'enrollments.program_id', '=', 'programs.program_id')
-            ->mergeBindings(DB::table('enrollments')); 
+            $validated = $request->validate([
+                'requestLimit' => 'required|integer|min:1',
+                'bufferTime' => 'required|integer|min:1',
+                'available_days' => 'nullable|array',
+                'customReceivedRequestReply' => 'nullable|string',
+            ]);
 
-        $pendingOneDay = (clone $baseQuery)->where('appointments.created_at', '<=', $oneDayAgo)->get();
-        $pendingTwoDays = (clone $baseQuery)->where('appointments.created_at', '<=', $twoDaysAgo)->get();
-        $pendingBeyondTwoDays = (clone $baseQuery)->where('appointments.created_at', '<', $twoDaysAgo)->get();
-    
-        $pendingAppointments = [
-            'pendingOneDay' => $pendingOneDay,
-            'pendingTwoDays' => $pendingTwoDays,
-            'pendingBeyondTwoDays' => $pendingBeyondTwoDays
-        ];
-    
-        return response()->json($pendingAppointments);
+            if(isset($validated['available_days'])) {
+                $validated['available_days'] = json_encode($validated['available_days']);
+            }
+
+            $setting = ApptMgmtSettings::findOrFail(1);
+            $setting->update([
+                'request_limit' => $validated['requestLimit'],
+                'buffer_time_minutes' => $validated['bufferTime'],
+                'am_availability_start' => $request->amStartTime,
+                'am_availability_end' => $request->amEndTime,
+                'pm_availability_start' => $request->pmStartTime,
+                'pm_availability_end' => $request->pmEndTime,
+                'available_schedules' => $validated['available_days'],
+                'received_request_reply' => $validated['customReceivedRequestReply'],
+            ]);
+
+            // Log success
+            Log::info('Appointment management settings updated successfully.');
+
+            return redirect()->back()->with('success', 'Settings Updated Successfully');
+        } catch (\Exception $e) {
+            // Log exception
+            Log::error('Error updating appointment management settings: ' . $e->getMessage());
+
+            return redirect()->back()->with('error', 'There was a problem updating the settings.');
+        }
     }
+
 }

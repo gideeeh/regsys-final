@@ -44,23 +44,24 @@
     <div x-cloak x-show="manage" id="manage" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center px-4 z-50">
         <div class="modal-content bg-white p-8 rounded-lg shadow-lg overflow-auto max-w-md w-full min-h-[90vh]">
             <h3 class="text-lg font-bold mb-4">Appointment Management Settings</h3>
-            <form method="POST" action="{{route('academic-calendar-add-event')}}"  id="addEventForm" class="space-y-4">
+            <form method="POST" action="{{route('appointments.save-mgmt-settings')}}"  id="saveMgmtSettings" class="space-y-4">
                 @csrf
+                @method('PATCH')
                 <label for="requestLimit" class="block text-sm font-medium text-gray-700">Request Limit Per Day</label>
-                <input type="number" id="requestLimit" placeholder="Request Limit Per Day" value="10" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                <input type="number" id="requestLimit" name="requestLimit" placeholder="Request Limit Per Day" value="{{$settings->request_limit}}" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
                 <label for="bufferTime" class="block text-sm font-medium text-gray-700">Buffer Time (minutes)</label>
-                <input type="number" id="bufferTime" placeholder="Buffer time between requests e.g., 15" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                <input type="number" id="bufferTime" name="bufferTime" placeholder="Buffer time between requests e.g., 15" value="{{$settings->buffer_time_minutes}}" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
                 <!-- AM Availability -->
                 <div class="space-y-2">
                     <h4 class="text-md font-medium text-gray-700">AM Availability</h4>
                     <div class="flex gap-2">
                         <div class="w-1/2">
                             <label for="amStartTime" class="block text-sm font-medium text-gray-700">Start Time</label>
-                            <input type="time" id="amStartTime" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                            <input type="time" id="amStartTime" name="amStartTime" value="{{$settings->am_availability_start}}" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
                         </div>
                         <div class="w-1/2">
                             <label for="amEndTime" class="block text-sm font-medium text-gray-700">End Time</label>
-                            <input type="time" id="amEndTime" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                            <input type="time" id="amEndTime" name="amEndTime" value="{{$settings->am_availability_end}}" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
                         </div>
                     </div>
                 </div>
@@ -71,11 +72,11 @@
                     <div class="flex gap-2">
                         <div class="w-1/2">
                             <label for="pmStartTime" class="block text-sm font-medium text-gray-700">Start Time</label>
-                            <input type="time" id="pmStartTime" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                            <input type="time" id="pmStartTime" name="pmStartTime" value="{{$settings->pm_availability_start}}" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
                         </div>
                         <div class="w-1/2">
                             <label for="pmEndTime" class="block text-sm font-medium text-gray-700">End Time</label>
-                            <input type="time" id="pmEndTime" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                            <input type="time" id="pmEndTime" name="pmEndTime" value="{{$settings->pm_availability_end}}" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
                         </div>
                     </div>
                 </div>
@@ -87,19 +88,19 @@
                         <div class="w-1/2 pl-4">
                             <div>
                                 <label class="flex items-center space-x-3">
-                                    <input type="checkbox" name="available_days[]" value="Monday" class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded">
+                                    <input type="checkbox" name="available_days[]" value="Monday" {{ in_array('Monday', $settings->available_schedules) ? 'checked' : '' }} class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded">
                                     <span class="text-gray-700">Monday</span>
                                 </label>
                             </div>
                             <div>
                                 <label class="flex items-center space-x-3">
-                                    <input type="checkbox" name="available_days[]" value="Tuesday" class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded">
+                                    <input type="checkbox" name="available_days[]" value="Tuesday" {{ in_array('Tuesday', $settings->available_schedules) ? 'checked' : '' }} class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded">
                                     <span class="text-gray-700">Tuesday</span>
                                 </label>
                             </div>
                             <div>
                                 <label class="flex items-center space-x-3">
-                                    <input type="checkbox" name="available_days[]" value="Wednesday" class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded">
+                                    <input type="checkbox" name="available_days[]" value="Wednesday" {{ in_array('Wednesday', $settings->available_schedules) ? 'checked' : '' }} class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded">
                                     <span class="text-gray-700">Wednesday</span>
                                 </label>
                             </div>
@@ -108,19 +109,19 @@
                         <div class="w-1/2 pl-4">
                             <div>
                                 <label class="flex items-center space-x-3">
-                                    <input type="checkbox" name="available_days[]" value="Thursday" class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded">
+                                    <input type="checkbox" name="available_days[]" value="Thursday" {{ in_array('Thursday', $settings->available_schedules) ? 'checked' : '' }} class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded">
                                     <span class="text-gray-700">Thursday</span>
                                 </label>
                             </div>
                             <div>
                                 <label class="flex items-center space-x-3">
-                                    <input type="checkbox" name="available_days[]" value="Friday" class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded">
+                                    <input type="checkbox" name="available_days[]" value="Friday" {{ in_array('Friday', $settings->available_schedules) ? 'checked' : '' }} class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded">
                                     <span class="text-gray-700">Friday</span>
                                 </label>
                             </div>
                             <div>
                                 <label class="flex items-center space-x-3">
-                                    <input type="checkbox" name="available_days[]" value="Saturday" class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded">
+                                    <input type="checkbox" name="available_days[]" value="Saturday" {{ in_array('Saturday', $settings->available_schedules) ? 'checked' : '' }} class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded">
                                     <span class="text-gray-700">Saturday</span>
                                 </label>
                             </div>
@@ -128,7 +129,7 @@
                     </div>
                 </fieldset>
                 <label for="customReceivedRequestReply" class="block text-sm font-medium text-gray-700">Custom Received Request Reply</label>
-                <textarea id="customReceivedRequestReply" placeholder="Set custom reply upon receiving a request" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></textarea>
+                <textarea id="customReceivedRequestReply" name="customReceivedRequestReply" placeholder="Set custom reply upon receiving a request" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">{{$settings->received_request_reply}}</textarea>
                 <div class="flex justify-end space-x-4">
                     <button type="button" @click="manage = false" class="modal-close-btn bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition ease-in-out duration-150">Close</button>
                     <button type="submit" id="submitBtn" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition ease-in-out duration-150">Save Changes</button>
