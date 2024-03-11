@@ -1,7 +1,7 @@
 @extends('admin.appointments-partials')
 @section('content')
 <x-alert-message />
-<div x-data="{manage: false}">
+<div x-data="{manage: false, clickEvent: false}">
     <div class="flex gap-4">
         
         <!-- Make response modal? get data from json of appointments. Have appointments be dynamically generated using js and have values in them to attach data when clicking on a specific response -->
@@ -16,25 +16,25 @@
             <div id='calendar' class="py-4 h-[30vh]"></div>
         </div>
         <div class="w-4/12 max-h-[80vh] min-h-[80vh] flex flex-col justify-between">
-            <div class="bg-white shadow-sm max-h-[39vh] min-h-[39vh] sm:rounded-lg p-2">
+            <div class="queue-container bg-white shadow-sm max-h-[39vh] min-h-[39vh] sm:rounded-lg p-2">
                 <h3 class="text-md">Appointments Queue</h3>
                 <div class="mb-2 text-sm">
-                    <button activeClassSelect=true class="actv-class-btn active-f2f bg-red-500 text-white text-md px-2 rounded hover:bg-red-600 transition ease-in-out duration-150'">Today</button>
-                    <button activeClassSelec=false class="actv-class-btn active-ol bg-gray-500 text-white px-2 rounded hover:bg-gray-600 transition ease-in-out duration-150">Tomorrow</button>
-                    <button activeClassSelec=false class="actv-class-btn active-ol bg-gray-500 text-white px-2 rounded hover:bg-gray-600 transition ease-in-out duration-150">This Week</button>
+                    <button activeClassSelect=true class="actv-queue-btn today-button active-queueSched bg-red-500 text-white text-md px-2 rounded hover:bg-red-600 transition ease-in-out duration-150'">Today</button>
+                    <button activeClassSelec=false class="actv-queue-btn tomorrow-button bg-gray-500 text-white px-2 rounded hover:bg-gray-600 transition ease-in-out duration-150">Tomorrow</button>
+                    <button activeClassSelec=false class="actv-queue-btn thisWeek-button bg-gray-500 text-white px-2 rounded hover:bg-gray-600 transition ease-in-out duration-150">This Week</button>
                 </div>
-                <div class="appointments-container">
+                <div class="appointments-queue">
                 
                 </div>
             </div>
-            <div class="bg-white shadow-sm max-h-[39vh] min-h-[39vh] sm:rounded-lg p-2">
+            <div class="pending-container bg-white shadow-sm max-h-[39vh] min-h-[39vh] sm:rounded-lg p-2">
                 <h3 class="text-md">Pending Appointments</h3>
                 <div class="mb-2 text-sm">
-                    <button activeClassSelect=true class="actv-class-btn active-f2f bg-red-500 text-white text-md px-2 rounded hover:bg-red-600 transition ease-in-out duration-150'">1 Day</button>
-                    <button activeClassSelec=false class="actv-class-btn active-ol bg-gray-500 text-white px-2 rounded hover:bg-gray-600 transition ease-in-out duration-150">2 Days</button>
-                    <button activeClassSelec=false class="actv-class-btn active-ol bg-gray-500 text-white px-2 rounded hover:bg-gray-600 transition ease-in-out duration-150">2 Days +</button>
+                    <button activeClassSelect=true class="actv-pending-btn one-day-button active-pendingDay bg-red-500 text-white text-md px-2 rounded hover:bg-red-600 transition ease-in-out duration-150'">1 Day</button>
+                    <button activeClassSelec=false class="actv-pending-btn two-days-button bg-gray-500 text-white px-2 rounded hover:bg-gray-600 transition ease-in-out duration-150">2 Days</button>
+                    <button activeClassSelec=false class="actv-pending-btn beyond-two-days-button bg-gray-500 text-white px-2 rounded hover:bg-gray-600 transition ease-in-out duration-150">2 Days +</button>
                 </div>
-                <div class="appointments-container">
+                <div class="appointments-pending">
 
                 </div>
             </div>
@@ -127,21 +127,19 @@
                         </div>
                     </div>
                 </fieldset>
-
                 <label for="customReceivedRequestReply" class="block text-sm font-medium text-gray-700">Custom Received Request Reply</label>
                 <textarea id="customReceivedRequestReply" placeholder="Set custom reply upon receiving a request" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></textarea>
-                <!-- <label for="eventTitle" class="block text-sm font-medium text-gray-700">Event Title</label>
-                <input type="text" id="eventTitle" placeholder="Event Title" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
-                <label for="startTime" class="block text-sm font-medium text-gray-700">Start Date & Time</label>
-                <input type="datetime-local" id="startTime" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
-                <label for="endTime" class="block text-sm font-medium text-gray-700">End Date & Time</label>
-                <input type="datetime-local" id="endTime" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
-                <textarea id="eventComments" placeholder="Comments" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></textarea> -->
                 <div class="flex justify-end space-x-4">
                     <button type="button" @click="manage = false" class="modal-close-btn bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition ease-in-out duration-150">Close</button>
                     <button type="submit" id="submitBtn" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition ease-in-out duration-150">Save Changes</button>
                 </div>
             </form>
+        </div>
+    </div>
+    <!-- Click Event Modal -->
+    <div x-cloak x-show="clickEvent" id="clickEvent" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center px-4 z-50">
+        <div class="modal-content bg-white p-8 rounded-lg shadow-lg overflow-auto max-w-md w-full min-h-[90vh]">
+            <button type="button" @click="clickEvent = false" class="modal-close-btn bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition ease-in-out duration-150">Close</button>
         </div>
     </div>
 </div>
@@ -157,14 +155,36 @@ document.addEventListener('DOMContentLoaded', function() {
             center: 'title',
             left: 'dayGridMonth,dayGridWeek,listWeek'
         },
+        eventDidMount: function(info) {
+            // Formatting dates for display
+            const dateTimeOptions = { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true };
+            const startString = info.event.start ? new Date(info.event.start).toLocaleDateString('en-US', dateTimeOptions) : 'No start date';
+            const endString = info.event.end ? new Date(info.event.end).toLocaleDateString('en-US', dateTimeOptions) : 'No end date';
+
+            // Initialize tippy.js tooltip
+            tippy(info.el, {
+                content: `Student: ${info.event.title}<br>
+                          Date: ${startString}<br>
+                          Service: ${info.event.extendedProps.service_name}`, 
+                allowHTML: true,
+            });
+        },
         aspectRatio: 1.45,
         contentHeight: 650,
         height: 650,
-        events: [
-            { title: 'Event 1', start: 'YYYY-MM-DD' },
-        ],
+        events: '/admin/appointments/json',
         eventClick: function(info) {
-            alert('Event: ' + info.event.title);
+            // alert('Event: ' + info.event.title + '\nService: ' + info.event.extendedProps.service_name);
+            // alert('Event: ' + info.event.title + '\nService: ' + info.event.extendedProps.service_name + '\n \nManage this appointment?');
+            // $('#clickEvent').show();
+            // alert(info.event.extendedProps.id);
+            var confirmManage = confirm('Appointment: ' + info.event.title + '\nService: ' + info.event.extendedProps.service_name + '\n\nManage this appointment?');
+
+            if (confirmManage) {
+                // Redirect to the management page for the clicked appointment
+                // Replace 'sample-route' with your actual route, and append the event ID as a parameter
+                window.location.href = '/admin/appointments/manage/' + info.event.extendedProps.id;
+            }
         }
     });
     calendar.setOption('contentHeight', 200);
@@ -183,3 +203,9 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
+
+<script>
+    appointmentsQueueUrl = "{{url('/admin/appointments/queue-json')}}";
+</script>
+<!-- Note defer is used to load this inside the bladefile. Ensures jquery is loaded first before the custom script -->
+<script src="{{ asset('js/adm_appt_dashboard.js') }}" defer></script>

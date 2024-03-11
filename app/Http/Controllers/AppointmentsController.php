@@ -11,21 +11,78 @@ class AppointmentsController extends Controller
 {
     public function index()
     {
-        // Check if the user is authenticated
+    
         if (Auth::check()) {
-            // Get the currently authenticated user
             $user = Auth::user();
             
-            // Determine the view based on the user's role
             if ($user->role === 'admin') {
-                // Render the admin dashboard view
                 return view('admin.appointments-dashboard');
             } else if ($user->role === 'user') {
-                // Render a user-specific appointments view
                 return view('user.appointments');
             }
         }
-        return redirect('/'); 
+        return redirect('/');
+    }
+
+    public function appointmentsCalendarJson()
+    {
+        $latestEnrollmentsSubquery = DB::table('enrollments')
+            ->selectRaw('student_id, program_id, year_level, enrollment_date, ROW_NUMBER() OVER (PARTITION BY student_id ORDER BY enrollment_date DESC) as rn')
+            ->toSql();
+    
+        $formattedAppointments = Appointment::query()
+            ->select([
+                'appointments.id',
+                'appointments.user_id',
+                'students.first_name as student_first_name',
+                'students.last_name as student_last_name',
+                'users.email',
+                'students.student_number',
+                'services.service_name',
+                'appointments.status',
+                'appointments.created_at',
+                DB::raw('programs.program_name, enrollments.year_level, enrollments.enrollment_date')
+            ])
+            ->join('users', 'appointments.user_id', '=', 'users.id')
+            ->join('students', 'users.id', '=', 'students.user_id')
+            ->join('services', 'appointments.service_id', '=', 'services.id')
+            ->leftJoin(DB::raw("({$latestEnrollmentsSubquery}) as enrollments"), function($join) {
+                $join->on('students.student_id', '=', 'enrollments.student_id')
+                    ->where('enrollments.rn', '=', 1);
+            })
+            ->join('programs', 'enrollments.program_id', '=', 'programs.program_id')
+            ->mergeBindings(DB::table('enrollments'))
+            ->get() 
+            ->map(function ($appointment) {
+                $createdAt = $appointment->created_at instanceof \Illuminate\Support\Carbon
+                            ? $appointment->created_at->toDateTimeString()
+                            : $appointment->created_at;
+    
+                return [
+                    'title' => $appointment->student_number . ' ' . $appointment->student_last_name . ', ' . substr($appointment->student_first_name, 0, 1) . '.', // Format title
+                    'start' => $createdAt,
+                    'end' => $createdAt,
+                    'extendedProps' => [
+                        'service_name' => $appointment->service_name,
+                        'student_number' => $appointment->student_number,
+                        'id' => $appointment->id,
+                    ],
+                ];
+            });
+    
+        $appointmentsJson = json_encode($formattedAppointments);
+
+        return response()->json($formattedAppointments);
+    }
+
+    public function manage($id) {
+        $appointment = Appointment::find($id);
+    
+        if (!$appointment) {
+            return redirect()->back()->with('error', 'Appointment not found.');
+        }
+    
+        return view('admin.manage-appointment', compact('appointment'));
     }
 
     public function appointments(Request $request)
@@ -45,7 +102,6 @@ class AppointmentsController extends Controller
         ->selectRaw('student_id, program_id, year_level, enrollment_date, ROW_NUMBER() OVER (PARTITION BY student_id ORDER BY enrollment_date DESC) as rn')
         ->toSql();
 
-        // Start building the main query
         $appointmentsQuery = Appointment::query()
             ->select([
                 'appointments.user_id',
@@ -66,9 +122,8 @@ class AppointmentsController extends Controller
                     ->where('enrollments.rn', '=', 1);
             })
             ->join('programs', 'enrollments.program_id', '=', 'programs.program_id')
-            ->mergeBindings(DB::table('enrollments')); // Ensure to merge the bindings for the raw subquery
-
-        // Apply search filtering if a search term is provided
+            ->mergeBindings(DB::table('enrollments')); 
+        
         $searchTerm = $request->query('query');
         if ($searchTerm) {
             $appointmentsQuery->where(function ($query) use ($searchTerm) {
@@ -79,12 +134,11 @@ class AppointmentsController extends Controller
             });
         }
 
-        // Execute the query with pagination
         $appointments = $appointmentsQuery->paginate(10)->withQueryString();
 
-        // Return the view with the appointments data and search term
         return view('admin.appointments', [
             'appointments' => $appointments,
+            'appointmentsJson' => $appointments->toJson(),
             'searchTerm' => $searchTerm,
         ]);
     }

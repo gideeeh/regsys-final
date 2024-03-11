@@ -1,7 +1,6 @@
 $(document).ready(function() {
     var currentClassType = 'F2F';
     var switchInterval;
-
     function fetchAndDisplayClasses(classType) {
         $.ajax({
             url: activeClassesUrl,

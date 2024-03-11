@@ -30,7 +30,7 @@
         <!-- Div below is shrinked idk why -->
         <div class="w-3/12 ml-4">
             <div class="active-classes-container w-full bg-white shadow-sm sm:rounded-lg min-h-[38vh] max-h-[38vh] overflow-y-auto nice-scroll cursor-default p-4 mb-6">
-                <h3 class="text-md"><a href="{{route('sections')}}" target="_blank">Active Classes</a></h3>
+                <h3 class="text-md"><a href="{{route('sections')}}" target="_blank" title="Click to manage class schedules">Active Classes</a></h3>
                 <div class="mb-2 text-sm">
                     <button activeClassSelect=true class="actv-class-btn active-f2f bg-red-500 text-white text-md px-2 rounded hover:bg-red-600 transition ease-in-out duration-150'">F2F</button>
                     <button activeClassSelec=false class="actv-class-btn active-ol bg-gray-500 text-white px-2 rounded hover:bg-gray-600 transition ease-in-out duration-150">Online</button>
@@ -39,7 +39,7 @@
             </div>
             <!-- Upcoming Calendar Events -->
             <div class="upcoming-events-container w-full bg-white shadow-sm sm:rounded-lg min-h-[35vh] max-h-[35vh] overflow-y-auto nice-scroll cursor-default p-4">
-                <h3 class="text-md"><a href="{{route('academic-calendar')}}" target="_blank">Upcoming Events</a></h3>
+                <h3 class="text-md"><a href="{{route('academic-calendar')}}" target="_blank" title="Go to Academic Calendar">Upcoming Events</a></h3>
                 <div class="mb-2 text-sm">
                     <button data-event-type="important" activeEventPeriod=true class="actv-event-btn active-event bg-red-500 text-white text-md px-2 rounded hover:bg-red-600 transition ease-in-out duration-150'">Important</button>
                     <button data-event-type="today" activeEventPeriod=false class="actv-event-btn inactive_event bg-gray-500 text-white text-md px-2 rounded hover:bg-red-600 transition ease-in-out duration-150'">Today</button>
