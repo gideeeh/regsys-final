@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Appointment;
 use App\Models\ApptMgmtSettings;
+use App\Models\Student;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -80,14 +82,87 @@ class AppointmentsController extends Controller
         return response()->json($formattedAppointments);
     }
 
-    public function manage($id) {
-        $appointment = Appointment::find($id);
-    
-        if (!$appointment) {
-            return redirect()->back()->with('error', 'Appointment not found.');
+    public function manage($id, Request $request) {
+        $latestEnrollmentDatesSubquery = DB::table('enrollments')
+            ->selectRaw('MAX(enrollment_date) as latest_enrollment_date, student_id')
+            ->groupBy('student_id');
+
+        $latestEnrollmentsSubquery = DB::table('enrollments')
+            ->joinSub($latestEnrollmentDatesSubquery, 'latest_dates', function($join) {
+                $join->on('enrollments.student_id', '=', 'latest_dates.student_id')
+                    ->on('enrollments.enrollment_date', '=', 'latest_dates.latest_enrollment_date');
+            })
+            ->select('enrollments.student_id', 'enrollments.program_id', 'enrollments.year_level');
+
+        $student = DB::table('students')
+            ->joinSub($latestEnrollmentsSubquery, 'latest_enrollments', function($join) {
+                $join->on('students.student_id', '=', 'latest_enrollments.student_id');
+            })
+            ->join('programs', 'latest_enrollments.program_id', '=', 'programs.program_id')
+            ->select([
+                'students.student_id',
+                'students.user_id',
+                'students.student_number',
+                'students.first_name',
+                'students.middle_name',
+                'students.last_name',
+                'students.suffix',
+                'students.personal_email',
+                'latest_enrollments.year_level',
+                'latest_enrollments.program_id',
+                'programs.program_name',
+                'programs.program_code'
+            ])
+            ->where('students.user_id', $id)
+            ->first();
+
+        $user = User::findOrFail($id);
+        // $student = Student::where('user_id', $id)->first();
+        $appointments = Appointment::query()
+            ->select([
+                'appointments.id',
+                'appointments.user_id',
+                'appointments.status',
+                'appointments.viewed_date',
+                'appointments.complete_date',
+                'appointments.service_id',
+                'appointments.appointment_datetime',
+                'appointments.notes',
+                'appointments.created_at',
+                'services.service_name',
+            ])
+            ->join('services','appointments.service_id','=','services.id')
+            ->where('user_id', $id)
+            ->get();
+
+        $highlightId = $request->query('highlight');
+        $highlightedAppointment = null;
+        if ($highlightId) {
+            $highlightedAppointment = Appointment::query()
+                ->select([
+                    'appointments.id',
+                    'appointments.user_id',
+                    'appointments.status',
+                    'appointments.viewed_date',
+                    'appointments.complete_date',
+                    'appointments.service_id',
+                    'appointments.appointment_datetime',
+                    'appointments.notes',
+                    'appointments.created_at',
+                    'services.service_name',
+                ])
+                ->join('services', 'appointments.service_id', '=', 'services.id')
+                ->where('appointments.user_id', $id)
+                ->where('appointments.id', $highlightId) // Specific to the highlighted appointment
+                ->first();
         }
-    
-        return view('admin.manage-appointment', compact('appointment'));
+
+        return view('admin.manage-appointment', [
+            'appointments' => $appointments,
+            'user' => $user,
+            'highlightedAppointment' => $highlightedAppointment,
+            'student' => $student,
+        ]);
     }
 
     public function appointments(Request $request)
@@ -110,6 +185,8 @@ class AppointmentsController extends Controller
         $appointmentsQuery = Appointment::query()
             ->select([
                 'appointments.user_id',
+                'appointments.id',
+                'students.student_id',
                 'students.first_name as student_first_name',
                 'students.last_name as student_last_name',
                 'users.email',
@@ -117,7 +194,7 @@ class AppointmentsController extends Controller
                 'services.service_name',
                 'appointments.status',
                 'appointments.created_at',
-                DB::raw('programs.program_name, enrollments.year_level, enrollments.enrollment_date')
+                DB::raw('programs.program_name, programs.program_code, enrollments.year_level, enrollments.enrollment_date')
             ])
             ->join('users', 'appointments.user_id', '=', 'users.id')
             ->join('students', 'users.id', '=', 'students.user_id')
@@ -127,7 +204,8 @@ class AppointmentsController extends Controller
                     ->where('enrollments.rn', '=', 1);
             })
             ->join('programs', 'enrollments.program_id', '=', 'programs.program_id')
-            ->mergeBindings(DB::table('enrollments')); 
+            ->mergeBindings(DB::table('enrollments'))
+            ->orderBy('appointments.created_at', 'desc');; 
         
         $searchTerm = $request->query('query');
         if ($searchTerm) {
@@ -139,7 +217,7 @@ class AppointmentsController extends Controller
             });
         }
 
-        $appointments = $appointmentsQuery->paginate(10)->withQueryString();
+        $appointments = $appointmentsQuery->paginate(6)->withQueryString();
 
         return view('admin.appointments', [
             'appointments' => $appointments,

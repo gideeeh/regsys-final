@@ -69,6 +69,8 @@ $(document).ready(function() {
     startSwitchingClasses();
 
     getQuotes();
+    getAppointments();
+    setInterval(getQuotes, 15000);
     
     fetchAndDisplayClasses(currentClassType );
 
@@ -102,9 +104,34 @@ $(document).ready(function() {
 
     function displayQuote(data) {
         var container = $('.quote-container');
-        container.empty(); // Clear previous content if any
-        var quoteContent = `<div class="pr-8"><p class="quote text-sm">${data.quote}</p><em class="author pl-40 text-xs">- ${data.author}</em></div>`;
-        container.html(quoteContent);
+        container.fadeOut(600, function() {
+            container.find('.quote').text(data.quote);
+            container.find('.author').text(`- ${data.author}`);
+            container.fadeIn(600);
+        });
+    }
+
+    function displayQueueAppt(data) {
+        var container = $('.apptQueue-container');
+        var url = `/admin/appointments/manage/${data.user_id}?highlight=${data.id}`; 
+        var apptInfo = `${data.student_last_name}, ${data.student_first_name.charAt(0)}. ${data.service_name}`;
+        var link = `<a href="${url}" class="nextAppt-queue text-sm" target="_blank" title="Click to View Appointment">${apptInfo}</a>`;
+        container.find('.nextAppt-queue').html(link);
+    }
+    function getAppointments()
+    {
+        $.ajax({
+            url: apptQueueUrl,
+            type: 'GET',
+            dataType: 'json',
+            success: function(data) {
+                displayQueueAppt(data);
+            },
+            error: function() {
+                var container = $('.apptQueue-container');
+                container.find('.nextAppt-queue').text('No Pending Appointments');
+            }
+        });
     }
 
 });

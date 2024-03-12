@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\View\View;
 use PHPUnit\Framework\MockObject\Builder\Stub;
+use Illuminate\Support\Facades\Storage;
 
 class StudentRecordsController extends Controller
 {
@@ -205,6 +206,9 @@ class StudentRecordsController extends Controller
         ]);
 
         $new_student->update(['user_id' => $user->id]);
+
+        $studentDirectory = 'students/' . $new_student->student_number . ' '. $new_student->last_name. ', ' .$new_student->first_name;
+        Storage::makeDirectory($studentDirectory);
 
         return redirect()->back()->with('success', 'Student added successfully!');
     }

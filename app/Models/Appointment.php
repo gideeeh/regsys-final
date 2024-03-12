@@ -16,6 +16,7 @@ class Appointment extends Model
         'complete_date',
         'service_id',
         'appointment_datetime',
+        'notes',
     ];
 
     // Relationship to a user

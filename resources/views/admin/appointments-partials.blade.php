@@ -1,6 +1,6 @@
 <x-app-layout>
 <div class="w-full p-6 flex gap-4 items-start">
-    <aside class="w-2/12 bg-white shadow-sm sm:rounded-lg min-h-[80vh] min-h-[80vh] p-4">
+    <aside class="w-2/12 bg-white shadow-sm sm:rounded-lg min-h-[80vh] p-4">
         <nav class="">
             <ul class="mt-4" x-data="{ open: false }">
                 <li>

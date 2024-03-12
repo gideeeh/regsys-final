@@ -6,7 +6,7 @@
         <div class="flex justify-end items-center">
             <x-search-form action="{{ route('appointments') }}" placeholder="Search Appointment" />
         </div>
-        <div class="mt-6">
+        <div class="my-6">
             {{ $appointments->links() }}
         </div>
         <div>
@@ -14,21 +14,22 @@
                 <thead >
                     <tr class="cursor-default">
                         <th class="bg-blue-500 text-white p-2 w-3/12">Name</th>
-                        <th class="bg-blue-500 text-white p-2 w-1/12">Course</th>
-                        <th class="bg-blue-500 text-white p-2 w-1/12">Year Level</th>
+                        <th class="bg-blue-500 text-white p-2 w-2/12">Course & Year</th>
                         <th class="bg-blue-500 text-white p-2 w-2/12">Service Request</th>
+                        <th class="bg-blue-500 text-white p-2 w-1/12">Status</th>
                         <th class="bg-blue-500 text-white p-2 w-2/12">Date of Request</th>
                         <!-- <th class="bg-blue-500 text-white p-2 w-3/12">Actions</th> -->
                     </tr>
                 </thead>
                 <tbody>
                     @foreach($appointments as $appointment)
-                    <tr class="border-b hover:bg-gray-100 cursor-pointer">
-                        <td class="border-dashed border-t border-gray-200 p-1 py-4">{{$appointment->student_first_name}} {{$appointment->student_last_name}}</td>
-                        <td class="border-dashed border-t border-gray-200 p-1 py-4">{{$appointment->program_name}}</td>
-                        <td class="border-dashed border-t border-gray-200 p-1 py-4">{{$appointment->year_level}}</td>
-                        <td class="border-dashed border-t border-gray-200 p-1 py-4">{{$appointment->service_name}}</td>
-                        <td class="border-dashed border-t border-gray-200 p-1 py-4">{{ $appointment->created_at->format('M j, Y g:i A') }}</td>
+                    <tr class="border-b hover:bg-gray-100 cursor-pointer text-sm" @click="window.location.href='{{ route('appointments.manage', $appointment->user_id) }}?highlight={{ $appointment->id }}'">
+                        <td class="border-dashed border-t border-gray-200 p-1 py-2">{{$appointment->student_first_name}} {{$appointment->student_last_name}}</td>
+                        <td class="border-dashed border-t border-gray-200 p-1 py-2">{{$appointment->program_code}} - {{$appointment->year_level}}</td>
+                        <!-- <td class="border-dashed border-t border-gray-200 p-2 py-4">{{$appointment->year_level}}</td> -->
+                        <td class="border-dashed border-t border-gray-200 p-1 py-2">{{$appointment->service_name}}</td>
+                        <td class="border-dashed border-t border-gray-200 p-1 py-2">{{$appointment->status}}</td>
+                        <td class="border-dashed border-t border-gray-200 p-1 py-2">{{ $appointment->created_at->format('M j, Y g:i A') }}</td>
                         <!-- <td class="border-dashed border-t border-gray-200 p-2 py-4">
                             <div class="flex justify-start space-x-4">
                                 <button class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition ease-in-out duration-150">Update</button>

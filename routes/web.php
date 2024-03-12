@@ -139,11 +139,12 @@ Route::middleware(['auth','isAdminUser'])->group(function() {
     Route::get('admin/appointments/dashboard', [AppointmentsController::class, 'index'])->name('appointments.dashboard');
     Route::get('admin/appointments/json', [AppointmentsController::class, 'appointmentsCalendarJson'])->name('appointments.json');
     Route::get('admin/appointments/queue-json', [AppointmentsDashboardController::class, 'appointmentsQueue'])->name('appointments.queue');
+    Route::get('admin/appointments/latest-appt-json', [AppointmentsDashboardController::class, 'latestAppointment'])->name('appointments.queue-latest');
     Route::patch('/admin/dashboard/save-appt-mgmt-settings', [AppointmentsDashboardController::class, 'saveMgmtSettings'])->name('appointments.save-mgmt-settings');
     Route::get('admin/appointments/manage/{id}', [AppointmentsController::class, 'manage'])->name('appointments.manage');
     Route::get('admin/appointments/appointments-list', [AppointmentsController::class, 'appointments'])->name('appointments');
     Route::get('admin/appointments/services', [ServicesController::class, 'index'])->name('appointments.services');
-    Route::post('admin/appointments/services/create', [ServicesController::class, 'store'])->name('appointments.create');
+    Route::post('admin/appointments/services/create', [ServicesController::class, 'store'])->name('appointments.create-service');
     Route::patch('admin/appointments/services/update/{service_id}', [ServicesController::class, 'update'])->name('appointments.update');
     Route::delete('admin/appointments/services/delete/{service_id}', [ServicesController::class, 'delete'])->name('appointments.delete');
 /* Local APIs */

@@ -82,6 +82,27 @@ class AppointmentsDashboardController extends Controller
         return response()->json($appointments);
     }
 
+    public function latestAppointment() 
+    {
+        $latestAppointment = Appointment::query()
+            ->select([
+                'appointments.id',
+                'appointments.user_id',
+                'students.first_name as student_first_name',
+                'students.last_name as student_last_name',
+                'students.student_number',
+                'services.service_name',
+                'appointments.appointment_datetime',
+            ])
+            ->join('users', 'appointments.user_id', '=', 'users.id')
+            ->join('students', 'users.id', '=', 'students.user_id')
+            ->join('services', 'appointments.service_id', '=', 'services.id')
+            ->orderBy('appointment_datetime','desc')->first();
+    
+        return response()->json($latestAppointment);
+    }
+    
+
     public function saveMgmtSettings(Request $request) 
     {
         try {

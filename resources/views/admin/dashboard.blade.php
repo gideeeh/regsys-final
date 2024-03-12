@@ -10,8 +10,9 @@
                         <h3 class="quote"></h3>
                         <p class="author"></p>
                     </div>
-                    <div>
-                        <p><span><strong>Next Appt Queue:</strong></span></p>
+                    <div class="apptQueue-container text-xs text-slate-600">
+                        <p><span><strong>Next Appt Queue: </strong></span></p>
+                        <p><span class="nextAppt-queue"></span></p>
                     </div>
                 </div>
                 <div class="w-4/12 overflow-hidden relative">
@@ -56,6 +57,7 @@
     activeClassesUrl = "{{url('/admin/dashboard/get-active-classes')}}";
     activeEventsUrl = "{{url('/admin/dashboard/get-calendar-events')}}";
     activeQuoteUrl = "{{url('/admin/dashboard/get-daily-quote')}}";
+    apptQueueUrl = "{{url('/admin/appointments/latest-appt-json')}}";
     academicCalendarLink = "{{url('/admin/functions/program-course-management/academic_calendar')}}";
     sectionsLink = "{{url('/admin/functions/program-course-management/sections')}}";
     window.programData = @json($programData);

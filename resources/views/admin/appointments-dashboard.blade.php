@@ -5,7 +5,7 @@
     <div class="flex gap-4">
         
         <!-- Make response modal? get data from json of appointments. Have appointments be dynamically generated using js and have values in them to attach data when clicking on a specific response -->
-        <div class="w-8/12 bg-white shadow-sm sm:rounded-lg max-h-[80vh] overflow-x-hidden overlow-y-scroll text-xs calendar-scroll p-2">
+        <div class="w-9/12 bg-white shadow-sm sm:rounded-lg max-h-[80vh] overflow-x-hidden overlow-y-scroll text-xs calendar-scroll p-2">
             <div class="flex items-center justify-between">
                 <button @click="manage=true" id="manageAppt" class="bg-slate-500 text-white px-4 py-2 rounded hover:bg-slate-600 transition ease-in-out duration-150">Manage</button>
                 <div class="flex justify-end gap-2">
@@ -15,19 +15,19 @@
             </div>
             <div id='calendar' class="py-4 h-[30vh]"></div>
         </div>
-        <div class="w-4/12 max-h-[80vh] min-h-[80vh] flex flex-col justify-between">
-            <div class="queue-container bg-white shadow-sm max-h-[39vh] min-h-[39vh] sm:rounded-lg p-2">
+        <div class="w-3/12 max-h-[80vh] min-h-[80vh] flex flex-col justify-between">
+            <div class="queue-container bg-white shadow-sm max-h-[39vh] min-h-[39vh] sm:rounded-lg p-2 overflow-y-auto nice-scroll cursor-default">
                 <h3 class="text-md">Appointments Queue</h3>
                 <div class="mb-2 text-sm">
                     <button activeClassSelect=true class="actv-queue-btn today-button active-queueSched bg-red-500 text-white text-md px-2 rounded hover:bg-red-600 transition ease-in-out duration-150'">Today</button>
                     <button activeClassSelec=false class="actv-queue-btn tomorrow-button bg-gray-500 text-white px-2 rounded hover:bg-gray-600 transition ease-in-out duration-150">Tomorrow</button>
-                    <button activeClassSelec=false class="actv-queue-btn thisWeek-button bg-gray-500 text-white px-2 rounded hover:bg-gray-600 transition ease-in-out duration-150">This Week</button>
+                    <button activeClassSelec=false class="actv-queue-btn thisWeek-button bg-gray-500 text-white px-1 rounded hover:bg-gray-600 transition ease-in-out duration-150">This Week</button>
                 </div>
                 <div class="appointments-queue">
                 
                 </div>
             </div>
-            <div class="pending-container bg-white shadow-sm max-h-[39vh] min-h-[39vh] sm:rounded-lg p-2">
+            <div class="pending-container bg-white shadow-sm max-h-[39vh] min-h-[39vh] sm:rounded-lg p-2 overflow-y-auto nice-scroll cursor-default">
                 <h3 class="text-md">Pending Appointments</h3>
                 <div class="mb-2 text-sm">
                     <button activeClassSelect=true class="actv-pending-btn one-day-button active-pendingDay bg-red-500 text-white text-md px-2 rounded hover:bg-red-600 transition ease-in-out duration-150'">1 Day</button>
