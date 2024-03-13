@@ -9,10 +9,6 @@ class ApptMgmtSettings extends Model
 {
     use HasFactory;
 
-    protected $casts = [
-        'available_schedules' => 'array',
-    ];
-
     protected $table = 'appt_mgmt_settings';
     protected $primaryKey = 'id';
     protected $fillable = [

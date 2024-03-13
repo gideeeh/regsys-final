@@ -5,6 +5,7 @@ use App\Http\Controllers\AcademicYearController;
 use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\AppointmentsController;
 use App\Http\Controllers\AppointmentsDashboardController;
+use App\Http\Controllers\AppointmentsUser;
 use App\Http\Controllers\ChartController;
 use App\Http\Controllers\CourseListingsController;
 use App\Http\Controllers\DashboardController;
@@ -63,7 +64,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::get('/user/dashboard', [UserDashboardController::class, 'index'])->name('user.dashboard');
     /* Appointments */
-    Route::get('/appointments', function(){return view('user.appointments');})->name('user.appointments');
+    Route::get('/user/appointments', [AppointmentsUser::class, 'index'])->name('user.appointments');
     Route::post('/appointments/create-appointment', [AppointmentsController::class, 'request_appointment'])->name('appointments.request');
     /* Public Json */
     Route::get('/public/api/get_services', [ServicesController::class, 'all_services_json'])->name('all_services_json');

@@ -22,11 +22,13 @@ class AppointmentsController extends Controller
             
             if ($user->role === 'admin') {
                 return view('admin.appointments-dashboard', [
+                    
                     'settings' => $settings,
                 ]);
-            } else if ($user->role === 'user') {
-                return view('user.appointments');
-            }
+            } 
+            // else if ($user->role === 'user') {
+            //     return view('user.appointments');
+            // }
         }
         return redirect('/');
     }
@@ -73,6 +75,7 @@ class AppointmentsController extends Controller
                         'service_name' => $appointment->service_name,
                         'student_number' => $appointment->student_number,
                         'id' => $appointment->id,
+                        'user_id' => $appointment->user_id,
                     ],
                 ];
             });
@@ -155,6 +158,15 @@ class AppointmentsController extends Controller
                 ->where('appointments.user_id', $id)
                 ->where('appointments.id', $highlightId) // Specific to the highlighted appointment
                 ->first();
+                
+            if ($highlightedAppointment && $highlightedAppointment->status === 'pending') {
+                $highlightedAppointment->update([
+                    'status' => 'viewed',
+                    'viewed_date' => now(), 
+                ]);
+
+                $highlightedAppointment = $highlightedAppointment->fresh();
+            }
         }
 
         return view('admin.manage-appointment', [
@@ -240,31 +252,31 @@ class AppointmentsController extends Controller
     }
 
     public function getUserAppointments(Request $request)
-{
-    $userId = Auth::id();
+    {
+        $userId = Auth::id();
 
-    $appointments = Appointment::join('services', 'appointments.service_id', '=', 'services.id')
-                        ->where('appointments.user_id', $userId)
-                        ->where('appointments.status', '!=', 'complete')
-                        ->get([
-                            'appointments.user_id',
-                            'services.service_name', 
-                            'appointments.status',
-                            'appointments.viewed_date',
-                            'appointments.complete_date',
-                        ])
-                        ->map(function ($appointment) {
-                            return [
-                                'user_id' => $appointment->user_id,
-                                'service_name' => $appointment->service_name, 
-                                'status' => $appointment->status,
-                                'viewed_date' => $appointment->viewed_date,
-                                'complete_date' => $appointment->complete_date,
-                            ];
-                        });
+        $appointments = Appointment::join('services', 'appointments.service_id', '=', 'services.id')
+                            ->where('appointments.user_id', $userId)
+                            ->where('appointments.status', '!=', 'complete')
+                            ->get([
+                                'appointments.user_id',
+                                'services.service_name', 
+                                'appointments.status',
+                                'appointments.viewed_date',
+                                'appointments.complete_date',
+                            ])
+                            ->map(function ($appointment) {
+                                return [
+                                    'user_id' => $appointment->user_id,
+                                    'service_name' => $appointment->service_name, 
+                                    'status' => $appointment->status,
+                                    'viewed_date' => $appointment->viewed_date,
+                                    'complete_date' => $appointment->complete_date,
+                                ];
+                            });
 
-    return response()->json($appointments);
-}
+        return response()->json($appointments);
+    }
 
 public function getUserCompletedAppointments(Request $request)
 {

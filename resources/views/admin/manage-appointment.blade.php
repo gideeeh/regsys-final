@@ -1,6 +1,6 @@
 @extends('admin.appointments-partials')
 @section('content')
-<div x-data={responseModal:true} class="flex gap-4">
+<div x-data={responseModal:false} class="flex gap-4">
     <div class="w-8/12 flex flex-col justify-between overflow-y-auto nice-scroll max-h-[80vh]">
         <div class="mb-3 bg-white shadow-sm sm:rounded-lg p-6 min-h-[20vh]">
             <div class="flex mb-2">
@@ -33,8 +33,8 @@
                     <p><strong>Notes:</strong></p>
                     <p>{{$highlightedAppointment->notes ?? 'No available notes.'}}</p>
                 </div>
-                <p><strong>File(s) Submitted:</strong></p>
                 <div>
+                    <p><strong>File(s) Submitted:</strong></p>
                     <!-- List of Files -->
                 </div>
             </div>
@@ -49,11 +49,11 @@
     </div>
 
     <div class="w-4/12 max-h-[80vh] min-h-[80vh] flex flex-col justify-between">
-        <div class="queue-container bg-white shadow-sm max-h-[39vh] min-h-[39vh] sm:rounded-lg p-2 overflow-y-auto nice-scroll cursor-default">
+        <div class="queue-container bg-white shadow-sm max-h-[39vh] min-h-[39vh] sm:rounded-lg p-4 overflow-y-auto nice-scroll cursor-default">
             <h3 class="text-md">Appointment History</h3>
             <div class="mb-2 text-sm">
-                <button activeClassSelect=true class="actv-queue-btn today-button active-queueSched bg-red-500 text-white text-md px-2 rounded hover:bg-red-600 transition ease-in-out duration-150">Pending</button>
-                <button activeClassSelec=false class="actv-queue-btn tomorrow-button bg-gray-500 text-white px-2 rounded hover:bg-gray-600 transition ease-in-out duration-150">Complete</button>
+                <button activeClassSelect=true class="bg-red-500 text-white text-md px-2 rounded hover:bg-red-600 transition ease-in-out duration-150">Ongoing</button>
+                <button activeClassSelec=false class="bg-gray-500 text-white px-2 rounded hover:bg-gray-600 transition ease-in-out duration-150">Complete</button>
             </div>
             <div class="appointments-history">
                 <div>
@@ -67,8 +67,8 @@
                 </div>
             </div>
         </div>
-        <div class="pending-container bg-white shadow-sm max-h-[39vh] min-h-[39vh] sm:rounded-lg p-2 overflow-y-auto nice-scroll cursor-default">
-            <h3 class="text-md mb-2">Files Submitted</h3>
+        <div class="pending-container bg-white shadow-sm max-h-[39vh] min-h-[39vh] sm:rounded-lg p-4 overflow-y-auto nice-scroll cursor-default">
+            <h3 class="text-md mb-2">Shared File(s) List</h3>
             <!-- <div class="mb-2 text-sm">
                 <button activeClassSelect=true class="actv-pending-btn one-day-button active-pendingDay bg-red-500 text-white text-md px-2 rounded hover:bg-red-600 transition ease-in-out duration-150'">1 Day</button>
                 <button activeClassSelec=false class="actv-pending-btn two-days-button bg-gray-500 text-white px-2 rounded hover:bg-gray-600 transition ease-in-out duration-150">2 Days</button>
@@ -81,18 +81,20 @@
     </div>
     <!-- Response Modal -->
     <div x-cloak x-show="responseModal" id="responseModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center px-4 z-50">
-        <div class="flex flex-col justify-between modal-content bg-white p-8 rounded-lg shadow-lg overflow-auto max-w-md w-full min-h-[90vh]">
+        <div class="flex flex-col justify-between modal-content bg-white p-8 rounded-lg shadow-lg overflow-y-auto nice-scroll max-w-md w-full min-h-[90vh]">
             <div>
+                <h3 class="text-lg font-bold mb-4">Appointment Response</h3>
                 <form action="#" method="POST" enctype="multipart/form-data">
                     @csrf
                     <input type="hidden" name="appointment_id" value="{{ $highlightedAppointment->id }}">
-    
                     <div class="mb-4">
                         <label for="response_file" class="block text-gray-700 text-sm font-bold mb-2">Attach Response File:</label>
-                        <input type="file" id="response_file" name="response_file" class="shadow border rounded py-2 px-3 text-gray-700">
+                        <input type="file" id="response_file" name="response_file" class="border rounded py-2 px-3 text-gray-700">
                     </div>
-
-                    <!-- Other form fields like text input for additional comments can go here -->
+                    <div>
+                        <label for="responseMessage" class="block text-sm font-medium text-gray-700 mb-2">Appointment Response Message</label>
+                        <textarea id="responseMessage" name="responseMessage" placeholder="Enter response message" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" style="height: 40vh;"></textarea>
+                    </div>
                 </form>
             </div>
             <div class="flex justify-end space-x-4">

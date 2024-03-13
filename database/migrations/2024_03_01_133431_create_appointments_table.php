@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('appointments', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id')->nullable();
-            $table->enum('status', ['pending', 'viewed', 'cancelled', 'complete'])->nullable()->default('pending');
+            $table->enum('status', ['pending', 'viewed', 'processing' ,'cancelled', 'complete'])->nullable()->default('pending');
             $table->date('viewed_date')->nullable();
             $table->date('complete_date')->nullable();
             $table->unsignedBigInteger('service_id');

@@ -182,9 +182,7 @@ document.addEventListener('DOMContentLoaded', function() {
             var confirmManage = confirm('Appointment: ' + info.event.title + '\nService: ' + info.event.extendedProps.service_name + '\n\nManage this appointment?');
 
             if (confirmManage) {
-                // Redirect to the management page for the clicked appointment
-                // Replace 'sample-route' with your actual route, and append the event ID as a parameter
-                window.location.href = '/admin/appointments/manage/' + info.event.extendedProps.id;
+                window.open('/admin/appointments/manage/' + info.event.extendedProps.user_id  + `?highlight=${info.event.extendedProps.id}`, '_blank');
             }
         }
     });

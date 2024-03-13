@@ -112,12 +112,19 @@ $(document).ready(function() {
     }
 
     function displayQueueAppt(data) {
+        var containerEmpty = $('.nextAppt-queue');
         var container = $('.apptQueue-container');
-        var url = `/admin/appointments/manage/${data.user_id}?highlight=${data.id}`; 
-        var apptInfo = `${data.student_last_name}, ${data.student_first_name.charAt(0)}. ${data.service_name}`;
-        var link = `<a href="${url}" class="nextAppt-queue text-sm" target="_blank" title="Click to View Appointment">${apptInfo}</a>`;
-        container.find('.nextAppt-queue').html(link);
+    
+        if (!data || Object.keys(data).length === 0) {
+            containerEmpty.html('<div class="no-appts-message">No appointments in queue.</div>');
+        } else {
+            var url = `/admin/appointments/manage/${data.user_id}?highlight=${data.id}`; 
+            var apptInfo = `${data.student_last_name}, ${data.student_first_name.charAt(0)}. ${data.service_name}`;
+            var link = `<a href="${url}" class="nextAppt-queue text-sm" target="_blank" title="Click to View Appointment">${apptInfo}</a>`;
+            container.find('.nextAppt-queue').html(link);
+        }
     }
+
     function getAppointments()
     {
         $.ajax({
