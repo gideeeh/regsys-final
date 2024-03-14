@@ -2,11 +2,9 @@
 @section('content')
 <div>
     <x-alert-message />
-    <div class="mt-4">
-        <a href="{{ route('student-records') }}" class="font-semibold text-xl text-gray-800 leading-tight no-underline hover:underline">
-            <h2 class="text-2xl font-semibold mb-4">Add New Student</h2>
-        </a>
-    </div>
+    <!-- <a href="{{ route('student-records') }}" class="text-sm text-gray-800 leading-tight no-underline hover:underline">
+        <span>Go Back: Student Records</span>
+    </a> -->
     <div class="py-2">
         <div class="overflow-x-auto bg-white rounded-lg overflow-y-auto relative px-1" style="min-height: 405px;">   
             <div>
@@ -94,8 +92,8 @@
                     </div>
                     <div class="flex justify-start">
                         <div class="w-4/12 mr-6">
-                            <label for="citizenship" class="block text-sm font-medium text-gray-700">Citizenship:</label>
-                            <input type="text" id="citizenship" name="citizenship" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                            <label for="nationality" class="block text-sm font-medium text-gray-700">Nationality:</label>
+                            <input type="text" id="nationality" name="nationality" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
                         </div>
                         <div class="w-4/12 mr-6">
                             <label for="civil_status" class="block text-sm font-medium text-gray-700">Civil Status:</label>
@@ -166,12 +164,27 @@
                     </div>
                     <div class="flex justify-start">
                         <div class="w-6/12 mr-9">
-                            <label for="highschool" class="block text-sm font-medium text-gray-700">Secondary:</label>
-                            <input type="text" id="highschool" name="highschool" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                            <label for="jr_highschool" class="block text-sm font-medium text-gray-700">Junior HighSchool:</label>
+                            <input type="text" id="jr_highschool" name="jr_highschool" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
                         </div>
                         <div class="w-2/12">
-                            <label for="hs_yr_grad" class="block text-sm font-medium text-gray-700">Year Graduated:</label>
-                            <select name="hs_yr_grad" id="hs_yr_grad" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                            <label for="jr_hs_yr_grad" class="block text-sm font-medium text-gray-700">Year Graduated:</label>
+                            <select name="jr_hs_yr_grad" id="jr_hs_yr_grad" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                                <option value="" selected>Select Year</option>
+                                @for ($year = date('Y'); $year >= date('Y') - 40; $year--)
+                                    <option value="{{ $year }}">{{ $year }}</option>
+                                @endfor
+                            </select>
+                        </div>
+                    </div>
+                    <div class="flex justify-start">
+                        <div class="w-6/12 mr-9">
+                            <label for="sr_highschool" class="block text-sm font-medium text-gray-700">Senior HighSchool:</label>
+                            <input type="text" id="sr_highschool" name="sr_highschool" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                        </div>
+                        <div class="w-2/12">
+                            <label for="sr_hs_yr_grad" class="block text-sm font-medium text-gray-700">Year Graduated:</label>
+                            <select name="sr_hs_yr_grad" id="sr_hs_yr_grad" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
                                 <option value="" selected>Select Year</option>
                                 @for ($year = date('Y'); $year >= date('Y') - 40; $year--)
                                     <option value="{{ $year }}">{{ $year }}</option>

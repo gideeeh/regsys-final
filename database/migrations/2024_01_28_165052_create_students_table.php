@@ -38,8 +38,10 @@ return new class extends Migration
             $table->string('guardian_contact', 45)->nullable();
             $table->string('elementary', 255)->nullable();
             $table->string('elem_yr_grad', 45)->nullable();
-            $table->string('highschool', 255)->nullable();
-            $table->string('hs_yr_grad', 45)->nullable();
+            $table->string('jr_highschool', 255)->nullable();
+            $table->string('jr_hs_yr_grad', 45)->nullable();
+            $table->string('sr_highschool', 255)->nullable();
+            $table->string('sr_hs_yr_grad', 45)->nullable();
             $table->string('college', 255)->nullable();
             $table->string('college_year_ended', 45)->nullable();
             $table->boolean('is_transferee')->nullable();

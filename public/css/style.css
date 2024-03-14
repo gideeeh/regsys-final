@@ -270,3 +270,12 @@ h3 {
 .test-red { 
     color: red; 
 }
+
+.stu-info-background {
+    background-image: url('/images/stu-profile-background.webp');
+    background-color: rgba(255, 255, 255, 0.5); 
+    background-blend-mode: lighten;
+    background-size: cover; 
+    background-repeat: no-repeat;
+    background-position: center bottom -25vh;
+}

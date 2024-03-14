@@ -32,7 +32,7 @@
     </head>
     <body class="font-sans antialiased bg-gray-100">
         <x-alert-message />
-        <div class="min-h-screen bg-gray-100">
+        <div class="min-h-screen bg-stone-100">
         @can('isAdmin')
             <!-- Include Admin Navigation -->
             @include('admin.navigation')

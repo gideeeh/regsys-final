@@ -83,8 +83,8 @@
         </div>
         <div class="flex justify-start">
             <div class="w-4/12 mr-6">
-                <label for="citizenship" class="block text-sm font-medium text-gray-700">Citizenship:</label>
-                <x-text-input id="citizenship" name="citizenship" type="text" class="mt-1 block w-full" :value="old('citizenship', $student->citizenship)"/>
+                <label for="nationality" class="block text-sm font-medium text-gray-700">Nationality:</label>
+                <x-text-input id="nationality" name="nationality" type="text" class="mt-1 block w-full" :value="old('citizenship', $student->citizenship)"/>
             </div>
             <div class="w-4/12 mr-6">
                 <label for="civil_status" class="block text-sm font-medium text-gray-700">Civil Status:</label>
@@ -137,12 +137,23 @@
         </div>
         <div class="flex justify-start">
             <div class="w-6/12 mr-9">
-                <label for="highschool" class="block text-sm font-medium text-gray-700">Secondary:</label>
-                <x-text-input id="highschool" name="highschool" type="text" class="mt-1 block w-full" :value="old('highschool', $student->highschool)"/>
+                <label for="jr_highschool" class="block text-sm font-medium text-gray-700">Junior HighSchool:</label>
+                <x-text-input id="jr_highschool" name="jr_highschool" type="text" class="mt-1 block w-full" :value="old('jr_highschool', $student->jr_highschool)"/>
             </div>
             <div class="w-2/12">
                 <label for="hs_yr_grad" class="block text-sm font-medium text-gray-700">Year Graduated:</label>
-                <x-select-option name="hs_yr_grad" id="hs_yr_grad" :default="old('hs_yr_grad', $student->hs_yr_grad ?? '')"
+                <x-select-option name="jr_hs_yr_grad" id="jr_hs_yr_grad" :default="old('jr_hs_yr_grad', $student->jr_hs_yr_grad ?? '')"
+                                :options="$years" class="mt-1 block w-full" />
+            </div>
+        </div>
+        <div class="flex justify-start">
+            <div class="w-6/12 mr-9">
+                <label for="sr_highschool" class="block text-sm font-medium text-gray-700">Senior HighSchool:</label>
+                <x-text-input id="sr_highschool" name="sr_highschool" type="text" class="mt-1 block w-full" :value="old('sr_highschool', $student->sr_highschool)"/>
+            </div>
+            <div class="w-2/12">
+                <label for="sr_hs_yr_grad" class="block text-sm font-medium text-gray-700">Year Graduated:</label>
+                <x-select-option name="sr_hs_yr_grad" id="sr_hs_yr_grad" :default="old('sr_hs_yr_grad', $student->sr_hs_yr_grad ?? '')"
                                 :options="$years" class="mt-1 block w-full" />
             </div>
         </div>

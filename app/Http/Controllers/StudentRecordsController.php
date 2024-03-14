@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Enrollment;
 use App\Models\Program;
 use App\Models\Student;
+use App\Models\StudentNote;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -72,6 +73,33 @@ class StudentRecordsController extends Controller
             'first_name' => 'required|string|max:255',
             'middle_name' => 'nullable|string|max:255',
             'last_name' => 'required|string|max:255',
+            'suffix' => 'nullable|string|max:10',
+            'student_number' => 'required|string|max:255',
+            'phone_number' => 'nullable|string|max:255',
+            'personal_email' => 'nullable|email|max:255',
+            'school_email' => 'nullable|email|max:255',
+            'birthdate' => 'nullable|date',
+            'birthplace' => 'nullable|string|max:255',
+            'sex' => 'required|in:M,F',
+            'nationality' => 'nullable|string|max:255',
+            'civil_status' => 'nullable|string|in:Single,Married,Widowed,Divorced,Separated',
+            'religion' => 'nullable|string|max:255',
+            'house_num' => 'nullable|string|max:255',
+            'street' => 'nullable|string|max:255',
+            'brgy' => 'nullable|string|max:255',
+            'city_municipality' => 'nullable|string|max:255',
+            'province' => 'nullable|string|max:255',
+            'zipcode' => 'nullable|string|max:255',
+            'elementary' => 'nullable|string|max:255',
+            'elem_yr_grad' => 'nullable|integer|min:1900|max:' . date('Y'),
+            'highschool' => 'nullable|string|max:255',
+            'hs_yr_grad' => 'nullable|integer|min:1900|max:' . date('Y'),
+            'college' => 'nullable|string|max:255',
+            'college_year_ended' => 'nullable|integer|min:1900|max:' . date('Y'),
+            'guardian_name' => 'nullable|string|max:255',
+            'guardian_contact' => 'nullable|string|max:255',
+            'is_transferee' => 'sometimes|boolean',
+            'is_irregular' => 'sometimes|boolean',
         ]);
     
         $student->update($validatedData);
@@ -110,10 +138,13 @@ class StudentRecordsController extends Controller
         ->orderBy('sj.subject_name')
         ->get();
     
+        $notes = StudentNote::where('student_id', $student_id)->get();
+
         return view('admin.indiv-student-record', [
             'student' => $student,
             'latestEnrollment' => $latestEnrollment,
-            'enrollmentDetails' => $enrollmentDetails
+            'enrollmentDetails' => $enrollmentDetails,
+            'notes' => $notes,
         ]);
     }
 
@@ -189,8 +220,10 @@ class StudentRecordsController extends Controller
         $new_student->guardian_contact = $request->guardian_contact;
         $new_student->elementary = $request->elementary;
         $new_student->elem_yr_grad = $request->elem_yr_grad;
-        $new_student->highschool = $request->highschool;
-        $new_student->hs_yr_grad = $request->hs_yr_grad;
+        $new_student->jr_highschool = $request->jr_highschool;
+        $new_student->jr_hs_yr_grad = $request->jr_hs_yr_grad;
+        $new_student->sr_highschool = $request->sr_highschool;
+        $new_student->sr_hs_yr_grad = $request->sr_hs_yr_grad;
         $new_student->college = $request->college;
         $new_student->college_year_ended = $request->college_year_ended;
         $new_student->is_transferee = $isTransferee;

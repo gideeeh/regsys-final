@@ -12,11 +12,7 @@
                 </div>
             </div>
 
-            <!-- <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                <div class="max-w-xl">
-                    @include('admin.edit-student-partials.edit-stu-academic')
-                </div>
-            </div>
+            <!-- 
 
             <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
                 <div class="max-w-xl">
