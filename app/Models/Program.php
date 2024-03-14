@@ -17,6 +17,7 @@ class Program extends Model
         'program_code',
         'program_name',
         'program_desc',
+        'program_major',
         'degree_type',
         'dept_id',
         'program_coordinator',

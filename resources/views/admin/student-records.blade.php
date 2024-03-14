@@ -14,25 +14,29 @@
         <div class="overflow-x-auto bg-white rounded-lg shadow overflow-y-auto relative" style="min-height: 405px;">   
             <table class="border-collapse table-auto w-full whitespace-no-wrap bg-white table-striped relative">
                 <thead >
-                    <tr class="cursor-default">
-                        <th class="bg-blue-500 text-white p-2 w-2/12">Student Number</th>
-                        <th class="bg-blue-500 text-white p-2 w-4/12">Name</th>
-                        <th class="bg-blue-500 text-white p-2 w-1/12">Course</th>
-                        <th class="bg-blue-500 text-white p-2 w-1/12">Year Level</th>
-                        <th class="bg-blue-500 text-white p-2 w-3/12">Actions</th>
+                    <tr class="cursor-default text-left text-sm">
+                        <th class="bg-blue-500 text-white p-1 w-2/12">Student Number</th>
+                        <th class="bg-blue-500 text-white p-1 w-3/12">Name</th>
+                        <th class="bg-blue-500 text-white p-1 w-3/12">Program</th>
+                        <th class="bg-blue-500 text-white p-1 w-2/12">Year Level</th>
+                        <th class="bg-blue-500 text-white p-1 w-1/12 text-center">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach ($students as $student)
-                    <tr class="border-b hover:bg-gray-100 cursor-pointer" x-data="{}" @click="window.location.href='{{ route('student-records.show', $student->student_id) }}'">
-                        <td class="border-dashed border-t border-gray-200 p-2 py-4"><strong>{{$student->student_number}}</strong></td>
-                        <td class="border-dashed border-t border-gray-200 p-2 py-4">{{$student->first_name}} {{ substr($student->middle_name, 0, 1)}}.  {{$student->last_name.' '.$student->suffix}}</td>
-                        <td class="border-dashed border-t border-gray-200 p-2 py-4">{{$student->program_code ?? 'Not Available' }}</td>
-                        <td class="border-dashed border-t border-gray-200 p-2 py-4">{{$student->year_level ?? '-'}}</td>
-                        <td class="border-dashed border-t border-gray-200 p-2 py-4">
-                            <div class="flex justify-start space-x-4">
-                                <button @click.stop="window.location.href='{{ route('student.edit', $student->student_id) }}'" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Update</button>
-                                <button @click.stop="deleteModal = true; selectedStudent = {{ $student->student_id }}" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition ease-in-out duration-150">Delete</button>
+                    <tr class="text-left text-sm border-b hover:bg-gray-100 cursor-pointer" x-data="{}" @click="window.location.href='{{ route('student-records.show', $student->student_id) }}'">
+                        <td class="border-dashed border-t border-gray-200 p-1"><strong>{{$student->student_number}}</strong></td>
+                        @if($student->middle_name)
+                        <td class="border-dashed border-t border-gray-200 p-1">{{$student->first_name}} {{ substr($student->middle_name, 0, 1)}}.  {{$student->last_name.' '.$student->suffix}}</td>
+                        @else
+                        <td class="border-dashed border-t border-gray-200 p-1">{{$student->first_name}} {{$student->last_name.' '.$student->suffix}}</td>
+                        @endif
+                        <td class="border-dashed border-t border-gray-200 p-1">{{$student->program_code ?? 'Not Available' }}</td>
+                        <td class="border-dashed border-t border-gray-200 p-1">{{$student->year_level ?? '-'}}</td>
+                        <td class="border-dashed border-t border-gray-200 p-1">
+                            <div class="flex justify-between gap-1">
+                                <button @click.stop="window.location.href='{{ route('student.edit', $student->student_id) }}'" class="bg-blue-500 text-sm text-white p-1 rounded hover:bg-blue-600">Update</button>
+                                <button @click.stop="deleteModal = true; selectedStudent = {{ $student->student_id }}" class="bg-red-500 text-sm text-white p-1 rounded hover:bg-red-600 transition ease-in-out duration-150">Delete</button>
                             </div>
                         </td>
                     </tr>

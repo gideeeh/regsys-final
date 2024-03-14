@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('programs', function (Blueprint $table) {
             $table->id('program_id');
-            $table->string('program_code',50)->unique();
+            $table->string('program_code',50);
             $table->string('program_name',255);
             $table->text('program_desc')->nullable();
             $table->string('degree_type',255);

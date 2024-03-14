@@ -21,7 +21,11 @@
     }">
     <x-alert-message />
     <h3 class="flex w-full justify-center bg-sky-950 px-4 rounded-md text-white mb-6 border-b-4 border-amber-300">Curriculum Details</h3>
-    <h1>{{$program->program_name}}</h1>
+    @if($program->program_major)
+    <p class="mb-4"><span class="text-3xl font-bold mr-2">{{$program->program_name}}</span><span class="text-xl font-semibold text-slate-600">Major in {{$program->program_major}}</span></p>
+    @else
+    <h1>{{$program->program_name}} </h1>
+    @endif
     <span class="py-8"><em>{{ trim($program->program_desc) ? $program->program_desc : 'No Description' }}</em></span>
     <div class="flex py-4 flex-col">
         <span><strong>Program Coordinator:</strong> {{ trim($program->program_coordinator) ? $program->program_coordinator : 'Not Set' }}</span>

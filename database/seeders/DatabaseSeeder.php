@@ -19,7 +19,7 @@ class DatabaseSeeder extends Seeder
             CS_SubjectSeeder::class,
             DepartmentSeeder::class,
             DeptHeadSeeder::class,
-            ProgramSeeder::class,
+            // ProgramSeeder::class,
             // StudentSeeder::class,
             // EnrollmentSeeder::class,
             AcademicYearSeeder::class,
@@ -28,9 +28,8 @@ class DatabaseSeeder extends Seeder
             ProfessorSeeder::class,
             // SectionScheduleSeeder::class,
             AdminUserSeeder::class,
-            ProgramSubjectSeeder::class,
+            // ProgramSubjectSeeder::class,
             ApptMgmtSettingsTableSeeder::class,
         ]);
-        
     }
 }

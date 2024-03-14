@@ -16,6 +16,7 @@ class ProgramController extends Controller
         $program = new Program();
         $program->program_code = $request->program_code;
         $program->program_name = $request->program_name;
+        $program->program_major = $request->program_major;
         $program->program_desc = $request->program_description;
         $program->degree_type = $request->degree_type;
         $program->dept_id = $request->department;
@@ -31,11 +32,12 @@ class ProgramController extends Controller
         $programs = DB::table('programs as p')
             ->leftJoin('program_subjects as ps', 'p.program_id', '=', 'ps.program_id')
             ->leftJoin('subjects as s', 'ps.subject_id', '=', 's.subject_id')
-            ->join('departments as d', 'p.dept_id', '=', 'd.dept_id')
+            ->leftJoin('departments as d', 'p.dept_id', '=', 'd.dept_id')
             ->select(
                 'p.program_id',
                 'p.program_code',
                 'p.program_desc',
+                'p.program_major',
                 'p.program_name',
                 'p.degree_type',
                 'd.dept_name',
@@ -43,14 +45,19 @@ class ProgramController extends Controller
                 'p.program_coordinator',
                 DB::raw('SUM(s.units_lec) + SUM(s.units_lab) AS total_units')
             )
-            ->groupBy('p.program_id', 'p.program_code', 'p.program_desc', 'd.dept_id', 'p.program_name', 'p.degree_type', 'd.dept_name', 'p.program_coordinator')
+            ->groupBy('p.program_id', 'p.program_code', 'p.program_major', 'p.program_desc', 'd.dept_id', 'p.program_name', 'p.degree_type', 'd.dept_name', 'p.program_coordinator')
             ->get();
 
         $departments = Department::all();
 
+        // return view('admin.program-list', [
+        //     'departments' => $departments,
+        //     'programs' => $programs
+        // ]);
+        // $programs = Program::all();
         return view('admin.program-list', [
+            'programs' => $programs,
             'departments' => $departments,
-            'programs' => $programs
         ]);
     }
     
@@ -71,6 +78,7 @@ class ProgramController extends Controller
         if ($program) {
             $program->program_code = $request->program_code;
             $program->program_name = $request->program_name;
+            $program->program_major = $request->program_major;
             $program->program_desc = $request->program_desc;
             $program->degree_type = $request->degree_type;
             $program->dept_id = $request->department;
