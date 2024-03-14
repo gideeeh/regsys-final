@@ -30,4 +30,9 @@ class Appointment extends Model
     {
         return $this->belongsTo(Service::class, 'service_id');
     }
+
+    public function responses()
+    {
+        return $this->hasMany(AppointmentResponse::class);
+    }
 }

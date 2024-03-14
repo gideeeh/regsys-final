@@ -81,7 +81,6 @@ tbody tr:hover {
 {
     padding: 0.3rem;
     width: 100%;
-    border: 2px solid greenyellow;
 }
 
 .dropdown-content {
@@ -92,32 +91,23 @@ tbody tr:hover {
 
 .indiv-student-panel {
     flex: 75%;
-    border: 1px solid pink;
 }
 
 .indiv-student-sidepanel {
     flex: 25%;
-    border: 1px solid cyan;
     padding-left: 1rem;
 }
 
 .stu-info {
     height: 15rem;
-    border: 1px solid red;
-}
-
-.stu-academic-info {
-    border: 1px solid violet;
 }
 
 .stu-notes {
     height: 15rem;
-    border: 1px solid teal;
 }
 
 .stu-functions {
     height: 25rem;
-    border: 1px solid green;
 }
 
 .modal-content {
@@ -157,10 +147,6 @@ tbody tr:hover {
 
 .modal-content::-webkit-scrollbar-thumb:hover, .nice-scroll::-webkit-scrollbar-thumb:hover {
     background: #555; 
-}
-
-.img-frame {
-    border: 1px solid black;
 }
 
 .img-frame img {

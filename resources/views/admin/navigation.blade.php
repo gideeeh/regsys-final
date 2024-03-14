@@ -42,9 +42,6 @@
                             <x-dropdown-link :href="route('faculty-records')">
                                         {{ __('Faculty Records') }}
                             </x-dropdown-link>
-                            <x-dropdown-link :href="route('course-listings')">
-                                        {{ __('Course Listings') }}
-                            </x-dropdown-link>
                         </div>
                     </div>
                     <x-nav-link :href="route('enrollment-records')" :active="request()->routeIs('enrollment-records')">

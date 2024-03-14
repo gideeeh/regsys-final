@@ -9,18 +9,20 @@
                             <img class="w-full" src="{{ asset('images/profile_pic_sample.jpg') }}" alt="{{$student->last_name}}">
                         </div>
                         <div class="stu-details w-9/12">
-                            <h1>{{$student->first_name}} {{$student->middle_name}} {{$student->last_name}} {{$student->suffix}}</h1>
-                            @isset($latestEnrollment)
-                            <p>Student Number: {{ $student->student_number }}</p>
-                            @if($latestEnrollment->latestEnrollment) {{-- Checking if latestEnrollment is set --}}
+                            <div class="mb-2">
+                                <h1>{{$student->first_name}} {{$student->middle_name}} {{$student->last_name}} {{$student->suffix}}</h1>
+                                @isset($latestEnrollment)
+                                <p>Student Number: {{ $student->student_number }}</p>
+                                @if($latestEnrollment->latestEnrollment) {{-- Checking if latestEnrollment is set --}}
                                 <p>Course: {{ $latestEnrollment->latestEnrollment->program->program_code }}</p>
                                 <p>Year Level: {{ $latestEnrollment->latestEnrollment->year_level }}</p>
                                 <p>Scholarship: {{ $latestEnrollment->latestEnrollment->scholarship_type }}</p>
-                            @else
+                                @else
                                 <p>Not Yet Enrolled</p>
-                            @endif
-                            @endisset
-                            <a href="#" @click="showModal = true">Personal Information</a>
+                                @endif
+                                @endisset
+                            </div>
+                            <a href="#" @click="showModal = true" class="mt-4 bg-sky-500 text-white text-sm p-1 rounded hover:bg-sky-600 transition ease-in-out duration-150">Personal Information</a>
                             <div x-show="showModal" @click.away="showModal = false" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full" id="my-modal">
                                 <div class="relative top-20 mx-auto p-5 border w-1/2 shadow-lg rounded-md bg-white">
                                     <div class="mt-3 text-left modal-content"> 
