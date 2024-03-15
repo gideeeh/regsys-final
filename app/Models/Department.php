@@ -16,7 +16,7 @@ class Department extends Model
     protected $fillable = [ 'dept_name', ];
 
     public function deptHead() {
-        return $this->hasOne(Dept_Head::class, 'dept_id');
+        return $this->hasMany(Dept_Head::class, 'dept_id');
     }
 
     public function programs() {
@@ -25,5 +25,9 @@ class Department extends Model
 
     public function professors() {
         return $this->hasMany(Professor::class, 'dept_id');
+    }
+
+    public function deptHeads() {
+        return $this->hasMany(Dept_Head::class, 'dept_id');
     }
 }

@@ -10,6 +10,8 @@ use App\Http\Controllers\ChartController;
 use App\Http\Controllers\CourseListingsController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DepartmentController;
+use App\Http\Controllers\DepartmentsController;
+use App\Http\Controllers\DeptHeadsController;
 use App\Http\Controllers\EnrolledSubjectsController;
 use App\Http\Controllers\EnrollmentsController;
 use App\Http\Controllers\FacultyRecordsController;
@@ -95,6 +97,9 @@ Route::middleware(['auth','isAdminUser'])->group(function() {
 /* Faculty Records */
     Route::get('/admin/faculty-records', [FacultyRecordsController::class, 'index'])->name('faculty-records');
     Route::get('/admin/faculty-records/{faculty}', [FacultyRecordsController::class, 'show'])->name('faculty-records.show');
+    Route::post('/admin/faculty-records/create-faculty-record', [FacultyRecordsController::class, 'store'])->name('faculty-records.store');
+    Route::patch('/admin/faculty-records/update-faculty-record/{id}', [FacultyRecordsController::class, 'update'])->name('faculty-records.update');
+    Route::delete('/admin/faculty-records/delete-faculty-record/{id}', [FacultyRecordsController::class, 'destroy'])->name('faculty-records.destroy');
 /* Subject Profile */
     Route::get('/admin/course-listings', [CourseListingsController::class, 'index'])->name('course-listings');
     Route::get('/admin/course-listings/{course}', [CourseListingsController::class, 'show'])->name('course-listings.show');
@@ -105,7 +110,15 @@ Route::middleware(['auth','isAdminUser'])->group(function() {
     Route::post('/admin/enrollments/enroll/enroll_student',[EnrollmentsController::class, 'store'])->name('enrollments.store');
 /* Enroll Subjects */
     Route::post('/admin/enrollments/enroll/enroll_subjects/{enrollment_id}',[EnrolledSubjectsController::class, 'store'])->name('enroll.subjects');
-
+/* Departments */
+    Route::get('/admin/functions/program-course-management/departments', [DepartmentsController::class, 'index'])->name('departments');
+    Route::post('/admin/functions/program-course-management/departments/create-dept-record', [DepartmentsController::class, 'store'])->name('departments.store');
+    Route::patch('/admin/functions/program-course-management/departments/update-dept-record/{id}', [DepartmentsController::class, 'update'])->name('departments.update');
+    Route::delete('/admin/functions/program-course-management/departments/delete-dept-record/{id}', [DepartmentsController::class, 'destroy'])->name('departments.destroy');
+/* Dept Heads */    
+    Route::post('/admin/functions/program-course-management/departments/create-deptHead-record', [DeptHeadsController::class, 'store'])->name('deptHead.store');
+    Route::patch('/admin/functions/program-course-management/departments/update-deptHead-record/{id}', [DeptHeadsController::class, 'update'])->name('deptHead.update');
+    Route::delete('/admin/functions/program-course-management/departments/delete-deptHead-record/{id}', [DeptHeadsController::class, 'destroy'])->name('deptHead.destroy');
 /* Program Management */
     Route::get('/admin/functions/program-course-management/program_list', [ProgramController::class, 'index'])->name('program-list');
     /* Sub - Program Profile */

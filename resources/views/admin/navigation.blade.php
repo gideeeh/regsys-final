@@ -60,6 +60,7 @@
                                 'academic-calendar',
                                 'academic-year',
                                 'sections',
+                                'departments',
                                 'program-list.show',
                                 ])">
                             {{ __('Functions') }}

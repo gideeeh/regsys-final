@@ -126,7 +126,15 @@
                             <p><strong>School Email:</strong> <span class="text-sm">{{$student->school_email ?? 'Record not found'}}</span></p>
                         </div>
                         <div class="w-1/2">
-                            <p><strong>Phone Number:</strong> <span class="text-sm">{{$student->phone_number ?? 'Record not found'}}</span></p>
+                            <p><strong>Phone Number:</strong>
+                                <span class="text-sm">
+                                    @if(isset($student->phone_number) && strlen($student->phone_number) === 11)
+                                        {{ substr($student->phone_number, 0, 4) }} {{ substr($student->phone_number, 4, 3) }} {{ substr($student->phone_number, 7) }}
+                                    @else
+                                        {{ $student->phone_number ?? 'Record not found' }}
+                                    @endif
+                                </span>
+                            </p>
                         </div>
                     </div>
                     <h3 class="bg-sky-600 text-center text-white rounded-md mb-4">Personal Information</h3>
@@ -155,10 +163,18 @@
                         @endif
                         @endif
                     </div>
-                    <p class="mb-1"><strong>Birthdate:</strong> <span class="text-sm">{{$student->birthdate ?? 'No birthdate record.'}}</span></p>
+                    <!-- {{ \Carbon\Carbon::parse($appointment->appointment_datetime)->format('M d, Y g:i A') }} -->
+                    <p class="mb-1"><strong>Birthdate:</strong> <span class="text-sm">{{\Carbon\Carbon::parse($student->birthdate)->format('M d, Y') ?? 'No birthdate record.'}}</span></p>
                     <p class="mb-1"><strong>Guardian Name:</strong> <span class="text-sm">{{$student->guardian_name ?? 'Record not found'}}</span></p>
-                    <p class="mb-1"><strong>Guardian Contact:</strong> <span class="text-sm">{{$student->guardian_contact ?? 'Record not found' }}</span></p>
-                    <!-- Click to Show More -->
+                    <p class="mb-1"><strong>Guardian Contact:</strong>
+                        <span class="text-sm">
+                            @if(isset($student->guardian_contact) && strlen($student->guardian_contact) === 11)
+                                {{ substr($student->guardian_contact, 0, 4) }} {{ substr($student->guardian_contact, 4, 3) }} {{ substr($student->guardian_contact, 7) }}
+                            @else
+                                {{ $student->guardian_contact ?? 'Record not found' }}
+                            @endif
+                        </span>
+                    </p>                    <!-- Click to Show More -->
                     <!-- <div class="flex justify-center">
                         <button 
                         @click="showMore = !showMore" 
@@ -176,27 +192,35 @@
                             <p><strong>Nationality:</strong> <span class="text-sm">{{$student->nationality ?? 'Record not found'}}</span></p>
                         </div>
                         <div class="w-1/2">
-                            <p><strong>Sex:</strong> <span class="text-sm">{{$student->sex ?? 'Record not found'}}</span></p>
+                            @if($student)
+                                @if($student->sex=='M')
+                                    <p><strong>Sex:</strong> <span class="text-sm">{{'Male'}}</span></p>
+                                @elseif($student->sex=='F')
+                                    <p><strong>Sex:</strong> <span class="text-sm">{{'Female'}}</span></p>
+                                @endif
+                            @else
+                                <p><strong>Sex:</strong> <span class="text-sm">{{'Record not found'}}</span></p>
+                            @endif
                             <p><strong>Religion:</strong> <span class="text-sm">{{$student->religion ?? 'Record not found'}}</span></p>
                         </div>
                     </div>    
                     <h3 class="bg-sky-600 text-center text-white rounded-md mb-4">Education Background</h3>
                     <div>
                         <div class="mb-4">
-                            <p class="w-1/2"><strong>Elementary:</strong> <span class="text-sm">{{$student->elementary ?? 'Record not found'}}</span></p>
-                            <p class="w-1/2"><strong>Year Grad:</strong> <span class="text-sm">{{$student->elem_yr_grad ?? 'Record not found'}}</span></p>
+                            <p><strong>Elementary:</strong> <span class="text-sm">{{$student->elementary ?? 'Record not found'}}</span></p>
+                            <p><strong>Year Grad:</strong> <span class="text-sm">{{$student->elem_yr_grad ?? 'Record not found'}}</span></p>
                         </div>
                         <div class="mb-4">
-                            <p class="w-1/2"><strong>Jr. High School:</strong> <span class="text-sm">{{$student->jr_highschool ?? 'Record not found'}}</span></p>
-                            <p class="w-1/2"><strong>Year Grad:</strong> <span class="text-sm">{{$student->jr_hs_yr_grad ?? 'Record not found'}}</span></p>
+                            <p><strong>Jr. High School:</strong> <span class="text-sm">{{$student->jr_highschool ?? 'Record not found'}}</span></p>
+                            <p><strong>Year Grad:</strong> <span class="text-sm">{{$student->jr_hs_yr_grad ?? 'Record not found'}}</span></p>
                         </div>
                         <div class="mb-4">
-                            <p class="w-1/2"><strong>Sr. High School:</strong> <span class="text-sm">{{$student->sr_highschool ?? 'Record not found'}}</span></p>
-                            <p class="w-1/2"><strong>Year Grad:</strong> <span class="text-sm">{{$student->sr_hs_yr_grad ?? 'Record not found'}}</span></p>
+                            <p><strong>Sr. High School:</strong> <span class="text-sm">{{$student->sr_highschool ?? 'Record not found'}}</span></p>
+                            <p><strong>Year Grad:</strong> <span class="text-sm">{{$student->sr_hs_yr_grad ?? 'Record not found'}}</span></p>
                         </div>
                         <div class="mb-4">
-                            <p class="w-1/2"><strong>College:</strong> <span class="text-sm">{{$student->college ?? 'Record not found'}}</span></p>
-                            <p class="w-1/2"><strong>Final Year/Grad:</strong> <span class="text-sm">{{$student->collge_year_ended ?? 'Record not found'}}</span></p>
+                            <p><strong>College:</strong> <span class="text-sm">{{$student->college ?? 'Record not found'}}</span></p>
+                            <p><strong>Final Year/Grad:</strong> <span class="text-sm">{{$student->college_year_ended ?? 'Record not found'}}</span></p>
                         </div>
                     </div>
                 </div>

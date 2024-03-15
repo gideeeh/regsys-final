@@ -16,6 +16,7 @@
                                         request()->routeIs('academic-calendar') || 
                                         request()->routeIs('program-list.show') || 
                                         request()->routeIs('sections') || 
+                                        request()->routeIs('departments') || 
                                         request()->routeIs('academic-year') ? 'font-semibold' : '' }} block rounded-md py-2 px-4 hover:bg-gray-200">
                                     Program Management
                                 </a>
@@ -27,6 +28,7 @@
                                     <li><a href="{{ route('sections') }}" class="{{ request()->routeIs('sections') ? 'active-main' : '' }} block py-2 px-6 hover:bg-gray-200">Sections</a></li>
                                     <li><a href="{{ route('academic-calendar') }}" class="{{ request()->routeIs('academic-calendar') ? 'active-main' : '' }} block py-2 px-6 hover:bg-gray-200">Academic Calendar</a></li>
                                     <li><a href="{{ route('academic-year') }}" class="{{ request()->routeIs('academic-year') ? 'active-main' : '' }} block py-2 px-6 hover:bg-gray-200">Academic Year</a></li>
+                                    <li><a href="{{ route('departments') }}" class="{{ request()->routeIs('departments') ? 'active-main' : '' }} block py-2 px-6 hover:bg-gray-200">Departments</a></li>
                                 </ul>
                             </li>
                             <li class="menu-nav"><a href="#" class="block rounded-md py-2 px-4">User Access Management</a></li>
