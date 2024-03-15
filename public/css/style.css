@@ -208,30 +208,36 @@ h3 {
     margin-bottom: 0.3rem;
 }
 
-.active-main {
-    font-weight: bold;
-    background-color: #f3f3f3;
-    text-decoration: underline;
-}
-
-.active-sub {
-    font-weight: bold;
-}
-
-.submenu {
-    list-style-type: none;
-    padding-left: 0;
-}
-
+/* Regular state */
 .submenu li a {
     display: block;
-    color: #000;
+    color: #000; /* Black font color */
     padding: 8px 2.5rem;
     font-size: 0.9rem;
+    background-color: transparent; 
+    transition: background-color 0.2s, color 0.2s; 
+    border-radius: 0.375em;
 }
 
-.submenu li a:hover {
-    background-color: #f3f3f3;
+.menu-nav a {
+    display: block;
+    color: #000; 
+    background-color: transparent; 
+    transition: background-color 0.2s, color 0.2s; 
+}
+
+/* Hover state */
+.submenu li a:hover, .menu-nav a:hover {
+    background-color: #7DD3FC; /* Light blue background on hover */
+    color: #FFF; /* White font color */
+}
+
+/* Active state */
+.submenu li a.active-main, .menu-nav a.active-main {
+    background-color: #38BDF8; /* Darker blue background when active */
+    color: #FFF; /* White font color */
+    font-weight: bold;
+    /* text-decoration: underline; */
 }
 
 .icon-size {

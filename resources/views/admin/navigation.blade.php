@@ -1,4 +1,4 @@
-<nav x-data="{ openFunctions: false, openRecords: false, notifs: false, }" class="bg-white border-b border-gray-100">
+<nav x-data="{ openFunctions: false, openRecords: false, openAppointments: false, notifs: false, }" class="bg-white border-b border-gray-100">
     <!-- Primary Navigation Menu -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
@@ -22,10 +22,7 @@
                             :active="request()->routeIs([
                                 'student-records',
                                 'student.add',
-                                'course-listings',
-                                'student-records.show',
-                                'faculty-records.show',
-                                'course-listings.show',
+                                'faculty-records',
                                 ])">
                             {{ __('Records') }}
                         </x-nav-link>
@@ -44,7 +41,12 @@
                             </x-dropdown-link>
                         </div>
                     </div>
-                    <x-nav-link :href="route('enrollment-records')" :active="request()->routeIs('enrollment-records')">
+                    <x-nav-link 
+                        :href="route('enrollment-records')" 
+                        :active="request()->routeIs([
+                            'enrollment-records',
+                            'enrollments.enroll',
+                            ])">
                         {{ __('Enrollments') }}
                     </x-nav-link>
 
@@ -83,9 +85,39 @@
                             </x-dropdown-link>
                         </div>
                     </div>
-                    <x-nav-link :href="route('appointments.dashboard')" :active="request()->routeIs('appointments.dashboard')">
+                    <div @mouseover="openAppointments = true" @mouseleave="openAppointments = false" class="relative sm:flex sm:items-center">
+                        <x-nav-link 
+                            class="sm:flex sm:items-center h-full" 
+                            :href="route('appointments.dashboard')" 
+                            :active="request()->routeIs([
+                                'appointments.dashboard',
+                                'appointments',
+                                'appointments.manage',
+                                'appointments.services',
+                                ])">
+                            {{ __('Student Appointments') }}
+                        </x-nav-link>
+                        <div class="dropdown-content absolute bg-white shadow-md z-50 w-40" 
+                            x-cloak 
+                            x-show="openAppointments"
+                            x-transition:enter="transition ease-out duration-100"
+                            x-transition:enter-start="opacity-0 transform scale-90"
+                            x-transition:enter-end="opacity-100 transform scale-100">
+                            <!-- Dropdown links -->
+                            <x-dropdown-link :href="route('appointments.dashboard')">
+                                        {{ __('Appointments Dashboard') }}
+                            </x-dropdown-link>
+                            <x-dropdown-link :href="route('appointments')">
+                                        {{ __('Appointments Management') }}
+                            </x-dropdown-link>
+                            <x-dropdown-link :href="route('appointments.services')">
+                                        {{ __('Services') }}
+                            </x-dropdown-link>
+                        </div>
+                    </div>
+                    <!-- <x-nav-link :href="route('appointments.dashboard')" :active="request()->routeIs('appointments.dashboard')">
                         {{ __('Student Appointments') }}
-                    </x-nav-link>
+                    </x-nav-link> -->
                 </div>
             </div>
 

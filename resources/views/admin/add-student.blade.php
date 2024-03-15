@@ -6,14 +6,12 @@
         <span>Go Back: Student Records</span>
     </a> -->
     <div class="py-2">
-        <div class="overflow-x-auto bg-white rounded-lg overflow-y-auto relative px-1" style="min-height: 405px;">   
+        <div class="overflow-x-auto bg-white rounded-lg overflow-y-auto relative px-1">   
             <div>
-                <form action="{{ route('student.store') }}" method="POST" class="space-y-4">
+                <form action="{{ route('student.store') }}" method="POST">
                     @csrf
-                    <div class="flex w-full justify-center bg-blue-500 py-1 rounded-md shadow text-white">
-                        <h3 class="hover:cursor-default">Student Information</h3>
-                    </div>
-                    <div class="flex justify-between">
+                    <h3 class="flex w-full justify-center bg-sky-950 px-4 rounded-md text-white mb-6">Student Information</h3>
+                    <div class="flex justify-between mb-4">
                         <div class="w-4/12">
                             <label for="first_name" class="block text-sm font-medium text-gray-700">First Name:</label>
                             <input type="text" id="first_name" name="first_name" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
@@ -38,7 +36,7 @@
                             </select>
                         </div>
                     </div>
-                    <div class="flex justify-start">
+                    <div class="flex justify-start mb-4">
                         <div class="w-4/12 mr-6">
                             <label for="student_number" class="block text-sm font-medium text-gray-700">Student Number:</label>
                             <input type="text" id="student_number" name="student_number" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
@@ -58,7 +56,7 @@
                             </div>
                         </div>  
                     </div>
-                    <div class="flex justify-start">
+                    <div class="flex justify-start mb-4">
                         <div class="w-6/12 mr-6">
                             <label for="personal_email" class="block text-sm font-medium text-gray-700">Personal Email Address:</label>
                             <input type="text" id="personal_email" name="personal_email" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
@@ -69,10 +67,8 @@
                         </div>                      
                     </div>
                     <!-- Personal Information -->
-                    <div class="flex w-full justify-center bg-blue-500 py-1 rounded-md shadow text-white">
-                        <h3 class="hover:cursor-default">Personal Information</h3>
-                    </div>
-                    <div class="flex justify-start">
+                    <h3 class="flex w-full justify-center bg-sky-600 px-4 rounded-md text-white my-6">Personal Information</h3>
+                    <div class="flex justify-start mb-4">
                         <div class="w-4/12 mr-6">
                             <label for="birthdate" class="block text-sm font-medium text-gray-700">Date of Birth:</label>
                             <input type="date" id="birthdate" name="birthdate" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
@@ -90,7 +86,7 @@
                             </select>
                         </div>
                     </div>
-                    <div class="flex justify-start">
+                    <div class="flex justify-start mb-4">
                         <div class="w-4/12 mr-6">
                             <label for="nationality" class="block text-sm font-medium text-gray-700">Nationality:</label>
                             <input type="text" id="nationality" name="nationality" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
@@ -112,10 +108,8 @@
                         </div>
                     </div>
                     <!-- Home Address -->
-                    <div class="flex w-full justify-center bg-blue-500 py-1 rounded-md shadow text-white">
-                        <h3 class="hover:cursor-default">Home Address</h3>
-                    </div>
-                    <div class="flex">
+                    <h3 class="flex w-full justify-center bg-sky-600 px-4 rounded-md text-white my-6">Home Address</h3>
+                    <div class="flex mb-4">
                         <div class="w-1/12 mr-6">
                             <label for="house_num" class="block text-sm font-medium text-gray-700">House No:</label>
                             <input type="text" id="house_num" name="house_num" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
@@ -129,7 +123,7 @@
                             <input type="text" id="brgy" name="brgy" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
                         </div>
                     </div>
-                    <div class="flex justify-between">
+                    <div class="flex justify-between mb-4">
                         <div class="w-5/12">
                             <label for="city_municipality" class="block text-sm font-medium text-gray-700">City/Municipality:</label>
                             <input type="text" id="city_municipality" name="city_municipality" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
@@ -144,10 +138,8 @@
                         </div>
                     </div>
                     <!-- Educational Background -->
-                    <div class="flex w-full justify-center bg-blue-500 py-1 rounded-md shadow text-white">
-                        <h3 class="hover:cursor-default">Educational Background</h3>
-                    </div>
-                    <div class="flex justify-start">
+                    <h3 class="flex w-full justify-center bg-sky-600 px-4 rounded-md text-white my-6">Educational Background</h3>
+                    <div class="flex justify-start mb-4">
                         <div class="w-6/12 mr-9">
                             <label for="elementary" class="block text-sm font-medium text-gray-700">Primary:</label>
                             <input type="text" id="elementary" name="elementary" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
@@ -162,7 +154,7 @@
                             </select>
                         </div>
                     </div>
-                    <div class="flex justify-start">
+                    <div class="flex justify-start mb-4">
                         <div class="w-6/12 mr-9">
                             <label for="jr_highschool" class="block text-sm font-medium text-gray-700">Junior HighSchool:</label>
                             <input type="text" id="jr_highschool" name="jr_highschool" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
@@ -177,7 +169,7 @@
                             </select>
                         </div>
                     </div>
-                    <div class="flex justify-start">
+                    <div class="flex justify-start mb-4">
                         <div class="w-6/12 mr-9">
                             <label for="sr_highschool" class="block text-sm font-medium text-gray-700">Senior HighSchool:</label>
                             <input type="text" id="sr_highschool" name="sr_highschool" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
@@ -192,7 +184,7 @@
                             </select>
                         </div>
                     </div>
-                    <div class="flex justify-start">
+                    <div class="flex justify-start mb-4">
                         <div class="w-6/12 mr-9">
                             <label for="college" class="block text-sm font-medium text-gray-700">College:</label>
                             <input type="text" id="college" name="college" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
@@ -208,22 +200,20 @@
                         </div>
                     </div>
                     <!-- Guardian Information -->
-                    <div class="flex w-full justify-center bg-blue-500 py-1 rounded-md shadow text-white">
-                        <h3 class="hover:cursor-default">Guardian Information</h3>
-                    </div>
-                    <div class="flex justify-start">
-                        <div class="w-5/12 mr-6">
+                    <h3 class="flex w-full justify-center bg-sky-600 px-4 rounded-md text-white my-6">Guardian Details</h3>
+                    <div class="flex gap-12 mb-12">
+                        <div class="w-5/12">
                             <label for="guardian_name" class="block text-sm font-medium text-gray-700">Guardian Name:</label>
                             <input type="text" id="guardian_name" name="guardian_name" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
                         </div>
-                        <div class="w-5/12 mr-6">
+                        <div class="w-5/12">
                             <label for="guardian_contact" class="block text-sm font-medium text-gray-700">Contact No.:</label>
                             <input type="text" id="guardian_contact" name="guardian_contact" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
                         </div>
                     </div>
                     <!-- Submit Button -->
-                    <div class="flex w-full justify-center py-6">
-                        <button type="submit" class="w-1/2 bg-green-500 font-medium font-semibold text-white px-8 py-2 shadow-md rounded-lg hover:bg-green-600 transition ease-in-out duration-150">Add Student</button>
+                    <div class="flex w-full justify-center">
+                        <button type="submit" class="px-4 py-2 bg-green-500 text-white font-medium rounded-md w-1/2 shadow-sm hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-gray-300">Add Student</button>
                     </div>
                 </form>
             </div>

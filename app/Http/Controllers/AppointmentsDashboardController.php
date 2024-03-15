@@ -31,6 +31,23 @@ class AppointmentsDashboardController extends Controller
             ->selectRaw('student_id, program_id, year_level, enrollment_date, ROW_NUMBER() OVER (PARTITION BY student_id ORDER BY enrollment_date DESC) as rn')
             ->toSql();
     
+        $appointments = Appointment::query()
+            ->select([
+                'appointments.id',
+                'appointments.user_id',
+                'students.first_name as student_first_name',
+                'students.last_name as student_last_name',
+                'users.email',
+                'students.student_number',
+                'services.service_name',
+                'appointments.status',
+                'appointments.created_at',
+                'appointments.appointment_datetime',
+            ])
+            ->join('users', 'appointments.user_id', '=', 'users.id')
+            ->leftjoin('students', 'users.id', '=', 'students.user_id')
+            ->join('services', 'appointments.service_id', '=', 'services.id');
+
         $baseQuery = Appointment::query()
             ->select([
                 'appointments.id',
@@ -46,16 +63,16 @@ class AppointmentsDashboardController extends Controller
                 DB::raw('programs.program_name, enrollments.year_level, enrollments.enrollment_date')
             ])
             ->join('users', 'appointments.user_id', '=', 'users.id')
-            ->join('students', 'users.id', '=', 'students.user_id')
+            ->leftjoin('students', 'users.id', '=', 'students.user_id')
             ->join('services', 'appointments.service_id', '=', 'services.id')
             ->leftJoin(DB::raw("({$latestEnrollmentsSubquery}) as enrollments"), 'students.student_id', '=', 'enrollments.student_id')
             ->where('enrollments.rn', '=', 1)
-            ->join('programs', 'enrollments.program_id', '=', 'programs.program_id')
+            ->leftjoin('programs', 'enrollments.program_id', '=', 'programs.program_id')
             ->mergeBindings(DB::table('enrollments')); 
     
-        $appointmentsToday = (clone $baseQuery)->whereBetween('appointments.appointment_datetime', [$todayStart, $todayEnd])->get();
-        $appointmentsTomorrow = (clone $baseQuery)->whereBetween('appointments.appointment_datetime', [$tomorrowStart, $tomorrowEnd])->get();
-        $appointmentsThisWeek = (clone $baseQuery)->whereBetween('appointments.appointment_datetime', [$startOfWeek, $endOfWeek])->get();
+        $appointmentsToday = (clone $appointments)->whereBetween('appointments.appointment_datetime', [$todayStart, $todayEnd])->get();
+        $appointmentsTomorrow = (clone $appointments)->whereBetween('appointments.appointment_datetime', [$tomorrowStart, $tomorrowEnd])->get();
+        $appointmentsThisWeek = (clone $appointments)->whereBetween('appointments.appointment_datetime', [$startOfWeek, $endOfWeek])->get();
 
         $pendingOneDay = (clone $baseQuery)
             ->where('appointments.appointment_datetime', '<=', $oneDayAgo)
@@ -71,10 +88,11 @@ class AppointmentsDashboardController extends Controller
     
         $appointments = [
             'today' => $appointmentsToday,
+            'appointments' => $appointments,
             'tomorrow' => $appointmentsTomorrow,
             'thisWeek' => $appointmentsThisWeek,
             'pendingOneDay' => $pendingOneDay,
-            // 'oneDayAgo' => $oneDayAgo,
+            'oneDayAgo' => $oneDayAgo,
             'pendingTwoDays' => $pendingTwoDays,
             'pendingBeyondTwoDays' => $pendingBeyondTwoDays
         ];

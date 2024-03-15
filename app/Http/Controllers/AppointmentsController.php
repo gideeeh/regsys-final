@@ -59,7 +59,7 @@ class AppointmentsController extends Controller
                 $join->on('students.student_id', '=', 'enrollments.student_id')
                     ->where('enrollments.rn', '=', 1);
             })
-            ->join('programs', 'enrollments.program_id', '=', 'programs.program_id')
+            ->leftJoin('programs', 'enrollments.program_id', '=', 'programs.program_id')
             ->mergeBindings(DB::table('enrollments'))
             ->get() 
             ->map(function ($appointment) {
@@ -98,10 +98,10 @@ class AppointmentsController extends Controller
             ->select('enrollments.student_id', 'enrollments.program_id', 'enrollments.year_level');
 
         $student = DB::table('students')
-            ->joinSub($latestEnrollmentsSubquery, 'latest_enrollments', function($join) {
+            ->leftJoinSub($latestEnrollmentsSubquery, 'latest_enrollments', function($join) {
                 $join->on('students.student_id', '=', 'latest_enrollments.student_id');
             })
-            ->join('programs', 'latest_enrollments.program_id', '=', 'programs.program_id')
+            ->leftJoin('programs', 'latest_enrollments.program_id', '=', 'programs.program_id')
             ->select([
                 'students.student_id',
                 'students.user_id',
@@ -209,13 +209,13 @@ class AppointmentsController extends Controller
                 DB::raw('programs.program_name, programs.program_code, enrollments.year_level, enrollments.enrollment_date')
             ])
             ->join('users', 'appointments.user_id', '=', 'users.id')
-            ->join('students', 'users.id', '=', 'students.user_id')
+            ->leftJoin('students', 'users.id', '=', 'students.user_id')
             ->join('services', 'appointments.service_id', '=', 'services.id')
             ->leftJoin(DB::raw("({$latestEnrollmentsSubquery}) as enrollments"), function($join) {
                 $join->on('students.student_id', '=', 'enrollments.student_id')
                     ->where('enrollments.rn', '=', 1);
             })
-            ->join('programs', 'enrollments.program_id', '=', 'programs.program_id')
+            ->leftJoin('programs', 'enrollments.program_id', '=', 'programs.program_id')
             ->mergeBindings(DB::table('enrollments'))
             ->orderBy('appointments.created_at', 'desc');; 
         

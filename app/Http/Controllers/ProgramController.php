@@ -48,6 +48,26 @@ class ProgramController extends Controller
             ->groupBy('p.program_id', 'p.program_code', 'p.program_major', 'p.program_desc', 'd.dept_id', 'p.program_name', 'p.degree_type', 'd.dept_name', 'p.program_coordinator')
             ->get();
 
+        $programsPaginate = DB::table('programs as p')
+            ->leftJoin('program_subjects as ps', 'p.program_id', '=', 'ps.program_id')
+            ->leftJoin('subjects as s', 'ps.subject_id', '=', 's.subject_id')
+            ->leftJoin('departments as d', 'p.dept_id', '=', 'd.dept_id')
+            ->select(
+                'p.program_id',
+                'p.program_code',
+                'p.program_desc',
+                'p.program_major',
+                'p.program_name',
+                'p.degree_type',
+                'd.dept_name',
+                'd.dept_id',
+                'p.program_coordinator',
+                DB::raw('SUM(s.units_lec) + SUM(s.units_lab) AS total_units')
+            )
+            ->groupBy('p.program_id', 'p.program_code', 'p.program_major', 'p.program_desc', 'd.dept_id', 'p.program_name', 'p.degree_type', 'd.dept_name', 'p.program_coordinator');
+
+        $programRecords = $programsPaginate->paginate(10)->withQueryString();
+
         $departments = Department::all();
 
         // return view('admin.program-list', [
@@ -56,7 +76,7 @@ class ProgramController extends Controller
         // ]);
         // $programs = Program::all();
         return view('admin.program-list', [
-            'programs' => $programs,
+            'programs' => $programRecords,
             'departments' => $departments,
         ]);
     }

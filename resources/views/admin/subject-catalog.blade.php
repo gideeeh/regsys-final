@@ -17,12 +17,70 @@
         selectedPreReq2:''}" 
         @keydown.escape.window="showModal = false">
         <x-alert-message />
-        <a href="{{ route('subject-catalog') }}" class="font-semibold text-xl text-gray-800 leading-tight no-underline hover:underline">
-            <span class="text-2xl font-semibold mb-4">Subjects Catalog</span>
-        </a>
-        <div class="flex justify-between space-x-4 mt-6">
-            <button @click="showModal = true" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition ease-in-out duration-150">+ Add Subject</button>
+        <h3 class="flex w-full justify-center bg-sky-950 px-4 rounded-md text-white mb-6 cursor-default">Subjects Catalog</h3>
+        <div class="flex justify-between mb-6">
+            <button @click="showModal = true" class="bg-green-500 text-white text-sm p-2 rounded hover:bg-green-600 transition ease-in-out duration-150">+ Add Subject</button>
+            <!-- <a href="{{ route('subject-catalog') }}" class="font-semibold text-xl text-gray-800 leading-tight no-underline hover:underline">
+                <span class="text-2xl font-semibold mb-4">Subjects Catalog</span>
+            </a> -->
             <x-search-form action="{{ route('subject-catalog') }}" placeholder="Search Subject" />
+        </div>
+        <!-- Subjects Table -->
+        <div>
+            {{ $subjects->links() }}
+        </div>
+        <div class="py-4">
+            <div class="overflow-x-auto bg-white rounded-lg shadow overflow-y-auto relative">
+                <table class="border-collapse table-auto w-full whitespace-no-wrap bg-white table-striped relative">
+                    <thead>
+                        <tr class="text-left text-sm">
+                            <th class="w-1/12 bg-blue-500 text-white pl-4 p-1">Subject Code</th>
+                            <th class="w-3/12 bg-blue-500 text-white p-1">Subject Name</th>
+                            <th class="w-1/12 bg-blue-500 text-white p-1">Units (Lec)</th>
+                            <th class="w-1/12 bg-blue-500 text-white p-1">Units (Lab)</th>
+                            <th class="w-1/12 bg-blue-500 text-white p-1">Total Units</th>
+                            <th class="w-2/12 bg-blue-500 text-white p-1">Pre-Req 1</th>
+                            <th class="w-2/12 bg-blue-500 text-white p-1">Pre-Req 2</th>
+                            <th class="w-1/12 bg-blue-500 text-center text-white p-1">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if($subjects->isNotEmpty())
+                        @foreach ($subjects as $subject)
+                        <tr class="border-b hover:bg-gray-100 cursor-pointer text-sm">
+                            <td class="border-dashed border-t border-gray-300 pl-4 p-2"><strong>{{ $subject->subject_code }}</strong></td>
+                            <td class="border-dashed border-t border-gray-300 p-2">{{ $subject->subject_name }}</td>
+                            <td class="border-dashed border-t border-gray-300 p-2">{{ $subject->units_lec }}</td>
+                            <td class="border-dashed border-t border-gray-300 p-2">{{ $subject->units_lab }}</td>
+                            <td class="border-dashed border-t border-gray-300 p-2">{{ $subject->units_lec + $subject->units_lab }}</td>
+                            <td class="border-dashed border-t border-gray-300 p-2">{{ $subject->prereq1 ?? '-'}}</td>
+                            <td class="border-dashed border-t border-gray-300 p-2">{{ $subject->prereq2 ?? '-'}}</td>
+                            <td class="border-dashed border-t border-gray-300 p-2 pr-4">
+                                <div class="flex justify-between gap-2">
+                                    <button 
+                                        @click.stop="showUpdateModal=true; 
+                                        selectedId = {{$subject->subject_id}};
+                                        selectedSubjectCode = '{{ $subject->subject_code }}'; 
+                                        selectedSubjectName = '{{ $subject->subject_name }}'; 
+                                        selectedSubjectDescription = '{{ $subject->subject_description }}'; 
+                                        selectedSubjectUnitsLec = {{ $subject->units_lec }}; 
+                                        selectedSubjectUnitsLab = {{ $subject->units_lab }}; 
+                                        selectedPreReq1 = '{{ $subject->prereq1 }}'; 
+                                        selectedPreReq2 = '{{ $subject->prereq2 }}';" 
+                                    class="bg-blue-500 text-sm text-white p-1 rounded hover:bg-blue-600">Update</button>
+                                    <button @click.stop="showDeleteModal=true; selectedId = {{$subject->subject_id}}" class="bg-red-500 text-sm text-white p-1 rounded hover:bg-red-600 transition ease-in-out duration-150">Delete</button>
+                                </div>
+                            </td>
+                        </tr>
+                        @endforeach
+                        @else
+                        <tr>
+                            <td colspan="8" class="w-full mt-16 text-rose-600 text-center bg-slate-100 py-12">No Subject Records Available</td>
+                        </tr>
+                        @endif
+                    </tbody>
+                </table>
+            </div>
         </div>
         <!-- Add Subject Modal --> 
         <div x-cloak x-show="showModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center px-4 z-50">
@@ -63,57 +121,6 @@
                         <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition ease-in-out duration-150">Create Subject</button>
                     </div>
                 </form>
-            </div>
-        </div>
-        <!-- Subjects Table -->
-        <div class="py-4">
-            <div class="overflow-x-auto bg-white rounded-lg shadow overflow-y-auto relative">
-                <table class="border-collapse table-auto w-full whitespace-no-wrap bg-white table-striped relative">
-                    <thead>
-                        <tr class="text-left">
-                            <th class="bg-blue-500 text-white p-2">Subject Code</th>
-                            <th class="bg-blue-500 text-white p-2">Subject Name</th>
-                            <th class="bg-blue-500 text-white p-2">Units (Lec)</th>
-                            <th class="bg-blue-500 text-white p-2">Units (Lab)</th>
-                            <th class="bg-blue-500 text-white p-2">Total Units</th>
-                            <th class="bg-blue-500 text-white p-2">Pre-Req 1</th>
-                            <th class="bg-blue-500 text-white p-2">Pre-Req 2</th>
-                            <th class="bg-blue-500 text-white p-2">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($subjects as $subject)
-                        <tr class="border-b hover:bg-gray-100 cursor-pointer">
-                            <td class="border-dashed border-t border-gray-300 p-2"><strong>{{ $subject->subject_code }}</strong></td>
-                            <td class="border-dashed border-t border-gray-300 p-2">{{ $subject->subject_name }}</td>
-                            <td class="border-dashed border-t border-gray-300 p-2">{{ $subject->units_lec }}</td>
-                            <td class="border-dashed border-t border-gray-300 p-2">{{ $subject->units_lab }}</td>
-                            <td class="border-dashed border-t border-gray-300 p-2">{{ $subject->units_lec + $subject->units_lab }}</td>
-                            <td class="border-dashed border-t border-gray-300 p-2">{{ $subject->prereq1 ?? '-'}}</td>
-                            <td class="border-dashed border-t border-gray-300 p-2">{{ $subject->prereq2 ?? '-'}}</td>
-                            <td class="border-dashed border-t border-gray-300 p-2">
-                                <div class="flex justify-end space-x-4">
-                                    <button 
-                                        @click.stop="showUpdateModal=true; 
-                                        selectedId = {{$subject->subject_id}};
-                                        selectedSubjectCode = '{{ $subject->subject_code }}'; 
-                                        selectedSubjectName = '{{ $subject->subject_name }}'; 
-                                        selectedSubjectDescription = '{{ $subject->subject_description }}'; 
-                                        selectedSubjectUnitsLec = {{ $subject->units_lec }}; 
-                                        selectedSubjectUnitsLab = {{ $subject->units_lab }}; 
-                                        selectedPreReq1 = '{{ $subject->prereq1 }}'; 
-                                        selectedPreReq2 = '{{ $subject->prereq2 }}';" 
-                                    class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Update</button>
-                                    <button @click.stop="showDeleteModal=true; selectedId = {{$subject->subject_id}}" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">Delete</button>
-                                </div>
-                            </td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-            <div class="mt-4">
-                {{ $subjects->links() }}
             </div>
         </div>
         <!-- Delete Modal -->

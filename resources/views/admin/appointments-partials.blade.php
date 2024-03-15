@@ -3,21 +3,21 @@
     <aside class="w-2/12 bg-white shadow-sm sm:rounded-lg min-h-[80vh] p-4">
         <nav class="">
             <ul class="mt-4" x-data="{ open: false }">
-                <li>
+                <li class="menu-nav">
                     <a href="{{ request()->routeIs('appointments.dashboard') ? '#' : route('appointments.dashboard') }}" 
-                    class="{{ request()->routeIs('appointments.dashboard') ? 'active-main' : '' }} block py-2 hover:bg-gray-200">
+                    class="{{ request()->routeIs('appointments.dashboard') ? 'active-main' : '' }} block rounded-md py-2 px-4">
                         Appointments Dashboard
                     </a>
                 </li>
-                <li>
+                <li class="menu-nav">
                     <a href="{{ request()->routeIs('appointments') ? '#' : route('appointments') }}" 
-                    class="{{ request()->routeIs('appointments') ? 'active-main' : '' }} block py-2 hover:bg-gray-200">
+                    class="{{ request()->routeIs('appointments') || request()->routeIs('appointments.manage') ? 'active-main' : '' }} block rounded-md py-2 px-4">
                         Appointments
                     </a>
                 </li>
-                <li>
+                <li class="menu-nav">
                     <a href="{{ request()->routeIs('appointments.services') ? '#' : route('appointments.services') }}" 
-                    class="{{ request()->routeIs('appointments.services') ? 'active-main' : '' }} block py-2 hover:bg-gray-200">
+                    class="{{ request()->routeIs('appointments.services') ? 'active-main' : '' }} block rounded-md py-2 px-4">
                         Manage Services
                     </a>
                 </li>

@@ -1,4 +1,4 @@
-<div x-data="{ searchTerm: '{{ $searchTerm ?? '' }}', showModal: false, showMore: false, showNotesModal: false, showNoteForm: false }">
+<div x-data="{ searchTerm: '{{ $searchTerm ?? '' }}', showModal: false, showMore: false, showNotesModal: false, showNoteForm: false }" @keydown.escape.window="showModal=false">
 <x-app-layout> 
     <div class="py-1 max-h-full">
         <div class="max-w-7xl py-4 mx-auto sm:px-6 lg:px-8" >
@@ -119,7 +119,7 @@
         <div class="relative top-20 mx-auto p-5 border w-3/5 shadow-lg rounded-md bg-white cursor-default">
             <div class="mt-3 text-left modal-content">
                 <div class="px-7">
-                    <h3 class="bg-sky-600 text-center text-white rounded-md mb-4">Contact Information</h3>
+                    <h3 class="bg-sky-950 text-center text-white rounded-md mb-4">Contact Information</h3>
                     <div class="flex justify-between gap-4">
                         <div class="mb-6 w-1/2">
                             <p class="mb-1"><strong>Personal Email:</strong> <span class="text-sm">{{$student->personal_email ?? 'Record not found'}}</span></p>
@@ -187,7 +187,7 @@
                             <p class="w-1/2"><strong>Year Grad:</strong> <span class="text-sm">{{$student->elem_yr_grad ?? 'Record not found'}}</span></p>
                         </div>
                         <div class="mb-4">
-                            <p class="w-1/2"><strong>Jr. High School:</strong> <span class="text-sm">{{$student->hr_highschool ?? 'Record not found'}}</span></p>
+                            <p class="w-1/2"><strong>Jr. High School:</strong> <span class="text-sm">{{$student->jr_highschool ?? 'Record not found'}}</span></p>
                             <p class="w-1/2"><strong>Year Grad:</strong> <span class="text-sm">{{$student->jr_hs_yr_grad ?? 'Record not found'}}</span></p>
                         </div>
                         <div class="mb-4">

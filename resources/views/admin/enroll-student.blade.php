@@ -113,12 +113,12 @@
             <table class="border-solid table-auto w-full whitespace-no-wrap bg-white table-striped relative overflow-hidden">
                 <thead>
                     <tr class="bg-gradient-to-r from-sky-600 to-sky-800 text-white">
-                        <th rowspan="2" class="w-1/12 bg-sky-600 text-white p-2 border border-white border-r-0">Course Code</th>
-                        <th rowspan="2" class="w-2/12 bg-sky-600 text-white p-2 border border-white border-r-0">Course Description</th>
-                        <th rowspan="2" class="w-1/12 bg-sky-600 text-white p-2 border border-white border-r-0">Section</th>
-                        <th colspan="2" class="w-3/12 bg-sky-600 text-white p-2 border border-white border-r-0">Units</th> 
-                        <th colspan="4" class="w-2/12 bg-sky-600 text-white p-2 border border-white border-r-0">Schedule</th>
-                        <th rowspan="2" class="w-1/12 bg-sky-600 text-white p-2 border border-white border-r-0">Action</th>
+                        <th rowspan="2" class="w-1/12 bg-sky-700 text-white p-2 border border-white border-r-0">Course Code</th>
+                        <th rowspan="2" class="w-2/12 bg-sky-700 text-white p-2 border border-white border-r-0">Course Description</th>
+                        <th rowspan="2" class="w-1/12 bg-sky-700 text-white p-2 border border-white border-r-0">Section</th>
+                        <th colspan="2" class="w-3/12 bg-sky-700 text-white p-2 border border-white border-r-0">Units</th> 
+                        <th colspan="4" class="w-2/12 bg-sky-700 text-white p-2 border border-white border-r-0">Schedule</th>
+                        <th rowspan="2" class="w-1/12 bg-sky-700 text-white p-2 border border-white border-r-0">Action</th>
                     </tr>
                     <tr class="bg-gradient-to-r from-emerald-400 to-emerald-800 text-white">
                         <th class="w-1/12 bg-rose-400 text-white p-2 border border-white border-r-0">Lec</th>

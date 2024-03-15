@@ -1,17 +1,18 @@
 @extends('admin.records')
 @section('content')
 <div x-data="{ deleteModal: false, searchTerm: '{{ $searchTerm ?? '' }}', selectedStudent: null }">
-    <div class="flex justify-between items-center space-x-4">
-        <a href="{{ route('student-records') }}" class="font-semibold text-xl text-gray-800 leading-tight no-underline hover:underline">
+    <h3 class="flex w-full justify-center bg-sky-950 px-4 rounded-md text-white mb-6 cursor-default">Student Records</h3>
+    <div class="flex justify-end items-center space-x-4">
+        <!-- <a href="{{ route('student-records') }}" class="font-semibold text-xl text-gray-800 leading-tight no-underline hover:underline">
             <span class="text-2xl font-semibold mb-4">Student Records</span>
-        </a>
+        </a> -->
         <x-search-form action="{{ route('student-records') }}" placeholder="Search Student" />
     </div>
-    <div class="mt-6">
+    <div class="my-6">
         {{ $students->links() }}
     </div>
     <div class="py-4">
-        <div class="overflow-x-auto bg-white rounded-lg shadow overflow-y-auto relative" style="min-height: 405px;">   
+        <div class="overflow-x-auto bg-white rounded-lg shadow overflow-y-auto relative">   
             <table class="border-collapse table-auto w-full whitespace-no-wrap bg-white table-striped relative">
                 <thead >
                     <tr class="cursor-default text-left text-sm">
@@ -23,14 +24,15 @@
                     </tr>
                 </thead>
                 <tbody>
+                @if($students->isNotEmpty())
                     @foreach ($students as $student)
                     <tr class="text-left text-sm border-b hover:bg-gray-100 cursor-pointer" x-data="{}" @click="window.location.href='{{ route('student-records.show', $student->student_id) }}'">
                         <td class="border-dashed border-t border-gray-200 py-2 pl-4"><strong>{{$student->student_number}}</strong></td>
-                        @if($student->middle_name)
-                        <td class="border-dashed border-t border-gray-200 p-1 py-2">{{$student->first_name}} {{ substr($student->middle_name, 0, 1)}}.  {{$student->last_name.' '.$student->suffix}}</td>
-                        @else
-                        <td class="border-dashed border-t border-gray-200 p-1 py-2">{{$student->first_name}} {{$student->last_name.' '.$student->suffix}}</td>
-                        @endif
+                        <td class="border-dashed border-t border-gray-200 p-1 py-2">
+                            {{$student->first_name}} 
+                            {{ $student->middle_name ? substr($student->middle_name, 0, 1) . '. ' : '' }} 
+                            {{$student->last_name}} {{$student->suffix ?? ''}}
+                        </td>
                         <td class="border-dashed border-t border-gray-200 p-1 py-2">{{$student->program_code ?? 'Not Available' }}</td>
                         <td class="border-dashed border-t border-gray-200 p-1 py-2">{{$student->year_level ?? '-'}}</td>
                         <td class="border-dashed border-t border-gray-200 pr-4 py-2">
@@ -41,6 +43,11 @@
                         </td>
                     </tr>
                     @endforeach
+                @else
+                    <tr>
+                        <td colspan="9" class="w-full mt-16 text-rose-600 text-center bg-slate-100 py-12">No Student Records Available</td>
+                    </tr>
+                @endif
                 </tbody>
             </table>
         </div>

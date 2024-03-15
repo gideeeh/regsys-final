@@ -157,12 +157,10 @@ document.addEventListener('DOMContentLoaded', function() {
             left: 'dayGridMonth,dayGridWeek,listWeek'
         },
         eventDidMount: function(info) {
-            // Formatting dates for display
             const dateTimeOptions = { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true };
             const startString = info.event.start ? new Date(info.event.start).toLocaleDateString('en-US', dateTimeOptions) : 'No start date';
             const endString = info.event.end ? new Date(info.event.end).toLocaleDateString('en-US', dateTimeOptions) : 'No end date';
 
-            // Initialize tippy.js tooltip
             tippy(info.el, {
                 content: `Student: ${info.event.title}<br>
                           Date: ${startString}<br>

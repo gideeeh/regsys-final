@@ -9,8 +9,12 @@
                     <p><strong>Student No.:</strong> {{ $student->student_number }}</p>
                 </div>
                 <div class="w-1/2">
-                    <p><strong>Program & Year:</strong> {{ $student->program_code }}-{{ $student->year_level }}</p>
-                    <p><strong>Email:</strong> {{ $student->personal_email }}</p>
+                    @if($student->program_code && $student->year_level)
+                    <p><strong>Program & Year:</strong><span class="text-center">{{ $student->program_code }}-{{ $student->year_level }}</span></p>
+                    @else
+                    <p><strong>Program & Year:</strong> <span class="text-sm">No enrollment record</span></p>
+                    @endif
+                    <p><strong>Email:</strong> <span class="text-sm">{{ $student->personal_email }}</span></p>
                 </div>
             </div>
             <a href="/admin/student-records/{{$student->student_id}}" class="underline text-xs" target="_blank">Visit Student Profile</a>
@@ -29,9 +33,9 @@
                         <p><strong>Status:</strong> {{ ucfirst($highlightedAppointment->status) }}</p>
                     </div>
                 </div>
-                <div class="mb-4">
+                <div class="mb-4 space-y-2">
                     <p><strong>Notes:</strong></p>
-                    <p>{{$highlightedAppointment->notes ?? 'No available notes.'}}</p>
+                    <p class="text-sm">{{$highlightedAppointment->notes ?? 'No available notes.'}}</p>
                 </div>
                 <div>
                     <p><strong>File(s) Submitted:</strong></p>

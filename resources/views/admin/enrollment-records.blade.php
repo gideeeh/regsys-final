@@ -9,25 +9,26 @@
     </div>
 
     <div class="py-4">
-        <div class="mb-4 mt-4">
+        <div class="my-4">
             {{ $enrollments->links() }}
         </div>
         <div class="overflow-x-auto bg-white rounded-lg shadow overflow-y-auto relative">
             <table class="border-collapse table-auto w-full whitespace-no-wrap bg-white table-striped relative">
                 <thead >
-                    <tr class="text-left">
-                        <th class="w-2/12 bg-blue-500 text-white p-2">Student Number</th>
-                        <th class="w-3/12 bg-blue-500 text-white p-2">Name</th>
-                        <th class="w-1/12 bg-blue-500 text-white p-2">Program</th>
-                        <th class="w-1/12 bg-blue-500 text-white p-2">Year Level</th>
-                        <th class="w-1/12 bg-blue-500 text-white p-2">Academic Year</th>
-                        <th class="w-1/12 bg-blue-500 text-white p-2">Term</th>
-                        <th class="w-1/12 bg-blue-500 text-white p-2">Method</th>
-                        <th class="w-1/12 bg-blue-500 text-white p-2">Status</th>
-                        <th class="w-1/12 bg-blue-500 text-white p-2">Actions</th>
+                    <tr class="cursor-default text-left text-sm">
+                        <th class="w-2/12 bg-blue-500 text-white p-1">Student Number</th>
+                        <th class="w-3/12 bg-blue-500 text-white p-1">Name</th>
+                        <th class="w-1/12 bg-blue-500 text-white p-1">Program</th>
+                        <th class="w-1/12 bg-blue-500 text-white p-1 text-xs">Year Level</th>
+                        <th class="w-1/12 bg-blue-500 text-white p-1 text-xs">Acad Year</th>
+                        <th class="w-1/12 bg-blue-500 text-white p-1">Term</th>
+                        <th class="w-1/12 bg-blue-500 text-white p-1">Method</th>
+                        <th class="w-1/12 bg-blue-500 text-white p-1">Status</th>
+                        <th class="w-1/12 bg-blue-500 text-white p-1">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
+                @if($enrollments->isNotEmpty())
                 @foreach ($enrollments as $enrollment)
                     <tr class="border-b hover:bg-gray-100 cursor-pointer" >
                         <td class="border-dashed border-t border-gray-200 p-2 py-4"><strong>{{$enrollment->student_number}}</strong></td>
@@ -47,6 +48,11 @@
                         </td>
                     </tr>
                 @endforeach
+                @else
+                    <tr>
+                        <td colspan="9" class="w-full mt-16 text-rose-600 text-center bg-slate-100 py-12">No Enrollment Records Available</td>
+                    </tr>
+                @endif
                 </tbody>
             </table>
         </div>

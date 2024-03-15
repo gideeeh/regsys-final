@@ -2,7 +2,7 @@
 @section('content')
 <div x-data="{createSection:false, filterByModal:false, manageSchedule:false}" @keydown.escape.window="createSection=false; filterByModal=false; manageSchedule=false">
     <x-alert-message />
-    <h3 class="flex w-full justify-center bg-sky-950 px-4 rounded-md text-white mb-6 border-b-4 border-amber-300">Sections and Schedules</h3>
+    <h3 class="flex w-full justify-center bg-sky-950 px-4 rounded-md text-white mb-6">Sections and Schedules</h3>
     <!-- Section Metadata -->
     <!-- Info Based from Initial Data or from filterby data -->
     <div class="flex w-full justify-between mb-8">
