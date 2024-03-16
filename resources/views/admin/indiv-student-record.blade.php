@@ -9,7 +9,8 @@
         selectedFile: null, 
     }" 
     @keydown.escape.window="
-        showModal=false
+        showModal=false;
+        showNotesModal=false;
     ">
 <x-app-layout> 
     <div class="py-1 max-h-full">
@@ -17,13 +18,35 @@
             <div class="flex overflow-hidden">
                 <main class="indiv-student-panel">
                     <!-- Student info section -->
-                    <div class="relative stu-info-background stu-info flex bg-white border border-1 rounded-lg p-6 gap-4 cursor-default" style="background-image: url('{{ asset('images/stu-profile-background.webp') }}'); background-color: rgba(255, 255, 255, 0.5); background-blend-mode: lighten; background-size: cover; background-repeat: no-repeat; background-position: center bottom -25vh;">                        
-                        <div class="img-frame w-3/12 flex justify-center items-center border border-1">
-                            <img class="w-full" src="{{ asset('images/profile_pic_sample.jpg') }}" alt="{{$student->last_name}}">
+                    <div class="relative stu-info-background stu-info flex bg-white border border-1 rounded-lg p-6 gap-6 cursor-default" style="background-image: url('{{ asset('images/stu-profile-background.webp') }}'); background-color: rgba(255, 255, 255, 0.5); background-blend-mode: lighten; background-size: cover; background-repeat: no-repeat; background-position: center bottom -25vh;">                        
+                        <div class="img-frame w-3/12 flex justify-center items-center">
+                            @php
+                                $profileImageExists = false;
+                                $preferredExtensions = ['jpeg', 'png', 'jpg'];
+                                foreach ($preferredExtensions as $extension) {
+                                    if (Storage::disk('local')->exists("{$student->file_path}/profile.{$extension}")) {
+                                        $profileImageExists = true;
+                                        $profileImagePath = route('student.image', ['studentId' => $student->student_id, 'filename' => "profile.{$extension}"]);
+                                        break;
+                                    }
+                                }
+                            @endphp
+
+                            <div class="flex justify-center items-center border-none">
+                                @if($profileImageExists)
+                                <img src="{{ $profileImagePath }}" alt="{{ $student->last_name }}" class="rounded-full border border-1 border-sky-950 p-1" style="width: 100%;" >
+                                @else
+                                    <img class="w-full" src="{{ asset('images/profile_pic_sample.jpg') }}" alt="{{ $student->last_name }}">
+                                @endif
+                            </div>
                         </div>
                         <div class="stu-details w-9/12 flex flex-col justify-between">
                             <div class="mb-2">
-                                <h1>{{$student->first_name}} {{$student->middle_name}} {{$student->last_name}} {{$student->suffix}}</h1>
+                                @if($student->middle_name)
+                                <h2>{{$student->first_name}} {{substr($student->middle_name,0,1)}}. {{$student->last_name}} {{$student->suffix}}</h2>
+                                @else
+                                <h2>{{$student->first_name}} {{$student->last_name}} {{$student->suffix}}</h2>
+                                @endif
                                 <div class="flex justify-between gap-4">
                                     <div class="w-1/2">
                                         <p class="mb-1"><strong class="text-slate-600">Student Number:</strong> <span class="text-sm">{{ $student->student_number }}</span></p>
@@ -50,41 +73,43 @@
                         </div>
                     </div>
                     <!-- Academic Info Section -->
-                     <div class="stu-academic-info mt-4 bg-white border border-1 rounded-lg p-6 gap-4 cursor-default lg:min-h-[45h] md:min-h-[38vh] sm:min-h-[31vh] lg:max-h-[45h] md:max-h-[38vh] sm:max-h-[31vh]">
-                        <h3 class="flex w-full justify-center bg-sky-600 px-4 rounded-md text-white mb-6">Academic History</h3>
+                     <div class="stu-academic-info mt-4 bg-white border border-1 rounded-lg p-6 gap-4 cursor-default lg:min-h-[45h] md:min-h-[38vh] sm:min-h-[31vh]">
+                        <h3 class="flex w-full justify-center bg-sky-600 px-4 rounded-md text-white mb-4">Academic History</h3>
                         @if($enrollmentDetails->isNotEmpty())
                         @foreach($enrollmentDetails->groupBy('year_level') as $yearLevel => $yearDetails)
-                        <h1>{{ ordinal($yearLevel) }} Year</h1>
+                        <h2 class="text-center bg-sky-950 text-white rounded-md">{{ ordinal($yearLevel) }} Year</h2>
                             @foreach($yearDetails->groupBy('term') as $term => $details)
                             <h2>Term: {{ ordinal($term) }}</h2>
-                            <table class="min-w-full border-collapse border border-gray-300">
-                                <thead>
-                                    <tr>
-                                        <th class="border border-gray-300 px-4 py-2">Subject Code</th>
-                                        <th class="border border-gray-300 px-4 py-2">Subject Name</th>
-                                        <th class="border border-gray-300 px-4 py-2">Prerequisite 1</th>
-                                        <th class="border border-gray-300 px-4 py-2">Prerequisite 2</th>
-                                        <th class="border border-gray-300 px-4 py-2">Units (Lec)</th>
-                                        <th class="border border-gray-300 px-4 py-2">Units (Lab)</th>
-                                        <th class="border border-gray-300 px-4 py-2">Total Units</th>
-                                        <th class="border border-gray-300 px-4 py-2">Final Grade</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                @foreach($details as $detail)
-                                    <tr>
-                                        <td class="border border-gray-300 px-4 py-2">{{ $detail->subject_code }}</td>
-                                        <td class="border border-gray-300 px-4 py-2">{{ $detail->subject_name }}</td>
-                                        <td class="border border-gray-300 px-4 py-2">{{ $detail->Prerequisite_Name_1 ?? '-' }}</td>
-                                        <td class="border border-gray-300 px-4 py-2">{{ $detail->Prerequisite_Name_2 ?? '-' }}</td>
-                                        <td class="border border-gray-300 px-4 py-2">{{ $detail->units_lec }}</td>
-                                        <td class="border border-gray-300 px-4 py-2">{{ $detail->units_lab }}</td>
-                                        <td class="border border-gray-300 px-4 py-2">{{ $detail->TOTAL }}</td>
-                                        <td class="border border-gray-300 px-4 py-2">{{ $detail->final_grade }}</td>
-                                    </tr>
-                                @endforeach
-                                </tbody>
-                            </table>
+                            <div class="overflow-x-auto bg-white rounded-lg shadow overflow-y-auto relative">
+                                <table class="min-w-full">
+                                    <thead>
+                                        <tr class="text-left text-sm bg-slate-300">
+                                            <th class="w-2/12 px-4 py-2">Subject Code</th>
+                                            <th class="w-2/12 px-4 py-2">Subject Name</th>
+                                            <th class="w-2/12 px-4 py-2">Pre-req 1</th>
+                                            <th class="w-2/12 px-4 py-2">Pre-req 2</th>
+                                            <th class="px-4 py-2">Units (Lec)</th>
+                                            <th class="px-4 py-2">Units (Lab)</th>
+                                            <th class="px-4 py-2">Total Units</th>
+                                            <th class="px-4 py-2">Final Grade</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    @foreach($details as $detail)
+                                        <tr class="">
+                                            <td class="px-4 py-2">{{ $detail->subject_code }}</td>
+                                            <td class="px-4 py-2">{{ $detail->subject_name }}</td>
+                                            <td class="px-4 py-2">{{ $detail->Prerequisite_Name_1 ?? '-' }}</td>
+                                            <td class="px-4 py-2">{{ $detail->Prerequisite_Name_2 ?? '-' }}</td>
+                                            <td class="px-4 py-2">{{ $detail->units_lec }}</td>
+                                            <td class="px-4 py-2">{{ $detail->units_lab }}</td>
+                                            <td class="px-4 py-2">{{ $detail->TOTAL }}</td>
+                                            <td class="px-4 py-2">{{ $detail->final_grade }}</td>
+                                        </tr>
+                                    @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
                             @endforeach
                         @endforeach
                         @else
@@ -135,7 +160,7 @@
                         <div>
                             @foreach($files as $file)
                                 @php
-                                    $displayName = strlen($file->file_name) > 15 ? substr($file->file_name, 0, 15) . '...' . $file->file_extension : $file->file_name . '.' . $file->file_extension;
+                                    $displayName = strlen($file->file_name) > 15 ? substr($file->file_name, 0, 15) . '...' . $file->file_extension : $file->file_name;
                                 @endphp
                                 <div class="flex justify-between border-b-2 hover:rounded rounded-none hover:text-white hover:bg-sky-300 hover:border-sky-300 items-center pl-1"
                                 @click.stop="window.location.href='{{ route('student-files.download', ['studentId' => $student->student_id, 'filename' => $file->file_name]) }}'"
@@ -201,7 +226,11 @@
                         @endif
                         @endif
                     </div>
-                    <p class="mb-1"><strong>Birthdate:</strong> <span class="text-sm">{{\Carbon\Carbon::parse($student->birthdate)->format('M d, Y') ?? 'No birthdate record.'}}</span></p>
+                    @if($student->birthdate)
+                    <p class="mb-1"><strong>Birthdate:</strong> <span class="text-sm">{{ \Carbon\Carbon::parse($student->birthdate)->format('M d, Y') }}</span></p>
+                    @else
+                    <p class="mb-1"><strong>Birthdate:</strong> <span class="text-sm">Record not found</span></p>
+                    @endif
                     <p class="mb-1"><strong>Guardian Name:</strong> <span class="text-sm">{{$student->guardian_name ?? 'Record not found'}}</span></p>
                     <p class="mb-1"><strong>Guardian Contact:</strong>
                         <span class="text-sm">
@@ -286,8 +315,8 @@
                     <textarea id="note" name="note" rows="3" class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full sm:text-sm border border-gray-300 rounded-md" required placeholder="Enter note here..."></textarea>
                 </div>
                 <div class="flex justify-end gap-4">
-                    <button type="submit" id="submitBtn" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition ease-in-out duration-150">Create Note</button>
                     <button type="button" @click="showNotesModal = false" class="modal-close-btn bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition ease-in-out duration-150">Close</button>
+                    <button type="submit" id="submitBtn" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition ease-in-out duration-150">Create Note</button>
                 </div>
             </form>
         </div>

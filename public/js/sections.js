@@ -92,7 +92,7 @@ $(document).ready(function() {
                 },
                 error: function(error) {
                     console.error("Error fetching schedule details:", error);
-                    row.append($('<td class="border border-gray-300" colspan="7"></td>').text('Schedule Information Not Set'));
+                    row.append($('<td class="border border-gray-300 text-center" colspan="7"></td>').text('Schedule Information Not Set'));
                     row.append($("<td class='border border-gray-300'></td>").append("<button class='manageButton bg-green-500 w-full text-white text-xs px-1 py-1 rounded hover:bg-green-600 transition ease-in-out duration-150'>Manage</button>"));
                     tbody.append(row);
                 }

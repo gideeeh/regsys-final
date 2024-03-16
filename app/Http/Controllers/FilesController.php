@@ -67,4 +67,22 @@ class FilesController extends Controller
             return redirect()->back()->with('error', 'File not found!');
         }
     }
+
+    public function getStudentImage(Request $request, $studentId, $filename)
+    {
+        // Authorization checks (if needed)
+
+        $student = Student::findOrFail($studentId);
+        $path = "{$student->file_path}/{$filename}";
+
+        if (!Storage::disk('local')->exists($path)) {
+            // Fallback image or error
+            abort(404, 'File not found.');
+        }
+
+        $file = Storage::disk('local')->get($path);
+        $type = Storage::disk('local')->mimeType($path);
+
+        return response($file, 200)->header('Content-Type', $type);
+    }
 }

@@ -96,6 +96,7 @@ Route::middleware(['auth','isAdminUser'])->group(function() {
     Route::post('/students/{studentId}/files/upload', [FilesController::class, 'uploadFile'])->name('student-files.upload');
     Route::get('/students/{studentId}/files/download/{filename}', [FilesController::class, 'download'])->name('student-files.download');
     Route::delete('admin/files/delete/{id}', [FilesController::class, 'destroy'])->name('student-files.delete');
+    Route::get('/student-image/{studentId}/{filename}', [FilesController::class, 'getStudentImage'])->name('student.image');
 /* Faculty Records */
     Route::get('/admin/faculty-records', [FacultyRecordsController::class, 'index'])->name('faculty-records');
     Route::get('/admin/faculty-records/{faculty}', [FacultyRecordsController::class, 'show'])->name('faculty-records.show');

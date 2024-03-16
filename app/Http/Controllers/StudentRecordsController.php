@@ -81,7 +81,6 @@ class StudentRecordsController extends Controller
             'school_email' => 'nullable|email|max:255',
             'birthdate' => 'nullable|date',
             'birthplace' => 'nullable|string|max:255',
-            'sex' => 'required|in:M,F',
             'nationality' => 'nullable|string|max:255',
             'civil_status' => 'nullable|string|in:Single,Married,Widowed,Divorced,Separated',
             'religion' => 'nullable|string|max:255',

@@ -6,6 +6,7 @@ namespace Database\Seeders;
 
 use App\Models\Enrollment;
 use App\Models\Professor;
+use App\Models\Service;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -30,6 +31,7 @@ class DatabaseSeeder extends Seeder
             AdminUserSeeder::class,
             // ProgramSubjectSeeder::class,
             ApptMgmtSettingsTableSeeder::class,
+            ServicesTableSeeder::class,
         ]);
     }
 }

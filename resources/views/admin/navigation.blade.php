@@ -22,6 +22,7 @@
                             :active="request()->routeIs([
                                 'student-records',
                                 'student.add',
+                                'student-records.show',
                                 'faculty-records',
                                 ])">
                             {{ __('Records') }}
