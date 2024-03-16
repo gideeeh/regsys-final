@@ -56,6 +56,7 @@
                                                 selectedProgramName = '{{ $program->program_name }}';
                                                 selectedProgramMajor = '{{ $program->program_major }}'; 
                                                 selectedDegreeType = '{{ $program->degree_type }}';
+                                                selectedProgramDesc = '{{ $program->program_desc }}';
                                                 selectedDepartment = '{{ $program->dept_id }}';
                                                 selectedProgramCoordinator = '{{ $program->program_coordinator }}';" 
                                         class="bg-blue-500 text-white text-xs rounded hover:bg-blue-600 transition ease-in-out p-1 duration-150">Update</button>
@@ -182,9 +183,9 @@
                                 <label for="program_coordinator" class="block text-sm font-medium text-gray-700">Program Coordinator:</label>
                                 <input type="text" x-model="selectedProgramCoordinator" name="program_coordinator" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
                             </div>
-                            <div class="mt-4">
+                            <div class="mt-4 flex justify-end space-x-4">
                                 <button type="button" @click="updateModal = false" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition ease-in-out duration-150">Cancel</button>
-                                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition ease-in-out duration-150">Update</button>
+                                <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition ease-in-out duration-150">Update</button>
                             </div>
                         </form>
                     </div>

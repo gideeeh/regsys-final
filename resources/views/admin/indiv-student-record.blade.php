@@ -163,7 +163,6 @@
                         @endif
                         @endif
                     </div>
-                    <!-- {{ \Carbon\Carbon::parse($appointment->appointment_datetime)->format('M d, Y g:i A') }} -->
                     <p class="mb-1"><strong>Birthdate:</strong> <span class="text-sm">{{\Carbon\Carbon::parse($student->birthdate)->format('M d, Y') ?? 'No birthdate record.'}}</span></p>
                     <p class="mb-1"><strong>Guardian Name:</strong> <span class="text-sm">{{$student->guardian_name ?? 'Record not found'}}</span></p>
                     <p class="mb-1"><strong>Guardian Contact:</strong>

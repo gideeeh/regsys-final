@@ -98,7 +98,7 @@
 
     <!-- Create Section Modal -->
     <div x-cloak x-show="createSection" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center px-4 z-50">
-        <div class="modal-content bg-white p-8 rounded-lg shadow-lg overflow-auto max-w-md w-full min-h-[70vh] max-h-[90vh]">
+        <div class="modal-content bg-white p-8 rounded-lg shadow-lg overflow-auto max-w-lg w-full min-h-[85vh] max-h-[85vh]">
             <h2>Create Section</h2>
             <form action="{{ route('section.create') }}" method="POST" class="space-y-4">
                 @csrf

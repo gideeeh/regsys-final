@@ -1,6 +1,6 @@
 <div
     x-data="{ show: true }"
-    x-init="setTimeout(() => show = false, 3000)" 
+    x-init="setTimeout(() => show = false, 5000)" 
     x-show="show"
     x-transition:enter="transition ease-out duration-300"
     x-transition:enter-start="opacity-0 transform scale-90"

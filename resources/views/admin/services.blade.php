@@ -30,11 +30,12 @@
                         </tr>
                     </thead>
                     <tbody>
+                    @if($services->isNotEmpty())
                         @foreach ($services as $service)
                         <tr class="text-left text-sm border-b hover:bg-gray-100 cursor-pointer">
-                            <td class="border-dashed border-t border-gray-300 p-2 pl-4">{{$service->service_name}}</td>
-                            <td class="border-dashed border-t border-gray-300 p-2">{{$service->description}}</td>
-                            <td class="border-dashed border-t border-gray-300 p-2 pr-4">
+                            <td class="border-dashed border-t border-gray-300 p-1 pl-4">{{$service->service_name}}</td>
+                            <td class="border-dashed border-t border-gray-300 p-1">{{$service->description}}</td>
+                            <td class="border-dashed border-t border-gray-300 p-1 pr-4">
                                 <div class="flex justify-center gap-1">
                                     <button 
                                         @click.stop="updateService = true; 
@@ -48,6 +49,11 @@
                             </td>
                         </tr>
                         @endforeach
+                    @else
+                        <tr>
+                            <td colspan="3" class="w-full mt-16 text-rose-600 text-center bg-slate-100 py-12">No Services Available</td>
+                        </tr>
+                    @endif
                     </tbody>
                 </table>
             </div>
@@ -105,7 +111,7 @@
 
         <!-- Update Modal -->
         <div x-cloak x-show="updateService" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center px-4 z-50">
-            <div class="modal-content bg-white p-8 rounded-lg shadow-lg overflow-auto max-w-md w-full max-h-[80vh]">
+            <div class="modal-content bg-white p-8 rounded-lg shadow-lg overflow-auto max-w-lg w-full min-h-[85vh] max-h-[85vh]">
                 <h3 class="text-lg font-bold mb-4">Update Service</h3>  
                 <form :action="'/admin/appointments/services/update/' + serviceId" method="POST" class="space-y-4">
                     @csrf

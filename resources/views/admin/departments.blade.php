@@ -104,7 +104,7 @@
         <!-- Add Department Head Modal -->
         <div x-cloak x-show="addDeptHead" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center px-4 z-50">
             <div class="modal-content bg-white p-8 rounded-lg shadow-lg overflow-auto max-w-lg w-full min-h-[85vh] max-h-[85vh]">
-                <h3 class="text-lg font-bold mb-4">Create Department Record</h3>   
+                <h3 class="text-lg font-bold mb-4">Create Department Heads Record</h3>   
                 <form action="{{route('deptHead.store')}}" method="POST" class="space-y-4">
                     @csrf
                     <div>
@@ -148,7 +148,7 @@
                         <input type="email" id="school_email" name="school_email" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
                     </div>
                     <div class="flex justify-end space-x-4">
-                        <button type="button" @click="addProfessor = false" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition ease-in-out duration-150">Cancel</button>
+                        <button type="button" @click="addDeptHead = false" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition ease-in-out duration-150">Cancel</button>
                         <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition ease-in-out duration-150">Create Record</button>
                     </div>
                 </form>

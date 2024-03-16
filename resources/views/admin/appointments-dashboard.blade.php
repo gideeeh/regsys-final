@@ -42,7 +42,7 @@
     </div>
     <!-- Manage Modal -->
     <div x-cloak x-show="manage" id="manage" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center px-4 z-50">
-        <div class="modal-content bg-white p-8 rounded-lg shadow-lg overflow-auto max-w-md w-full min-h-[90vh]">
+        <div class="modal-content bg-white p-8 rounded-lg shadow-lg overflow-auto max-w-lg w-full min-h-[85vh] max-h-[85vh]">
             <h3 class="text-lg font-bold mb-4">Appointment Management Settings</h3>
             <form method="POST" action="{{route('appointments.save-mgmt-settings')}}"  id="saveMgmtSettings" class="space-y-4">
                 @csrf

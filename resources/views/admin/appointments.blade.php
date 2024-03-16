@@ -24,6 +24,7 @@
                         </tr>
                     </thead>
                     <tbody>
+                    @if($appointments->isNotEmpty())
                         @foreach($appointments as $appointment)
                         <tr class="border-b hover:bg-gray-100 cursor-pointer text-sm" @click="window.location.href='{{ route('appointments.manage', $appointment->user_id) }}?highlight={{ $appointment->id }}'">
                             <td class="border-dashed border-t border-gray-200 pl-4 p-1 py-2">{{$appointment->student_number}}</td>
@@ -38,6 +39,11 @@
                             <td class="border-dashed border-t border-gray-200 p-1 py-2">{{ $appointment->created_at->format('M j, Y g:i A') }}</td>
                         </tr>
                         @endforeach
+                    @else
+                        <tr>
+                            <td colspan="6" class="w-full mt-16 text-rose-600 text-center bg-slate-100 py-12">No Appointment Records Available</td>
+                        </tr>
+                    @endif
                     </tbody>
                 </table>
             </div>

@@ -15,7 +15,7 @@
         selectedSubjectUnitsLab:'',
         selectedPreReq1:'',
         selectedPreReq2:''}" 
-        @keydown.escape.window="showModal = false">
+        @keydown.escape.window="showModal = false;showUpdateModal=false">
         <x-alert-message />
         <h3 class="flex w-full justify-center bg-sky-950 px-4 rounded-md text-white mb-6 cursor-default">Subjects Catalog</h3>
         <div class="flex justify-between mb-6">
@@ -84,7 +84,7 @@
         </div>
         <!-- Add Subject Modal --> 
         <div x-cloak x-show="showModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center px-4 z-50">
-            <div class="modal-content bg-white p-8 rounded-lg shadow-lg overflow-auto max-w-md w-full max-h-[80vh]">
+            <div class="modal-content bg-white p-8 rounded-lg shadow-lg overflow-auto max-w-lg w-full min-h-[85vh] max-h-[85vh]">
                 <h3 class="text-lg font-bold mb-4">Add New Program</h3>
                 <form action="{{ route('subject-catalog-new-subject') }}" method="POST" class="space-y-4">
                     @csrf
@@ -142,7 +142,7 @@
         </div>
         <!-- Update Modal -->
         <div x-cloak x-show="showUpdateModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center px-4 z-50">
-            <div class="modal-content bg-white p-8 rounded-lg shadow-lg overflow-auto max-w-md w-full max-h-[80vh]">
+            <div class="modal-content bg-white p-8 rounded-lg shadow-lg overflow-auto max-w-lg w-full min-h-[85vh] max-h-[85vh]">
                 <h3 class="text-lg font-bold mb-4">Update Program</h3>
                 <form :action="'/admin/functions/program-course-management/subject_catalog/update/' + selectedId" method="POST" class="space-y-4">
                     @csrf

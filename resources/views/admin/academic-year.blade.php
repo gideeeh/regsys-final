@@ -12,7 +12,7 @@
     @keydown.escape.window="showModal = false; showAddAcadYearTerm = false; showUpdateAcadYearTerm = false; showDeleteAcadYearTerm = false;">
 
     <x-alert-message />
-    <h3 class="flex w-full justify-center bg-sky-950 px-4 rounded-md text-white mb-6">Academic Years</h3>
+    <h3 class="flex w-full justify-center bg-sky-950 px-4 rounded-md text-white mb-6">Academic Year</h3>
     <button @click="showAddAcadYearTerm = true" id="showSetAcadYearTerm" class="mb-4 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition ease-in-out duration-150">+ Add Academic Year Record</button>
     
     <div class="flex flex-wrap acad-yr-container justify-start">
@@ -148,7 +148,7 @@
 
     <!-- Update Academic Year Modal -->
     <div x-cloak x-show="showUpdateAcadYearTerm" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center px-4 z-50">
-        <div class="modal-content bg-white p-8 rounded-lg shadow-lg overflow-auto max-w-md w-full min-h-[85vh] max-h-[86vh]">
+        <div class="modal-content bg-white p-8 rounded-lg shadow-lg overflow-auto max-w-lg w-full min-h-[85vh] max-h-[85vh]">
             <h3 class="text-lg font-bold mb-4">Update School Year and Term</h3>
             <h2 class="mb-4"><span x-text="selectedAcadYear"></span></h2>
             <form :action="'/admin/functions/program-course-management/academic_year/update_acad_year/' + selectedAcadYearId" method="POST" class="space-y-4">

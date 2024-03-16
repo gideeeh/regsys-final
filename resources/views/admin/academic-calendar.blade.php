@@ -1,7 +1,7 @@
 @extends('admin.functions')
 @section('content')
 <div x-data="{ showModal: false, showSetAcadYearTerm: false }" @keydown.escape.window="showModal = false; showSetAcadYearTerm = false">
-    <h3 class="flex w-full justify-center bg-sky-950 px-4 rounded-md text-white mb-6">Sections and Schedules</h3>
+    <h3 class="flex w-full justify-center bg-sky-950 px-4 rounded-md text-white mb-6">Academic Calendar</h3>
     <div class="flex date-picker justify-between my-6">
         <button @click="showModal = true" id="showModalButton" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition ease-in-out duration-150">+ Add Event</button>    
         <div>

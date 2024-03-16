@@ -50,22 +50,24 @@
                     @if(isset($program_subjects[$year][$term]))
                     <table class="border-solid table-auto w-full whitespace-no-wrap bg-white table-striped relative">
                         <thead>
-                            <th class="w-1/12 bg-sky-600 text-white p-2">Code</th>
-                            <th class="w-3/12 bg-sky-600 text-white p-2">Name</th>
-                            <th class="w-3/12 bg-sky-600 text-white p-2">Pre-req 1</th>
-                            <th class="w-3/12 bg-sky-600 text-white p-2">Pre-req 2</th>
-                            <th class="w-1/12 bg-sky-600 text-white p-2">Units(Lec)</th>
-                            <th class="w-1/12 bg-sky-600 text-white p-2">Units(Lab)</th>
+                            <tr class="text-left">
+                                <th class="w-1/12 bg-sky-600 text-white p-2 pl-4">Code</th>
+                                <th class="w-3/12 bg-sky-600 text-white p-2">Name</th>
+                                <th class="w-3/12 bg-sky-600 text-white p-2">Pre-req 1</th>
+                                <th class="w-3/12 bg-sky-600 text-white p-2">Pre-req 2</th>
+                                <th class="w-1/12 text-center bg-sky-600 text-white p-2">Units(Lec)</th>
+                                <th class="w-1/12 text-center bg-sky-600 text-white p-2 pr-4">Units(Lab)</th>
+                            </tr>
                         </thead>
                         <tbody>
                             @foreach($program_subjects[$year][$term] as $program_subject)
-                            <tr class="border-b hover:bg-gray-100 cursor-pointer">
-                                <td class="border-dashed border-t border-gray-200 p-2 py-4"><strong>{{$program_subject->subject->subject_code}}</strong></td>
+                            <tr class="text-sm border-b hover:bg-gray-100 cursor-pointer">
+                                <td class="border-dashed border-t border-gray-200 p-2 py-4 pl-4"><strong>{{$program_subject->subject->subject_code}}</strong></td>
                                 <td class="border-dashed border-t border-gray-200 p-2 py-4">{{$program_subject->subject->subject_name}}</td>
                                 <td class="border-dashed border-t border-gray-200 p-2 py-4">{{ $program_subject->prerequisite_1 ?? '-' }}</td>
                                 <td class="border-dashed border-t border-gray-200 p-2 py-4">{{ $program_subject->prerequisite_2 ?? '-' }}</td>
-                                <td class="border-dashed border-t border-gray-200 p-2 py-4">{{$program_subject->subject->units_lec}}</td>
-                                <td class="border-dashed border-t border-gray-200 p-2 py-4">{{$program_subject->subject->units_lab}}</td>
+                                <td class="border-dashed text-center border-t border-gray-200 p-2 py-4">{{$program_subject->subject->units_lec}}</td>
+                                <td class="border-dashed text-center border-t border-gray-200 p-2 py-4 pr-4">{{$program_subject->subject->units_lab}}</td>
                             </tr>
                             @endforeach
                         </tbody>
