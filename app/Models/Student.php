@@ -45,6 +45,7 @@ class Student extends Model
         'college_year_ended',
         'is_transferee',
         'is_irregular',
+        'file_path',
     ];
 
     protected $casts = [
@@ -80,5 +81,10 @@ class Student extends Model
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
+    }
+
+    public function files()
+    {
+        return $this->hasMany(File::class);
     }
 }

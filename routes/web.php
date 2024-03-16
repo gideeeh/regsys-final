@@ -15,6 +15,7 @@ use App\Http\Controllers\DeptHeadsController;
 use App\Http\Controllers\EnrolledSubjectsController;
 use App\Http\Controllers\EnrollmentsController;
 use App\Http\Controllers\FacultyRecordsController;
+use App\Http\Controllers\FilesController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProgramController;
 use App\Http\Controllers\ProgramSubjectController;
@@ -57,9 +58,6 @@ Route::get('/', function () {
     }
 });
 
-Route::get('/departments', [DepartmentController::class, 'index']);
-Route::get('/subjects', [SubjectController::class, 'index']);
-
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -94,6 +92,10 @@ Route::middleware(['auth','isAdminUser'])->group(function() {
     Route::delete('/student/student-records/delete_student/{student_id}', [StudentRecordsController::class, 'destroy'])->name('student-delete');
     Route::get('/student/student-records/edit/{student}', [StudentRecordsController::class, 'edit'])->name('student.edit');
     Route::patch('/student/student-records/edit/update/{student}', [StudentRecordsController::class, 'update_personal'])->name('student.update');
+/* Student File Records */
+    Route::post('/students/{studentId}/files/upload', [FilesController::class, 'uploadFile'])->name('student-files.upload');
+    Route::get('/students/{studentId}/files/download/{filename}', [FilesController::class, 'download'])->name('student-files.download');
+    Route::delete('admin/files/delete/{id}', [FilesController::class, 'destroy'])->name('student-files.delete');
 /* Faculty Records */
     Route::get('/admin/faculty-records', [FacultyRecordsController::class, 'index'])->name('faculty-records');
     Route::get('/admin/faculty-records/{faculty}', [FacultyRecordsController::class, 'show'])->name('faculty-records.show');

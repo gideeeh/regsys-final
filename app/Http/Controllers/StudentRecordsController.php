@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Enrollment;
+use App\Models\File;
 use App\Models\Program;
 use App\Models\Student;
 use App\Models\StudentNote;
@@ -109,6 +110,11 @@ class StudentRecordsController extends Controller
     
     public function show($student_id)
     {
+
+        if (auth()->user()->role !== 'admin') {
+            abort(403, 'You are not authorized to perform this action.');
+        }
+        
         $latestEnrollment = Student::with(['latestEnrollment', 'latestEnrollment.program', 'notes'])->findOrFail($student_id);
         $student = Student::findOrFail($student_id);
         // $latestYearLevel = $student->enrollments()->orderByDesc('year_level')->first()->year_level ?? null;
@@ -121,6 +127,7 @@ class StudentRecordsController extends Controller
         ->select(
             's.student_id',
             's.student_number',
+            's.user_id',
             'sj.subject_code',
             'sj.subject_name',
             'pr1.subject_name as Prerequisite_Name_1',
@@ -140,11 +147,14 @@ class StudentRecordsController extends Controller
     
         $notes = StudentNote::where('student_id', $student_id)->get();
 
+        $files = DB::table('files')->where('student_id', $student_id)->get();
+        
         return view('admin.indiv-student-record', [
             'student' => $student,
             'latestEnrollment' => $latestEnrollment,
             'enrollmentDetails' => $enrollmentDetails,
             'notes' => $notes,
+            'files' => $files,
         ]);
     }
 
@@ -228,6 +238,12 @@ class StudentRecordsController extends Controller
         $new_student->college_year_ended = $request->college_year_ended;
         $new_student->is_transferee = $isTransferee;
         $new_student->is_irregular = $isIrregular;
+        
+        $studentDirectory = 'students/' . $new_student->student_number . ' '. $new_student->last_name. ', ' .$new_student->first_name;
+        Storage::makeDirectory($studentDirectory);
+        
+        $new_student->file_path = $studentDirectory;
+
         $new_student->save();
 
         $user = User::create([
@@ -239,9 +255,6 @@ class StudentRecordsController extends Controller
         ]);
 
         $new_student->update(['user_id' => $user->id]);
-
-        $studentDirectory = 'students/' . $new_student->student_number . ' '. $new_student->last_name. ', ' .$new_student->first_name;
-        Storage::makeDirectory($studentDirectory);
 
         return redirect()->back()->with('success', 'Student added successfully!');
     }

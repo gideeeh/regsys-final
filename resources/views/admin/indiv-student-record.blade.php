@@ -1,4 +1,16 @@
-<div x-data="{ searchTerm: '{{ $searchTerm ?? '' }}', showModal: false, showMore: false, showNotesModal: false, showNoteForm: false }" @keydown.escape.window="showModal=false">
+<div 
+    x-data="{ 
+        searchTerm: '{{ $searchTerm ?? '' }}', 
+        showModal: false, 
+        deleteFileModal:false, 
+        showMore: false, 
+        showNotesModal: false, 
+        showNoteForm: false, 
+        selectedFile: null, 
+    }" 
+    @keydown.escape.window="
+        showModal=false
+    ">
 <x-app-layout> 
     <div class="py-1 max-h-full">
         <div class="max-w-7xl py-4 mx-auto sm:px-6 lg:px-8" >
@@ -38,7 +50,7 @@
                         </div>
                     </div>
                     <!-- Academic Info Section -->
-                     <div class="stu-academic-info mt-4 bg-white border border-1 rounded-lg p-6 gap-4 cursor-default lg:min-h-[45h] md:min-h-[38vh] sm:min-h-[31vh]">
+                     <div class="stu-academic-info mt-4 bg-white border border-1 rounded-lg p-6 gap-4 cursor-default lg:min-h-[45h] md:min-h-[38vh] sm:min-h-[31vh] lg:max-h-[45h] md:max-h-[38vh] sm:max-h-[31vh]">
                         <h3 class="flex w-full justify-center bg-sky-600 px-4 rounded-md text-white mb-6">Academic History</h3>
                         @if($enrollmentDetails->isNotEmpty())
                         @foreach($enrollmentDetails->groupBy('year_level') as $yearLevel => $yearDetails)
@@ -81,17 +93,22 @@
                     </div>
                 </main>
                 <aside class="indiv-student-sidepanel cursor-default">
-                    <div class="stu-notes bg-white border border-1 rounded-lg p-6 mb-4">
+                    <div class="stu-notes bg-white border border-1 rounded-lg p-6 mb-4 lg:min-h-[47h] md:min-h-[40vh] sm:min-h-[33vh] lg:max-h-[47h] md:max-h-[40vh] sm:max-h-[33vh] overflow-y-auto nice-scroll">
                         <div class="flex justify-between mb-6">
                             <span class="font-semibold">Student Notes</span>
                             <button @click="showNotesModal = true" class="cursor-pointer bg-green-500 font-semibold text-xs rounded-md text-white p-1 hover:bg-green-600 transition ease-in-out duration-150">Manage</button>
                         </div>
-                        <div class="display-notes text-sm mb-4 overflow-y-auto nice-scroll">
+                        <div class="display-notes text-sm space-y-4 mb-4">
                             @if($notes)
                             @foreach($notes as $note)
+                            @if($notes->count() > 1)
+                            <div class="border-b-2 border-slate-400 pb-4">
+                            @else
                             <div>
-                                <p><strong>Title:</strong> {{$note->note_title}}</p>
-                                <p>{{$note->note}}</p>
+                            @endif
+                                <p><strong>Title:</strong> <span class="text-xs">{{$note->note_title}}</span></p>
+                                <p><strong>Date:</strong> <span class="text-xs">{{\Carbon\Carbon::parse($note->created_at)->format('M d, Y') ?? 'No recorded note.'}}</span></p>
+                                <p><strong>Note:</strong> <span class="text-xs">{{$note->note}}</span></p>
                             </div>
                             @endforeach
                             @else
@@ -101,13 +118,34 @@
                             @endif
                         </div>
                     </div>
-                    <div class="bg-white border border-1 rounded-lg p-6 lg:min-h-[45h] md:min-h-[38vh] sm:min-h-[31vh]">
-                        <div class="flex justify-between mb-6 xl:min-h-[24h]">
+                    <div class="bg-white border border-1 rounded-lg p-6 lg:min-h-[45h] md:min-h-[38vh] sm:min-h-[31vh] lg:max-h-[45h] md:max-h-[38vh] sm:max-h-[31vh] overflow-y-auto nice-scroll">
+                        <div class="flex justify-between">
                             <span class="font-semibold">File Records</span>
-                            <button class="cursor-pointer bg-purple-500 font-semibold text-xs rounded-md text-white p-1 hover:bg-purple-600 transition ease-in-out duration-150">+ Add File</button>
+                            <form action="{{ route('student-files.upload', $student->student_id) }}" method="post" enctype="multipart/form-data">
+                                @csrf
+                                <div class="flex justify-between">
+                                    <label class="cursor-pointer bg-purple-500 font-semibold text-xs rounded-md text-white p-1 hover:bg-purple-600 transition ease-in-out duration-150">
+                                        + Add File
+                                        <input type="file" name="file" style="display: none;" onchange="form.submit()">
+                                    </label>
+                                </div>
+                            </form>
+                            <!-- <button class="cursor-pointer bg-purple-500 font-semibold text-xs rounded-md text-white p-1 hover:bg-purple-600 transition ease-in-out duration-150">+ Add File</button> -->
                         </div>
-                        <div class="overflow-y-auto nice-scroll">
-
+                        <div>
+                            @foreach($files as $file)
+                                @php
+                                    $displayName = strlen($file->file_name) > 15 ? substr($file->file_name, 0, 15) . '...' . $file->file_extension : $file->file_name . '.' . $file->file_extension;
+                                @endphp
+                                <div class="flex justify-between border-b-2 hover:rounded rounded-none hover:text-white hover:bg-sky-300 hover:border-sky-300 items-center pl-1"
+                                @click.stop="window.location.href='{{ route('student-files.download', ['studentId' => $student->student_id, 'filename' => $file->file_name]) }}'"
+                                    style="cursor:pointer;">
+                                    <span class="text-xs text-sm rounded-md block">{{ $displayName }}</span>
+                                    <div @click.stop="deleteFileModal=true; selectedFile={{$file->id}}" class="px-1 text-center text-sm text-red-500 hover:text-red-800 font-bold cursor-pointer" title="Delete file">
+                                        <span>x</span>
+                                    </div>
+                                </div>
+                            @endforeach
                         </div>
                     </div>
                 </aside>
@@ -252,6 +290,22 @@
                     <button type="button" @click="showNotesModal = false" class="modal-close-btn bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition ease-in-out duration-150">Close</button>
                 </div>
             </form>
+        </div>
+    </div>
+    <!-- Delete Modal -->
+
+    <div x-cloak x-show="deleteFileModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center px-4 z-50">
+        <div class="modal-content bg-white p-8 rounded-lg shadow-lg overflow-auto max-w-md w-full">
+            <h3 class="text-lg font-bold mb-4">Confirm Deletion</h3>
+            <p>Are you sure you want to delete this Student?</p>
+            <div class="flex justify-end space-x-4 mt-4">
+                <form :action="'/admin/files/delete/' + selectedFile" method="POST">
+                    @csrf
+                    @method('DELETE')
+                    <button type="button" @click="deleteFileModal = false" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition ease-in-out duration-150">Cancel</button>
+                    <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition ease-in-out duration-150">Delete</button>
+                </form>
+            </div>
         </div>
     </div>
 </x-app-layout>
