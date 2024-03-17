@@ -59,13 +59,13 @@ class Subject extends Model
         return $this->hasMany(Enrolled_Subject::class, 'subject_id');
     }
 
-    public function program_semester_subjects()
-    {
-        return $this->hasMany(Program_Semester_Subject::class, 'subject_id');
-    }
+    // public function program_semester_subjects()
+    // {
+    //     return $this->hasMany(Program_Semester_Subject::class, 'subject_id');
+    // }
 
     public function sectionsSubject()
     {
-        return $this->hasMany(Section::class, 'subject_id');
+        return $this->hasMany(SectionSubject::class, 'subject_id');
     }
 }

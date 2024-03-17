@@ -17,6 +17,7 @@ class Section extends Model
         'term',
         'year_level',
         'program_id',
+        'section_type_id',
     ];
 
     public function sectionSubject()
@@ -27,5 +28,10 @@ class Section extends Model
     public function program()
     {
         return $this->belongsTo(Program::class, 'program_id');
+    }
+
+    public function section_type()
+    {
+        return $this->belongsTo(SectionType::class, 'section_type_id');
     }
 }

@@ -148,10 +148,13 @@ Route::middleware(['auth','isAdminUser'])->group(function() {
     Route::delete('/admin/functions/program-course-management/academic_year/delete_acad_year/{id}',[AcademicYearController::class, 'destroy'])->name('academic-year.delete');
 /* Class Schedules */
     Route::get('/admin/functions/program-course-management/sections',[SectionController::class, 'index'])->name('sections');
+    Route::get('/admin/functions/program-course-management/sections/{id}',[SectionController::class, 'show'])->name('sections.show');
     // Route::get('/admin/functions/program-course-management/sections/create',[SectionController::class, 'create_section'])->name('section.create');
     Route::post('/admin/functions/program-course-management/sections/create',[SectionController::class, 'store'])->name('section.create');
 /* Sections, Section Subjects */
     Route::post('/admin/functions/sections/assign-schedule',[SectionSubjectsController::class, 'store'])->name('section-subject.store');
+    Route::post('/admin/functions/sections/store-subjects-free',[SectionSubjectsController::class, 'store_free'])->name('section-subject-free.store');
+    Route::post('/admin/functions/sections/store-subjects-free/set_schedule',[SectionSubjectSchedulesController::class, 'store_schedule_free_section'])->name('section-subject-free-schedule.store');
 /* Appointments */
     Route::get('admin/appointments/dashboard', [AppointmentsController::class, 'index'])->name('appointments.dashboard');
     Route::get('admin/appointments/json', [AppointmentsController::class, 'appointmentsCalendarJson'])->name('appointments.json');

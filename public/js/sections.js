@@ -1,6 +1,16 @@
 $(document).ready(function() {
     let currentSectionId = null;
 
+    // $('#createSectionButton').on('click', function() {
+    //     const sectionType = $('#create_section_type').val(); // Get the selected section type
+        
+    //     if (sectionType === 'free') {
+    //         // Open a modal or display a UI element for subject selection
+    //         $('#freeSectionSubjectSelectionModal').modal('show');
+    //     }
+    //     // For 'block' sections, you might proceed as before or adjust based on your specific logic
+    // });
+
     // Function Definitions
 
     /* Used to update info from filter modal */
@@ -100,14 +110,15 @@ $(document).ready(function() {
         });
     }
 
+    /* Creates the button */
     function updateSectionButtons(sections) {
         var container = $('#display-sections');
         container.empty();
         sections.forEach(function(section) {
             var button = $('<button/>', {
-                text: section.section_name,
+                text: section.section_name + ' - ' +  section.section_type['section_type'].charAt(0).toUpperCase() + section.section_type['section_type'].slice(1),
                 id: 'section-' + section.section_id,
-                class: 'bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition ease-in-out duration-150',
+                class: 'bg-gray-500 mr-6 text-white px-4 mb-4py-2 rounded hover:bg-gray-600 transition ease-in-out duration-150',
                 click: function() {
                     selectSection(section.section_id);
                     console.log(`Year level: ${section.year_level}`);
@@ -130,8 +141,8 @@ $(document).ready(function() {
 
     function selectSection(sectionId) {
         currentSectionId = sectionId;
-        $('button[id^="section-"]').attr('class', 'bg-gray-500 text-white px-2 py-2 rounded hover:bg-gray-600 transition ease-in-out duration-150');
-        $('#section-' + sectionId).attr('class', 'bg-red-500 text-white text-md px-2 py-2 rounded hover:bg-red-600 transition ease-in-out duration-150');
+        $('button[id^="section-"]').attr('class', 'bg-gray-500 mr-6 mb-4 text-white px-2 py-2 rounded hover:bg-gray-600 transition ease-in-out duration-150');
+        $('#section-' + sectionId).attr('class', 'bg-red-500 mr-6 mb-4 text-white text-md px-2 py-2 rounded hover:bg-red-600 transition ease-in-out duration-150');
     }
 
     function formatTime(startTime, endTime) {

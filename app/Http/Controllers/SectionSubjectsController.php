@@ -9,6 +9,18 @@ use Illuminate\Support\Facades\DB;
 
 class SectionSubjectsController extends Controller
 {
+
+    public function store_free(Request $request)
+    {
+        $section_subjects = SectionSubject::firstOrCreate([
+            'section_id' => $request->section_id,
+            'subject_id' => $request->subject_to_add,
+        ]);
+
+        return redirect()->back()->with('success', 'Section successfully created.');
+    }
+
+
     public function store(Request $request) {
         $section_subjects = SectionSubject::firstOrCreate([
             'section_id' => $request->section_id,

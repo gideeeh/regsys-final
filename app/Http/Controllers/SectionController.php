@@ -4,8 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Academic_Year;
 use App\Models\Program;
+use App\Models\Program_Subject;
 use App\Models\Section;
 use App\Models\SectionSubject;
+use App\Models\SectionSubjectSchedule;
+use App\Models\SectionType;
 use App\Services\AcademicYearService;
 use Illuminate\Http\Request;
 
@@ -17,7 +20,7 @@ class SectionController extends Controller
     {
         $this->academicYearService = $academicYearService;
     }
-    public function index()
+    public function index(Request $request)
     {
         $acad_years = Academic_Year::all();
         $activeAcadYearAndTerm  = $this->academicYearService->determineActiveAcademicYearAndTerm();
@@ -41,31 +44,30 @@ class SectionController extends Controller
             ->get();
 
         $programs = Program::all();
-        return view('admin.sections', [
-            'programs' => $programs,
-            'acad_years' => $acad_years,
-            'activeAcadYear' => $activeAcadYear,
-            'activeTerm' => $activeTerm,
-            'uniqueSections' => $uniqueSections,
-            'initial_sections' => $initial_sections,
-        ]);
-    }
+        $section_types = SectionType::all();
 
-    // public function create_section()
-    // {
-    //     $acad_years = Academic_Year::all();
-    //     $programs = Program::all();
-    //     $activeAcadYear = $this->academicYearService->determineActiveAcademicYear();
-    //     if (!$activeAcadYear) {
-    //         return redirect()->back()->with('error', 'No active academic year found.');
-    //     }
-    //     session(['active_academic_year' => $activeAcadYear->id]);
-    //     return view('admin.create-section', [
-    //         'programs' => $programs,
-    //         'activeAcadYear' => $activeAcadYear,
-    //         'acad_years' => $acad_years,
-    //     ]);
-    // }
+        $sections = Section::with('section_type')->get();
+        $query = Section::query();
+
+        // Check if filters are applied and adjust the query accordingly
+        if ($request->filled('filter_acad_year')) {
+            $query->where('academic_year', $request->filter_acad_year);
+        }
+        if ($request->filled('filter_term')) {
+            $query->where('term', $request->filter_term);
+        }
+        if ($request->filled('filter_section_type') && $request->filter_section_type != 'all') {
+            $query->where('section_type_id', $request->filter_section_type);
+        }
+        if ($request->filled('filter_year_level')) {
+            $query->where('year_level', $request->filter_year_level);
+        }
+    
+        $sections = $query->get();
+    
+        // Return the view with filtered sections (and other necessary data)
+        return view('admin.sections', compact('sections', 'programs', 'acad_years', 'activeAcadYear', 'activeTerm', 'uniqueSections', 'initial_sections', 'section_types'));
+    }
 
     public function store(Request $request)
     {
@@ -75,6 +77,7 @@ class SectionController extends Controller
             'term' => $request->create_sec_term,
             'year_level' => $request->create_sec_year_level,
             'program_id' => $request->create_sec_program,
+            'section_type_id' => $request->create_section_type,
         ]);
 
         if ($section->wasRecentlyCreated) {
@@ -102,7 +105,9 @@ class SectionController extends Controller
             $query->where('year_level', $request->year_level);
         }
 
-        $sections = $query->get(['section_id', 'section_name', 'year_level']);
+        $sections = Section::with(['section_type' => function($query) {
+            $query->select(['id', 'section_type']); 
+        }])->get(['section_id', 'section_name', 'year_level', 'section_type_id']);
 
         if ($sections->isEmpty()) {
             return response()->json([
@@ -114,8 +119,21 @@ class SectionController extends Controller
         return response()->json(['sections' => $sections]);
     }
 
-    public function searchSection(Request $request)
+    public function show($id)
     {
+        // Step 1: Retrieve the section data along with its related section type
+        $section = Section::with('section_type')->findOrFail($id);
+        
+        // Step 2: Fetch the subjects related to the section's year level
+        $blockSubjects = Program_Subject::with('subject')
+        ->where('year', $section->year_level)
+        ->get();
 
+        $sectionSubjects = SectionSubject::with(['subjectSectionSchedule','subject','subjectSectionSchedule.professor'])
+            ->where('section_id', $section->section_id)
+            ->get();
+
+        // Return the view with the section and subjects data
+        return view('admin.section-show', compact('section', 'blockSubjects', 'sectionSubjects'));
     }
 }
