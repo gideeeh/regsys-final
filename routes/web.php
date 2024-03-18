@@ -111,7 +111,8 @@ Route::middleware(['auth','isAdminUser'])->group(function() {
     Route::get('/admin/enrollment-records/{enrollment_id}', [EnrollmentsController::class, 'show'])->name('enrollment-records.show');
     Route::get('/admin/enrollments/enroll', [EnrollmentsController::class, 'enroll'])->name('enrollments.enroll');
     Route::post('/admin/enrollments/enroll/enroll_student',[EnrollmentsController::class, 'store'])->name('enrollments.store');
-/* Enroll Subjects */
+    Route::post('/admin/enrollments/validate', [EnrollmentsController::class, 'validateSelections'])->name('enrollment.validate');
+    /* Enroll Subjects */
     Route::post('/admin/enrollments/enroll/enroll_subjects/{enrollment_id}',[EnrolledSubjectsController::class, 'store'])->name('enroll.subjects');
 /* Departments */
     Route::get('/admin/functions/program-course-management/departments', [DepartmentsController::class, 'index'])->name('departments');

@@ -1,6 +1,9 @@
 $(document).ready(function() {
     let $enrollSubjects = $('#enroll_subjects');
     let selectedSubjects = [];
+    let selectedSecSubIds = [];
+    // let selections = {}; 
+    let selections = [];
 
     function logCurrentInputs() {
         var inputs = $('#enrollmentForm').find('input, select').serializeArray();
@@ -73,6 +76,10 @@ $(document).ready(function() {
     $('table').on('click', '.remove-subject', function() {
         let subjectIdToRemove = $(this).closest('tr').data('subjectId');
         $(this).closest('tr').remove();
+
+        selections = selections.filter(selection => selection.subject_id !== subjectIdToRemove.toString());
+
+        console.log("Selections after removal:", selections);
         selectedSubjects = selectedSubjects.filter(subject => subject.subject_id != subjectIdToRemove);
 
         updateTotalUnits();
@@ -91,6 +98,10 @@ $(document).ready(function() {
         } else {
             form.reportValidity();
         }
+    });
+
+    $('.validate').on('click', function() {
+        console.log("Selected sec_sub_ids:", selectedSubjects.map(s => s.sec_sub_id));
     });
 
     function updateTotalUnits() {
@@ -148,7 +159,7 @@ $(document).ready(function() {
             cache: true
         }
     }).on("select2:select", function(e) {
-    var studentId = e.params.data.id;
+        var studentId = e.params.data.id;
         $.ajax({
             url: `/admin/students/get-students/${studentId}`,
             type: "GET",
@@ -228,7 +239,7 @@ $(document).ready(function() {
                         results: data.map(function(item) {
                             return {
                                 id: item.section_id,
-                                text: item.section_name,
+                                text: item.section_name + ' - ' + item.section_type,
                                 customData: item
                             };
                         })
@@ -238,6 +249,21 @@ $(document).ready(function() {
             }
         }).on("select2:select",function(e){
             let selectedData = e.params.data.customData;
+            let subjectId = $(this).closest('tr').attr('data-subject-id');
+            let secSubId = selectedData.sec_sub_id;
+            // selections[subjectId] = secSubId;
+            let existingSelectionIndex = selections.findIndex(selection => selection.subject_id === subjectId);
+            if (existingSelectionIndex !== -1) {
+                // Update existing selection with new sec_sub_id
+                selections[existingSelectionIndex].sec_sub_id = secSubId;
+            } else {
+                // Push new selection
+                selections.push({ subject_id: subjectId, sec_sub_id: secSubId });
+            }
+            console.log("Updated selections:", selections);
+            console.log("Selected sec_sub_id:", secSubId);
+            console.log("SecSubIDS:", selectedSecSubIds);
+            console.log("SecSubIDSasdasd");
             let f2fTimeSchedule = formatTime(selectedData.start_time_f2f, selectedData.end_time_f2f);
             let onlineTimeSchedule = formatTime(selectedData.start_time_online, selectedData.end_time_online);
             let formattedClassDaysF2F = formatDays(selectedData.class_days_f2f || '[]');
@@ -252,11 +278,34 @@ $(document).ready(function() {
             $row.find('.online-time-cell').text(onlineTimeSchedule);
             $row.find('.f2f-days-cell').text(formattedClassDaysF2F);
             $row.find('.online-days-cell').text(formattedClassDaysOnline);
-            $row.find('.section-name').text(selectedData.section_name);
+            $row.find('.section-name').text(selectedData.section_name + ' - ' + selectedData.section_type);
             $row.append(hiddenInputForSecSubId);
         });
     }
 
+    $('.test-enroll').on('click', function() {
+        console.log("Final selections for submission:", JSON.stringify(selections));
+    
+        $.ajax({
+            url: "/admin/enrollments/validate",
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify({
+                selections: selections
+            }),
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function(response) {
+                alert('Test enrolled');
+                console.log('Validation Success:', response);
+            },
+            error: function(xhr, status, error) {
+                console.error('Error validation:', error);
+                alert('Error during validation');
+            }
+        });
+    });
     
 
     updateTotalUnits();

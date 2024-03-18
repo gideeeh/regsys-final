@@ -59,9 +59,12 @@ class SectionSubjectsController extends Controller
     {
         $query = DB::table('section_subjects as ss')
             ->join('sections as s', 'ss.section_id', '=', 's.section_id')
+            ->join('section_types as st', 's.section_type_id', '=', 'st.id')
             ->join('section_subject_schedules as sss', 'ss.id', '=', 'sss.sec_sub_id')
             ->select(
                 's.section_id',
+                's.section_type_id',
+                'st.section_type',
                 'ss.id as sec_sub_id',
                 's.section_name', 
                 's.academic_year', 

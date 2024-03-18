@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Academic_Year;
+use App\Models\Enrolled_Subject;
 use App\Models\Enrollment;
 use App\Models\Program;
+use App\Models\SectionSubject;
 use App\Models\Student;
 use App\Models\Subject;
 use App\Services\AcademicYearService;
@@ -108,6 +110,8 @@ class EnrollmentsController extends Controller
             'sec_sub_ids.*' => 'required|exists:section_subjects,id',
         ]);
 
+
+
         $selectedSubjects = json_decode($request->selectedSubjects, true);
 
         $existingEnrollment = Enrollment::where([
@@ -143,5 +147,37 @@ class EnrollmentsController extends Controller
             Log::error('Enrollment creation failed: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Error in enrolling the student.');
         }
+    }
+
+    public function validateSelections(Request $request)
+    {
+        $selections = $request->input('selections');
+        
+        foreach ($selections as $selection) {
+            $subjectId = $selection['subject_id'];
+            $secSubId = $selection['sec_sub_id'];
+            
+            // Fetching the SectionSubject and its related schedule
+            $secSub = SectionSubject::with('subjectSectionSchedule')->where('id', $secSubId)->first();
+    
+            if ($secSub && $secSub->subjectSectionSchedule) {
+                // Assuming class_limit is a property of subjectSectionSchedule
+                $secSubCount = $secSub->subjectSectionSchedule->class_limit;
+    
+                // Filtering the count for this specific section
+                $enrolledSubForThisSectionCount = Enrolled_Subject::where('sec_sub_id', $secSubId)->count();
+    
+                if ($secSubCount <= $enrolledSubForThisSectionCount) {
+                    return response()->json(['message' => 'Section already full', 'sec_sub_id' => $secSubId]);
+                }
+            } else {
+                // Handling cases where the section or its schedule might not be found
+                return response()->json(['message' => 'Section or schedule not found', 'sec_sub_id' => $secSubId]);
+            }
+    
+            \Log::info("Processing subject $subjectId with section-subject $secSubId");
+        }
+    
+        return response()->json(['message' => 'Validation successful', 'data' => $selections]);
     }
 }

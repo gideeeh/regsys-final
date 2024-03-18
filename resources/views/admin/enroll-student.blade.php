@@ -155,9 +155,10 @@
                 <span class="w-4/12 total-units"><strong>Total Units:</strong> </span>
             </div>
         </div>
-        <div class="flex justify-end">
+        <div class="flex justify-end gap-4">
+            <button type="button" class="w-1/4 test-enroll shadow bg-purple-500 text-white px-2 py-1 rounded hover:bg-purple-600 transition ease-in-out duration-150">Test Enroll</button>
+            <button type="button" class="w-1/4 validate shadow bg-yellow-500 text-white px-2 py-1 rounded hover:bg-yellow-600 transition ease-in-out duration-150">Validate</button>
             <button type="button" class="w-1/4 enroll shadow bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600 transition ease-in-out duration-150">Enroll</button>
-            <!-- <button type="button" class="log-data shadow bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600 transition ease-in-out duration-150">Log</button> -->
         </div>
     </form>
 </div>
