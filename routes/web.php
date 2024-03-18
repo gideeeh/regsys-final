@@ -16,6 +16,7 @@ use App\Http\Controllers\EnrolledSubjectsController;
 use App\Http\Controllers\EnrollmentsController;
 use App\Http\Controllers\FacultyRecordsController;
 use App\Http\Controllers\FilesController;
+use App\Http\Controllers\GradesController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProgramController;
 use App\Http\Controllers\ProgramSubjectController;
@@ -57,6 +58,19 @@ Route::get('/', function () {
         return redirect()->route('login'); // Redirect guests to the login page
     }
 });
+
+/* API Route for Integration */
+Route::middleware('auth:sanctum')->get('/enrollments', [EnrollmentsController::class, 'apiGradingIndex']);
+/* API Keys */
+Route::middleware('api.key')->get('/api/protected-route', function () {
+    return response()->json(['message' => 'You have access']);
+});
+
+Route::middleware('api.key')->post('/api/submit-grades', [GradesController::class, 'submitGrades']);
+
+
+
+
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

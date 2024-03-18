@@ -16,6 +16,7 @@ class Kernel extends HttpKernel
     protected $routeMiddleware = [
         // ... existing middleware ...
         'isAdminUser' => \App\Http\Middleware\IsAdminUser::class,
+        'api.key' => \App\Http\Middleware\CheckApiKey::class,
     ];
     
     protected $middleware = [

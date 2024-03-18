@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\EnrollmentResource;
 use App\Models\Academic_Year;
 use App\Models\Enrolled_Subject;
 use App\Models\Enrollment;
@@ -110,7 +111,14 @@ class EnrollmentsController extends Controller
             'sec_sub_ids.*' => 'required|exists:section_subjects,id',
         ]);
 
+        $student_number_query = Student::query()
+            ->select('student_number')
+            ->where('student_id','=',$request->student_id)
+            ->first();
 
+        $student_number = json_decode($student_number_query, true)['student_number'];
+
+        $enrollmentCode = $student_number . '_' . $request->acad_year . '_' . $request->term . '_' . $request->program_id;
 
         $selectedSubjects = json_decode($request->selectedSubjects, true);
 
@@ -137,6 +145,7 @@ class EnrollmentsController extends Controller
                 'scholarship_type' => $validated['scholarship_type'] ?? 'none',
                 'status' => $validated['status'] ?? 'pending',
                 'enrollment_method' => $validated['enrollment_method'],
+                'enrollment_code' => $enrollmentCode,
             ]);
 
             session()->flash('selectedSubjects', $selectedSubjects);
@@ -179,5 +188,12 @@ class EnrollmentsController extends Controller
         }
     
         return response()->json(['message' => 'Validation successful', 'data' => $selections]);
+    }
+
+    public function apiGradingIndex()
+    {
+        $enrollments = Enrollment::all();
+        return EnrollmentResource::collection($enrollments);
+        
     }
 }

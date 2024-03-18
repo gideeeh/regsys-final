@@ -22,6 +22,7 @@ class Enrollment extends Model
         'scholarship_type',
         'status',
         'enrollment_method',
+        'enrollment_code',
     ];
 
     public function enrolledSubjects()
