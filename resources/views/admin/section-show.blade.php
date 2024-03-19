@@ -18,7 +18,7 @@
         <p>Year Level: {{$section->year_level}}</p>
         <p>Academic Year: {{$section->academic_year}} T-{{$section->term}}</p>
     </div>
-    <div class="flex justify-center gap-4">
+    <div class="flex justify-left gap-4">
         <div>
             @if($section->section_type->section_type==='block')
             <h2>Subjects Offered</h2>
@@ -66,44 +66,44 @@
             @else
 
             <!-- IF ITS FREEEEEEEEEEEEEEEEEE -->
-            <div>
                 <h2>Subjects Schedules</h2>
                 <button @click="addSubjectToSection=true" class="bg-green-500 text-white text-xs px-1 py-1 rounded hover:bg-green-600 transition ease-in-out duration-150">Add Subject</button>
-                <table class="border-separate border-spacing-2">
-                    <thead>
-                        <tr>
-                            <th>Subject Code</th>
-                            <th>Subject Name</th>
-                            <th>Status</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($sectionSubjects as $sectionSubject)
-                        <tr>
-                            <td>{{$sectionSubject->subject?->subject_code}}</td>
-                            <td>{{$sectionSubject->subject?->subject_name}}</td>
-                            <td class="cursor-default">
-                                @if($sectionSubject->subjectSectionSchedule)
-                                    <span class="bg-green-100 text-green-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">Set</span>
-                                @else
-                                    <span class="bg-red-100 text-red-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">Not Set</span>
-                                @endif
-                            </td>
-                            <td>
-                                <button @click="
-                                    manageSchedule=true; 
-                                    selectedSectionId={{$section->section_id}}; 
-                                    selectedSecSubId={{$sectionSubject->id}}; 
-                                    selectedSubjectName='{{$sectionSubject->subject?->subject_name}}'; 
-                                    selectedSubjectId={{$sectionSubject->subject_id}};" 
-                                    class='bg-sky-950 text-white text-xs px-1 py-1 rounded hover:bg-sky-800 transition ease-in-out duration-150'>Set Details</button>
-                            </td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
+                <div class="max-h-[40vh] max-w-md overflow-y-scroll nice-scroll text-xs">
+                    <table class="border-separate border-spacing-2">
+                        <thead>
+                            <tr>
+                                <th>Subject Code</th>
+                                <th>Subject Name</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($sectionSubjects as $sectionSubject)
+                            <tr>
+                                <td>{{$sectionSubject->subject?->subject_code}}</td>
+                                <td>{{$sectionSubject->subject?->subject_name}}</td>
+                                <td class="cursor-default">
+                                    @if($sectionSubject->subjectSectionSchedule)
+                                        <span class="bg-green-100 text-green-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">Set</span>
+                                    @else
+                                        <span class="bg-red-100 text-red-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">Not Set</span>
+                                    @endif
+                                </td>
+                                <td>
+                                    <button @click="
+                                        manageSchedule=true; 
+                                        selectedSectionId={{$section->section_id}}; 
+                                        selectedSecSubId={{$sectionSubject->id}}; 
+                                        selectedSubjectName='{{$sectionSubject->subject?->subject_name}}'; 
+                                        selectedSubjectId={{$sectionSubject->subject_id}};" 
+                                        class='bg-sky-950 text-white text-xs px-1 py-1 rounded hover:bg-sky-800 transition ease-in-out duration-150'>Manage</button>
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
             @endif
         </div>
         <div>
