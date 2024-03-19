@@ -49,7 +49,6 @@ class SectionController extends Controller
         $sections = Section::with('section_type')->get();
         $query = Section::query();
 
-        // Check if filters are applied and adjust the query accordingly
         if ($request->filled('filter_acad_year')) {
             $query->where('academic_year', $request->filter_acad_year);
         }
@@ -65,7 +64,6 @@ class SectionController extends Controller
     
         $sections = $query->get();
     
-        // Return the view with filtered sections (and other necessary data)
         return view('admin.sections', compact('sections', 'programs', 'acad_years', 'activeAcadYear', 'activeTerm', 'uniqueSections', 'initial_sections', 'section_types'));
     }
 
@@ -121,19 +119,28 @@ class SectionController extends Controller
 
     public function show($id)
     {
-        // Step 1: Retrieve the section data along with its related section type
         $section = Section::with('section_type')->findOrFail($id);
         
-        // Step 2: Fetch the subjects related to the section's year level
-        $blockSubjects = Program_Subject::with('subject')
-        ->where('year', $section->year_level)
-        ->get();
-
+        $blockSubjects = Program_Subject::join('subjects', 'program_subjects.subject_id', '=', 'subjects.subject_id')
+            ->select('program_subjects.*', 'subjects.subject_code', 'subjects.subject_name') // Include subject details
+            ->where('year', $section->year_level)
+            ->orderBy('subjects.subject_code')
+            ->get()
+            ->unique('subject_id'); 
+        
         $sectionSubjects = SectionSubject::with(['subjectSectionSchedule','subject','subjectSectionSchedule.professor'])
             ->where('section_id', $section->section_id)
             ->get();
-
-        // Return the view with the section and subjects data
+    
+        $sectionSubjectsIds = $sectionSubjects->pluck('subject_id')->unique();
+    
+        $blockSubjects = $blockSubjects->map(function ($blockSubject) use ($sectionSubjectsIds) {
+            $isScheduleSet = $sectionSubjectsIds->contains($blockSubject->subject_id);
+            $blockSubject->is_schedule_set = $isScheduleSet;
+            return $blockSubject;
+        })->sortByDesc('is_schedule_set'); 
+    
         return view('admin.section-show', compact('section', 'blockSubjects', 'sectionSubjects'));
     }
+    
 }

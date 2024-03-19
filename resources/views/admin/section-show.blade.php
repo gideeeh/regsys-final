@@ -7,111 +7,170 @@
     selectedSecSubId: null,
     selectedSubjectCode: '',
     selectedSubjectName: ''
-}">
+    }"
+    @keydown.escape.window = "
+        manageSchedule=false;
+        addSubjectToSection=false;"
+>
 
     <div>
-        <h1>{{$section->section_name}}</h1>
-        <h2>Section id: {{$section->section_id}}</h2>
+        <h1>{{$section->section_name}} - {{ucfirst($section->section_type->section_type)}}</h1>
         <p>Year Level: {{$section->year_level}}</p>
-        <p>Academic Year: {{$section->academic_year}}</p>
-        <p>Term: {{$section->term}}</p>
-        <p>Section Type: {{$section->section_type->section_type}}</p>
+        <p>Academic Year: {{$section->academic_year}} T-{{$section->term}}</p>
     </div>
-    @if($section->section_type->section_type==='block')
-    <h1>Block</h1>
-    <h2>Subjects Schedules</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>Subject Code</th>
-                <th>Subject Name</th>
-                <th>Start Time F2F</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach($blockSubjects as $blockSubject)
-            <tr>
-                <td>{{$blockSubject->subject->subject_code}}</td>
-                <td>{{$blockSubject->subject->subject_name}}</td>
-                <td>{{$blockSubject->subject->subject_name}}</td>
-                <td>
-                    <button @click="
-                        manageSchedule=true; 
-                        selectedSectionId={{$section->section_id}}; 
-                        selectedSubjectId={{$blockSubject->subject->subject_id}}; 
-                        selectedSubjectCode='{{$blockSubject->subject->subject_code}}'; 
-                        selectedSubjectName='{{$blockSubject->subject->subject_name}}';" 
-                        class='bg-green-500 text-white text-xs px-1 py-1 rounded hover:bg-green-600 transition ease-in-out duration-150'>Set Details</button>
-                </td>
-            </tr>
-            @endforeach
-        </tbody>
-    </table>
-    @else
+    <div class="flex justify-center gap-4">
+        <div>
+            @if($section->section_type->section_type==='block')
+            <h2>Subjects Offered</h2>
+            <div class="max-h-[40vh] max-w-md overflow-y-scroll nice-scroll text-xs">
+                <table class="border-separate border-spacing-1">
+                    <thead>
+                        <tr class="text-left">
+                            <th>Subj Code</th>
+                            <th>Subj Name</th>
+                            <th>Action</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($blockSubjects as $blockSubject)
+                        <tr>
+                            <td>{{$blockSubject->subject->subject_code}}</td>
+                            <td>{{$blockSubject->subject->subject_name}}</td>
+                            <td class="text-center cursor-default">
+                                @php
+                                $isScheduleSet = $sectionSubjects->first(function ($sectionSubject) use ($blockSubject) {
+                                    return $sectionSubject->subject_id == $blockSubject->subject->subject_id;
+                                });
+                                @endphp
+                                @if($isScheduleSet)
+                                <p class="bg-green-100 text-green-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">Set</p>
+                                @else
+                                <p class="bg-red-100 text-red-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">Not Set</p>
+                                @endif
+                            </td>
+                            <td>
+                                <button @click="
+                                    manageSchedule=true; 
+                                    selectedSectionId={{$section->section_id}}; 
+                                    selectedSubjectId={{$blockSubject->subject->subject_id}}; 
+                                    selectedSubjectCode='{{$blockSubject->subject->subject_code}}'; 
+                                    selectedSubjectName='{{$blockSubject->subject->subject_name}}';" 
+                                    class='bg-sky-950 text-xs text-white text-xs p-1 rounded hover:bg-sky-800 transition ease-in-out duration-150'>Manage</button>
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+            @else
 
-    <!-- IF ITS FREEEEEEEEEEEEEEEEEE -->
-    <h1>Not block</h1>
-    <h2>Subjects Schedules</h2>
-    <button @click="addSubjectToSection=true" class="bg-green-500 text-white text-xs px-1 py-1 rounded hover:bg-green-600 transition ease-in-out duration-150">Add Subject</button>
-    <table>
-        <thead>
-            <tr>
-                <th>Subject Code</th>
-                <th>Subject Name</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach($sectionSubjects as $sectionSubject)
-            <tr>
-                <td>{{$sectionSubject->subject?->subject_code}}</td>
-                <td>{{$sectionSubject->subject?->subject_name}}</td>
-                <td>
-                    <button @click="
-                        manageSchedule=true; 
-                        selectedSectionId={{$section->section_id}}; 
-                        selectedSecSubId={{$sectionSubject->id}}; 
-                        selectedSubjectId={{$sectionSubject->subject_id}};" 
-                        class='bg-green-500 text-white text-xs px-1 py-1 rounded hover:bg-green-600 transition ease-in-out duration-150'>Set Details</button>
-                </td>
-            </tr>
-            @endforeach
-        </tbody>
-    </table>
-    @endif
+            <!-- IF ITS FREEEEEEEEEEEEEEEEEE -->
+            <div>
+                <h2>Subjects Schedules</h2>
+                <button @click="addSubjectToSection=true" class="bg-green-500 text-white text-xs px-1 py-1 rounded hover:bg-green-600 transition ease-in-out duration-150">Add Subject</button>
+                <table class="border-separate border-spacing-2">
+                    <thead>
+                        <tr>
+                            <th>Subject Code</th>
+                            <th>Subject Name</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($sectionSubjects as $sectionSubject)
+                        <tr>
+                            <td>{{$sectionSubject->subject?->subject_code}}</td>
+                            <td>{{$sectionSubject->subject?->subject_name}}</td>
+                            <td class="cursor-default">
+                                @if($sectionSubject->subjectSectionSchedule)
+                                    <span class="bg-green-100 text-green-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">Set</span>
+                                @else
+                                    <span class="bg-red-100 text-red-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">Not Set</span>
+                                @endif
+                            </td>
+                            <td>
+                                <button @click="
+                                    manageSchedule=true; 
+                                    selectedSectionId={{$section->section_id}}; 
+                                    selectedSecSubId={{$sectionSubject->id}}; 
+                                    selectedSubjectName='{{$sectionSubject->subject?->subject_name}}'; 
+                                    selectedSubjectId={{$sectionSubject->subject_id}};" 
+                                    class='bg-sky-950 text-white text-xs px-1 py-1 rounded hover:bg-sky-800 transition ease-in-out duration-150'>Set Details</button>
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+            @endif
+        </div>
+        <div>
+            <h1>Section Details</h1>
+            <table class="border-separate border-spacing-1 text-sm max-h-[40vh] overflow-y-scroll nice-scroll">
+                <thead>
+                    <tr class="text-left">
+                        <th>Subject Code</th>
+                        <th>Subject Name</th>
+                        <th>Sched F2F</th>
+                        <th>Sched OL</th>
+                        <th>Prof</th>
+                        <th>Room</th>
+                        <th>Limit</th>
+                        <th>Pax</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($sectionSubjects as $sectionSubject)
+                    <tr>
+                        <td>{{$sectionSubject->subject?->subject_code}}</td>
+                        <td>{{$sectionSubject->subject?->subject_name}}</td>
+                        @php
+                            $daysF2F = json_decode($sectionSubject->subjectSectionSchedule?->class_days_f2f, true) ?? [];
+                            $daysOL = json_decode($sectionSubject->subjectSectionSchedule?->class_days_online, true) ?? [];
 
-    <h1>Section Details</h1>
-    <table>
-        <thead>
-            <tr>
-                <th>Subject Code</th>
-                <th>Subject Name</th>
-                <th>Start Time F2F</th>
-                <th>End Time F2F</th>
-                <th>Start Time OL</th>
-                <th>End Time OL</th>
-                <th>Professor</th>
-                <th>Room</th>
-                <th>Class Limit</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach($sectionSubjects as $sectionSubject)
-            <tr>
-                <td>{{$sectionSubject->subject?->subject_code}}</td>
-                <td>{{$sectionSubject->subject?->subject_name}}</td>
-                <td>{{\Carbon\Carbon::parse($sectionSubject->subjectSectionSchedule?->start_time_f2f)->format('h:i A') ?? 'No recorded time.'}}</td>
-                <td>{{\Carbon\Carbon::parse($sectionSubject->subjectSectionSchedule?->end_time_f2f)->format('h:i A') ?? 'No recorded time.'}}</td>
-                <td>{{\Carbon\Carbon::parse($sectionSubject->subjectSectionSchedule?->start_time_online)->format('h:i A') ?? 'No recorded time.'}}</td>
-                <td>{{\Carbon\Carbon::parse($sectionSubject->subjectSectionSchedule?->end_time_online)->format('h:i A') ?? 'No recorded time.'}}</td>
-                <td>{{$sectionSubject->subjectSectionSchedule?->professor->first_name}} {{$sectionSubject->subjectSectionSchedule?->professor->last_name}}</td>
-                <td>{{$sectionSubject->subjectSectionSchedule?->room}}</td>
-                <td>{{$sectionSubject->subjectSectionSchedule?->class_limit}}</td>
-            </tr>
-            @endforeach
-        </tbody>
-    </table>
+                            $dayMap = [
+                                'Monday' => 'Mon',
+                                'Tuesday' => 'Tue',
+                                'Wednesday' => 'Wed',
+                                'Thursday' => 'Thu',
+                                'Friday' => 'Fri',
+                                'Saturday' => 'Sat',
+                                'Sunday' => 'Sun',
+                            ];
+
+                            $abbreviatedDaysF2F = array_map(function($day) use ($dayMap) {
+                                return $dayMap[$day] ?? $day;
+                            }, $daysF2F);
+
+                            $abbreviatedDaysOL = array_map(function($day) use ($dayMap) {
+                                return $dayMap[$day] ?? $day;
+                            }, $daysOL);
+                        @endphp
+                        <td class="text-xs">{{ implode(', ', $abbreviatedDaysF2F) }} {{\Carbon\Carbon::parse($sectionSubject->subjectSectionSchedule?->start_time_f2f)->format('h:i A') ?? 'No recorded time.' }} - {{\Carbon\Carbon::parse($sectionSubject->subjectSectionSchedule?->end_time_f2f)->format('h:i A') ?? 'No recorded time.'}}</td>
+                        <td class="text-xs">{{ implode(', ', $abbreviatedDaysOL) }} {{\Carbon\Carbon::parse($sectionSubject->subjectSectionSchedule?->start_time_online)->format('h:i A') ?? 'No recorded time.' }} - {{\Carbon\Carbon::parse($sectionSubject->subjectSectionSchedule?->end_time_online)->format('h:i A') ?? 'No recorded time.'}}</td>
+                        <td>{{substr($sectionSubject->subjectSectionSchedule?->professor->first_name,0,1).'.'}} {{$sectionSubject->subjectSectionSchedule?->professor->last_name}}</td>
+                        <td>{{$sectionSubject->subjectSectionSchedule?->room}}</td>
+                        <td>{{$sectionSubject->subjectSectionSchedule?->class_limit}}</td>
+                        <td class="text-left">
+                            @php
+                                $enrolledCount = $sectionSubject->enrolledStudentsCount();
+                                $classLimit = $sectionSubject->subjectSectionSchedule?->class_limit ?? 0;
+                            @endphp
+
+                            @if($enrolledCount >= $classLimit)
+                                <p class="bg-red-100 text-red-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">Full</p>
+                            @else
+                                <p>{{ $enrolledCount }}</p>
+                            @endif
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+    </div>
 
 
 
@@ -142,11 +201,6 @@
     <div x-cloak id="manageSchedule" x-show="manageSchedule" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center px-4 z-50" data-section-id="${subject.section_id}">
         <div class="modal-content bg-white p-8 rounded-lg shadow-lg overflow-auto min-wd-lg max-w-xl w-full min-h-[85vh] max-h-[90vh]">
             <h2>Manage Section</h2>
-            @if($section->section_type->section_type==='free')
-            <h1>Freeee</h1>
-            <h1 >SecSubId: <span x-text="selectedSecSubId"></span></h1>
-
-            @endif
             <!-- F2F Class Schedule -->
             @if($section->section_type->section_type==='block')
             <form id="createSectionSchedule" action="{{route('section-subject.store')}}" method="POST">
@@ -159,8 +213,7 @@
                 @endif
                 <input type="hidden" name="subject_id" x-bind:value="selectedSubjectId">
                 <input type="hidden" name="section_id" x-bind:value="selectedSectionId">
-                <h1 x-text="selectedSubjectCode"></h1>
-                <h1 x-text="selectedSubjectName"></h1>
+                <h3 class="mb-4"><span x-text="selectedSubjectCode"></span> - <span x-text="selectedSubjectName"></span></h3>
                 <!-- <h1 x-text="selectedSectionId"></h1>
                 <h1 x-text="selectedSubjectId"></h1> -->
                 <div class="cursor-default w-full acad-year-card border-solid border-2 border-slate-400 rounded-md px-4 py-4 mb-6 mr-12 hover:border-sky-950">

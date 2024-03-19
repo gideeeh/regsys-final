@@ -17,7 +17,14 @@ class SectionSubjectsController extends Controller
             'subject_id' => $request->subject_to_add,
         ]);
 
-        return redirect()->back()->with('success', 'Section successfully created.');
+        if ($section_subjects->wasRecentlyCreated) {
+            $message = 'Subject successfully added.';
+            return redirect()->back()->with('success', $message);
+        } else {
+            $message = 'This subject already exists.';
+            return redirect()->back()->with('error', $message);
+        }
+
     }
 
 

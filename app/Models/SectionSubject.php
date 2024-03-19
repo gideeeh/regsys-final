@@ -15,6 +15,8 @@ class SectionSubject extends Model
         'subject_id',
     ];
 
+    // protected $casts = ['class_days_f2f' => 'array'];
+
     public function section()
     {
         return $this->belongsTo(Section::class, 'section_id');
@@ -33,5 +35,10 @@ class SectionSubject extends Model
     public function enrolledSubject()
     {
         return $this->hasOne(Enrolled_Subject::class, 'sec_sub_id');
+    }
+
+    public function enrolledStudentsCount()
+    {
+        return Enrolled_Subject::where('sec_sub_id', $this->id)->count();
     }
 }

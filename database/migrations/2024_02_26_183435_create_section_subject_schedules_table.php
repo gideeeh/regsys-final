@@ -21,8 +21,8 @@ return new class extends Migration
             $table->time('end_time_f2f')->nullable();
             $table->time('start_time_online')->nullable();
             $table->time('end_time_online')->nullable();
-            $table->string('room');
-            $table->integer('class_limit');
+            $table->string('room')->nullable();
+            $table->integer('class_limit')->nullable();
             $table->timestamps();
 
             $table->foreign('sec_sub_id')->references('id')->on('section_subjects')->onDelete('set null');

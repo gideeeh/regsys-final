@@ -8,10 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class SectionSubjectSchedule extends Model
 {
     use HasFactory;
-    protected $casts = [
-        'class_days_f2f' => 'array',
-        'class_days_online' => 'array',
-    ];
+    // protected $casts = [
+    //     'class_days_f2f' => 'array',
+    //     'class_days_online' => 'array',
+    // ];
     
     protected $table = 'section_subject_schedules'; 
     protected $primarykey = 'id';

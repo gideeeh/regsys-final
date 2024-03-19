@@ -202,14 +202,11 @@ class EnrollmentsController extends Controller
             $subjectId = $selection['subject_id'];
             $secSubId = $selection['sec_sub_id'];
             
-            // Fetching the SectionSubject and its related schedule
             $secSub = SectionSubject::with('subjectSectionSchedule')->where('id', $secSubId)->first();
     
             if ($secSub && $secSub->subjectSectionSchedule) {
-                // Assuming class_limit is a property of subjectSectionSchedule
                 $secSubCount = $secSub->subjectSectionSchedule->class_limit;
     
-                // Filtering the count for this specific section
                 $enrolledSubForThisSectionCount = Enrolled_Subject::where('sec_sub_id', $secSubId)->count();
     
                 if ($secSubCount <= $enrolledSubForThisSectionCount) {

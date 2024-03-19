@@ -1,0 +1,3 @@
+sec_sub_id, prof_id, class_days_f2f, class_days_online, start_time_f2f, end_time_f2f, start_time_online, end_time_online, room, class_limit, created_at, updated_at
+1, 3, "[\"Wednesday\"]", "[\"Wednesday\"]", 17:00:00, 21:00:00, 17:00:00, 21:00:00, 200, 50, 2024-03-19 14:52:05, 2024-03-19 14:52:05
+2, 2, "[\"Saturday\"]", "[\"Wednesday\"]", 08:00:00, 12:00:00, 08:00:00, 12:00:00, 201, 50, 2024-03-19 14:52:41, 2024-03-19 14:52:41

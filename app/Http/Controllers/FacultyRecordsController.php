@@ -51,9 +51,28 @@ class FacultyRecordsController extends Controller
         return view('admin.indiv-professor-record', ['professor' => $professorRecord]);
     }
 
-    public function faculty_json()
+    public function faculty_json(Request $request)
     {
-        $professors = Professor::all();
+        $search = $request->get('q');
+
+        // $subjects = Subject::where('subject_name','like','%'.$search.'%')
+        //                     ->orWhere('subject_code','like','%'.$search.'%')
+        //                     ->get([
+        //                         'subject_id as subject_id',
+        //                         'subject_name as subject_name',
+        //                         'subject_code as subject_code',
+        //                         'subject_description as subject_description',
+        //                         'units_lec as units_lec',
+        //                         'units_lab as units_lab',
+        //                         'prerequisite_1 as prerequisite_1',
+        //                         'prerequisite_2 as prerequisite_2',
+        //                         'prerequisite_3 as prerequisite_3',
+        //                     ]);
+        $professors = Professor::where('first_name','like','%'.$search.'%')
+                                ->orWhere('last_name','like','%'.$search.'%')
+                                ->get();
+        
+        // $professors = Professor::all();
         return response()->json($professors);
     }
 

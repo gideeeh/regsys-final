@@ -1,0 +1,31 @@
+[
+    {
+      "sec_sub_id": 1,
+      "prof_id": 3,
+      "class_days_f2f": ["Wednesday"],
+      "class_days_online": ["Wednesday"],
+      "start_time_f2f": "17:00:00",
+      "end_time_f2f": "21:00:00",
+      "start_time_online": "17:00:00",
+      "end_time_online": "21:00:00",
+      "room": 200,
+      "class_limit": 50,
+      "created_at": "2024-03-19 14:52:05",
+      "updated_at": "2024-03-19 14:52:05"
+    },
+    {
+      "sec_sub_id": 2,
+      "prof_id": 2,
+      "class_days_f2f": ["Saturday"],
+      "class_days_online": ["Wednesday"],
+      "start_time_f2f": "08:00:00",
+      "end_time_f2f": "12:00:00",
+      "start_time_online": "08:00:00",
+      "end_time_online": "12:00:00",
+      "room": 201,
+      "class_limit": 50,
+      "created_at": "2024-03-19 14:52:41",
+      "updated_at": "2024-03-19 14:52:41"
+    }
+  ]
+  
