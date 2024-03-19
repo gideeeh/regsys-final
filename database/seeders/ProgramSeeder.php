@@ -29,6 +29,9 @@ class ProgramSeeder extends Seeder
                 'program_coordinator' => $record['program_coordinator'],
                 'total_units' => $record['total_units'],
                 'status' => $record['status'],
+                'created_at' =>$record['created_at'],
+                'updated_at' =>$record['updated_at'],
+                'program_major' => $record['program_major'],
             ]); 
         }
     }

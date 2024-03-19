@@ -1,0 +1,12 @@
+id,first_name,last_name,email,email_verified_at,password,role,remember_token,created_at,updated_at
+1,Admin,Admin,admin@example.com,,,admin,,,
+2,Sophia,Fernandez,sophia@gmail.com,,,user,,,
+3,Liam,Johnson,liam.johnson@example.com,,,user,,,
+4,Emma,Wilson,emma.wilson@example.com,,,user,,,
+5,Noah,Robinson,noah.robinson@example.com,,,user,,,
+6,Olivia,Jackson,olivia.jackson@example.com,,,user,,,
+7,Ava,Harris,ava.harris@example.com,,,user,,,
+8,Isabella,Martinez,isabella.martinez@example.com,,,user,,,
+9,William,Hernandez,william.hernandez@example.com,,,user,,,
+10,Sophia,Brown,sophia.brown@example.com,,,user,,,
+11,Mia,Moore,mia.moore@example.com,,,user,,,

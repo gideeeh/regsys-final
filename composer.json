@@ -7,6 +7,7 @@
     "require": {
         "php": "^8.1",
         "actb/blade-github-octicons": "^4.2",
+        "barryvdh/laravel-dompdf": "^2.1",
         "blade-ui-kit/blade-heroicons": "^2.2",
         "codeat3/blade-clarity-icons": "^1.8",
         "codeat3/blade-teeny-icons": "^1.9",

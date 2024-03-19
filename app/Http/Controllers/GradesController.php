@@ -12,36 +12,40 @@ class GradesController extends Controller
 {
     public function submitGrades(Request $request)
     {
-        $grades = $request->input('grades');
-
-        if (is_null($grades)) {
+        $gradesData = $request->input('grades');
+    
+        if (is_null($gradesData)) {
             return response()->json(['message' => 'No grades provided'], 400);
         }
-
+    
+        // Validate each grades entry
+        $validator = Validator::make($gradesData, [
+            '*.enrolledSubject_code' => 'required|exists:enrolled_subjects,enrolledSubject_code',
+            '*.final_grade' => 'required|numeric',
+            '*.remarks' => 'sometimes|string'
+        ]);
+    
+        if ($validator->fails()) {
+            return response()->json(['message' => 'Invalid grades data', 'errors' => $validator->errors()], 422);
+        }
+    
         DB::beginTransaction();
         try {
-            foreach ($grades as $grade) {
-                $enrolledSubjectCode = $grade['enrolledSubject_code'];
-                $finalGrade = $grade['final_grade'];
-
-                $enrolledSubject = Enrolled_Subject::where('enrolledSubject_code', $enrolledSubjectCode)->first();
-
-                if ($enrolledSubject) {
-                    // Update the final grade
-                    $enrolledSubject->update([
-                        'final_grade' => $finalGrade,
-                    ]);
-                } else {
-                    Log::warning("Enrolled subject with code {$enrolledSubjectCode} not found.");
-                }
+            foreach ($gradesData as $gradeData) {
+                $enrolledSubject = Enrolled_Subject::where('enrolledSubject_code', $gradeData['enrolledSubject_code'])->first();
+    
+                $enrolledSubject->update([
+                    'final_grade' => $gradeData['final_grade'],
+                    'remarks' => $gradeData['remarks'] ?? null,
+                ]);
             }
-
+    
             DB::commit();
             return response()->json(['message' => 'Grades updated successfully'], 200);
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Failed to update grades: ' . $e->getMessage());
-            return response()->json(['message' => 'Failed to update grades'], 500);
+            return response()->json(['message' => 'Failed to update grades', 'error' => $e->getMessage()], 500);
         }
     }
 }

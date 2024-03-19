@@ -1,0 +1,30 @@
+body {
+    font-family: 'Georgia', 'Arial', sans-serif;
+    padding: 20px;
+}
+.gradeslip-container {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+table, th, td {
+    border: 1px solid black;
+}
+th, td {
+    padding: 8px;
+    text-align: left;
+}
+.header {
+    text-align: center;
+    position: relative;
+}
+.info-logo {
+    width: 7rem;
+    position: absolute;
+    top: 0;
+    left: 0;
+}

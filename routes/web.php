@@ -17,6 +17,7 @@ use App\Http\Controllers\EnrollmentsController;
 use App\Http\Controllers\FacultyRecordsController;
 use App\Http\Controllers\FilesController;
 use App\Http\Controllers\GradesController;
+use App\Http\Controllers\PrintablesController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProgramController;
 use App\Http\Controllers\ProgramSubjectController;
@@ -200,6 +201,11 @@ Route::middleware(['auth','isAdminUser'])->group(function() {
     Route::get('/admin/functions/get-schedules', [SectionSubjectSchedulesController::class, 'sec_sub_schedule_json'])->name('sec_sub_schedule_json');
     Route::get('/admin/functions/fetch-schedule', [SectionSubjectSchedulesController::class, 'fetchScheduleDetailsForSectionAndSubject'])->name('sec_sub_schedule.fetch');
     Route::get('/admin/functions/get-section-subjects', [SectionSubjectsController::class, 'search'])->name('sec_sub.search');
+/* Printables */
+
+/* Gradeslip */
+Route::get('/gradeslip/pdf/print/{enrollmentId}', [PrintablesController::class, 'printGradeSlip'])->name('gradeslip.pdf');
+Route::get('/gradeslip/pdf/view/{enrollmentId}', [PrintablesController::class, 'view_gradeslip'])->name('gradeslip.view');
 });
 
 require __DIR__.'/auth.php';

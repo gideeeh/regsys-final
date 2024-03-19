@@ -20,42 +20,50 @@ class StudentSeeder extends Seeder
         $csv = Reader::createFromPath($csvFilePath, 'r');
         $csv->setHeaderOffset(0);
 
+        
         foreach($csv->getRecords() as $offset=>$record)
         {
+            $file_path = 'students/'.$record['student_number'].' '.$record['last_name'].', '.$record['first_name'];
             Student::create([
-                'user_id' => $record['user_id'] ?: null,
+                'user_id' => $record['user_id'] ?? null,
                 'student_number' => $record['student_number'],
                 'first_name' => $record['first_name'],
-                'middle_name' => $record['middle_name'],
+                'middle_name' => null, 
                 'last_name' => $record['last_name'],
-                'suffix' => $record['suffix'],
-                'sex' => $record['sex'],
-                'birthdate' => Carbon::createFromFormat('m/d/Y', $record['birthdate'])->format('Y-m-d'),
-                'birthplace' => $record['birthplace'],
-                'civil_status' => $record['civil_status'],
-                'nationality' => $record['nationality'],
-                'religion' => $record['religion'],
-                'phone_number' => $record['phone_number'],
+                'suffix' => null,
+                'sex' => null,
+                'birthdate' => null,
+                'birthplace' => null,
+                'civil_status' => null,
+                'nationality' =>  null,
+                'religion' => null,
+                'phone_number' => null,
                 'personal_email' => $record['personal_email'],
-                'school_email' => $record['school_email'],
-                'house_num' => $record['house_num'],
-                'street' => $record['street'],
-                'brgy' => $record['brgy'],
-                'city_municipality' => $record['city_municipality'],
-                'province' => $record['province'],
-                'zipcode' => $record['zipcode'],
-                'guardian_name' => $record['guardian_name'],
-                'guardian_contact' => $record['guardian_contact'],
-                'elementary' => $record['elementary'],
-                'elem_yr_grad' => $record['elem_yr_grad'],
-                'highschool' => $record['highschool'],
-                'hs_yr_grad' => $record['hs_yr_grad'],
-                'college' => $record['college'] ?: null,
-                'college_year_ended' => $record['college_year_ended'] ?: null,
-                'is_transferee' => $record['is_transferee'] === 'true',
-                'is_irregular' => $record['is_irregular'] === 'true',
+                'school_email' => null,
+                'house_num' => null,
+                'street' => null,
+                'brgy' => null,
+                'city_municipality' => null,
+                'province' => null,
+                'zipcode' => null,
+                'guardian_name' => null,
+                'guardian_contact' => null,
+                'elementary' => null,
+                'elem_yr_grad' => null,
+                'jr_highschool' => null,
+                'jr_hs_yr_grad' => null,
+                'sr_highschool' => null,
+                'sr_hs_yr_grad' => null,
+                'college' => null,
+                'college_year_ended' => null,
+                'is_transferee' => $record['is_transferee'],
+                'is_irregular' => $record['is_irregular'],
+                'created_at' => now(),
+                'updated_at' => now(),
+                'file_path' => $file_path,
             ]);
         }
+        
 
     }
 }

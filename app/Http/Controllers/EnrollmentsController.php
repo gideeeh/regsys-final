@@ -12,6 +12,7 @@ use App\Models\Student;
 use App\Models\Subject;
 use App\Services\AcademicYearService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class EnrollmentsController extends Controller
@@ -25,6 +26,23 @@ class EnrollmentsController extends Controller
     
     public function index (Request $request)
     {
+
+        $studentsQuery = DB::table('students as s')
+            ->leftJoin('enrollments as e', 's.student_id', '=', 'e.student_id')
+            ->leftJoin('programs as p', 'e.program_id', '=', 'p.program_id') 
+            ->select(
+                's.student_id',
+                's.student_number',
+                's.first_name',
+                's.middle_name',
+                's.last_name',
+                's.suffix',
+                'p.program_code',
+                'p.program_major',
+                DB::raw('MAX(e.year_level) as year_level')
+            )
+            ->groupBy('s.student_id', 's.student_number', 's.first_name', 's.middle_name', 's.last_name', 's.suffix', 'p.program_code', 'p.program_major');
+
         $query = Enrollment::query()
             ->select(
                 'enrollments.enrollment_id', 
@@ -41,6 +59,7 @@ class EnrollmentsController extends Controller
                 'students.last_name',
                 'students.suffix',
                 'programs.program_code',
+                'programs.program_major',
             )
             ->join('programs', 'programs.program_id', '=', 'enrollments.program_id')
             ->join('students', 'enrollments.student_id', '=', 'students.student_id');
@@ -48,7 +67,7 @@ class EnrollmentsController extends Controller
         $searchTerm = $request->query('query');
         if($searchTerm)
         {
-            $query->where(function($query) use ($searchTerm) {
+            $studentsQuery->where(function($query) use ($searchTerm) {
                 $query->where('students.first_name', 'LIKE', "%{$searchTerm}%")
                     ->orWhere('students.last_name', 'LIKE', "%{$searchTerm}%")
                     ->orWhere('students.student_number', 'LIKE', "%{$searchTerm}%")
@@ -56,20 +75,37 @@ class EnrollmentsController extends Controller
             });
         }
 
-        $enrollmentRecords = $query->paginate(10)->withQueryString();
+        // $enrollmentRecords = $query->paginate(10)->withQueryString();
+        $studentRecords = $studentsQuery->paginate(10)->withQueryString();
+
 
         return view('admin.enrollment-records', [
-            'enrollments' => $enrollmentRecords,
+            // 'enrollments' => $enrollmentRecords,
+            'students' => $studentRecords,
             'searchTerm' => $searchTerm
         ]);
     }
 
-    public function show($enrollment_id)
+    public function show($student_id)
     {
-        $enrollmentRecord = Enrollment::findOrFail($enrollment_id);
-        
-        return view('admin.indiv-enrollment-record', ['enrollment' => $enrollmentRecord]);
+        // Eager load enrollments with programs and their enrolled subjects (including the subject details).
+        $student = Student::with([
+            'enrollments.program',
+            'enrollments.enrolledSubjects.subject',
+            'enrollments.enrolledSubjects.sectionSubject.subjectSectionSchedule.professor',
+            'enrollments' => function ($query) {
+                $query->orderBy('year_level', 'desc')->orderBy('term');
+            }
+        ])->findOrFail($student_id);
+    
+        // Group enrollments by program_id.
+        $groupedEnrollments = $student->enrollments->groupBy('program_id');
+    
+        return view('admin.enrollment-records-show', compact('groupedEnrollments', 'student'));
     }
+    
+    
+    
 
     public function enroll()
     {
