@@ -31,6 +31,9 @@ class CS_SubjectSeeder extends Seeder
                 'prerequisite_1' => $record['prerequisite_1'],
                 'prerequisite_2' => $record['prerequisite_2'],
                 'prerequisite_3' => $record['prerequisite_3'],
+                'created_at' => now(),
+                'updated_at' => now(),
+                'co_requisite' => $record['co_requisite'] === '' ? null : $record['co_requisite'],
             ]);
         }
     }

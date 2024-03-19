@@ -7,7 +7,7 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use League\Csv\Reader;
 
-class SectionSeeder extends Seeder
+class SectionsSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -22,11 +22,14 @@ class SectionSeeder extends Seeder
         {
             Section::create([
                 'section_name' => $record['section_name'],
-                'subject_id' => $record['subject_id'],
                 'academic_year' => $record['academic_year'],
                 'term' => $record['term'],
-                'is_openedUponRequest' => $record['is_openedUponRequest'],
-            ]);
+                'created_at' => now(),
+                'updated_at' => now(),
+                'year_level' => $record['year_level'],
+                'program_id' => null,
+                'section_type_id' => $record['section_type_id'],
+            ]); 
         }
     }
 }

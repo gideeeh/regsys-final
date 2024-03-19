@@ -1,11 +1,11 @@
-section_name,subject_id,academic_year,term,is_openedUponRequest
-PE1 Section 1,5,2023-2024,2,0
-NSTP1 Section 1,4,2023-2024,2,0
-GE111 Section 1,1,2023-2024,2,0
-GE111 Section 2,1,2023-2024,2,0
-NSTP2 Section 2,9,2023-2024,2,0
-PE2 Section 1,10,2023-2024,2,0
-Purposive Communication Section 1,14,2023-2024,2,0
-Operating System Section 1,18,2023-2024,2,0
-PE3 Section 1,15,2023-2024,2,0
-Application Project 1 Section 1,16,2023-2024,2,0
+section_name,academic_year,term,created_at,updated_at,year_level,program_id,section_type_id
+Section 1,2023-2024,2,,,1,,1
+Section 2,2023-2024,2,,,1,,1
+Section 1,2023-2024,2,,,2,,1
+Section 1,2023-2024,2,,,3,,1
+Section 1,2023-2024,2,,,4,,1
+Section 2,2023-2024,2,,,2,,1
+Section 2,2023-2024,2,,,4,,1
+Section 2,2023-2024,2,,,3,,1
+Section 1,2023-2024,2,,,1,,2
+Section 1,2023-2024,2,,,4,,2

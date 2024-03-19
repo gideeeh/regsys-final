@@ -34,6 +34,7 @@ class DatabaseSeeder extends Seeder
             ApptMgmtSettingsTableSeeder::class,
             ServicesTableSeeder::class,
             SectionTypesSeeder::class,
+            SectionsSeeder::class,
         ]);
     }
 }

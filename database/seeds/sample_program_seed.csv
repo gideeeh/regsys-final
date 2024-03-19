@@ -1,3 +1,4 @@
 program_id,program_code,program_name,program_desc,degree_type,dept_id,program_coordinator,total_units,status,created_at,updated_at,program_major
-1,BSCS,"Computer Science","Computer Science program description","Bachelor",1,"John Doe",0,"Active","2023-03-17","2023-03-17",
-2,BSIT,"Information Technology","Information Technology program description","Bachelor",2,"Jane Smith",0,"Active","2023-03-17","2023-03-17",
+1,BSCS,"Computer Science","Computer Science program description","Bachelor",1,"John Doe",0,"Active",,,
+2,BSIT,"Information Technology","Information Technology program description","Bachelor",1,"Jane Smith",0,"Active",,,
+3,BSBA,"Business Administration","Business Administration program description","Bachelor",2,"Jane Doe",0,"Active",,,

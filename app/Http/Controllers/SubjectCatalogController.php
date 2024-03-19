@@ -14,6 +14,7 @@ class SubjectCatalogController extends Controller
         $subjectsQuery = DB::table('subjects as s')
             ->leftJoin('subjects as pr1', 's.prerequisite_1', '=', 'pr1.subject_id')
             ->leftJoin('subjects as pr2', 's.prerequisite_2', '=', 'pr2.subject_id') 
+            ->leftJoin('subjects as cr', 's.co_requisite', '=', 'cr.subject_id') 
             ->select(
                 's.subject_id', 
                 's.subject_code',
@@ -22,7 +23,8 @@ class SubjectCatalogController extends Controller
                 's.units_lec',
                 's.units_lab',
                 'pr1.subject_name as prereq1',
-                'pr2.subject_name as prereq2'
+                'pr2.subject_name as prereq2',
+                'cr.subject_id as co_req',
             ); 
 
         // Search
@@ -61,6 +63,7 @@ class SubjectCatalogController extends Controller
         $subject->units_lab = $request->units_lab;
         $subject->prerequisite_1 = $request->prereq1;
         $subject->prerequisite_2 = $request->prereq2;
+        $subject->co_requisite = $request->co_req;
         $subject->save();
     
         return redirect()->back()->with('success', 'Program added successfully!');
@@ -91,6 +94,7 @@ class SubjectCatalogController extends Controller
             $subject->units_lab = $request->units_lab;
             $subject->prerequisite_1 = $request->prereqUpdate1;
             $subject->prerequisite_2 = $request->prereqUpdate2;
+            $subject->co_requisite = $request->co_req2;
             $subject->save();
 
             return redirect()->back()->with('success', 'Subject updated successfully!');

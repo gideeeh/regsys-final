@@ -38,9 +38,9 @@
                             <th class="w-3/12 bg-blue-500 text-white p-1">Subject Name</th>
                             <th class="w-1/12 bg-blue-500 text-white p-1">Units (Lec)</th>
                             <th class="w-1/12 bg-blue-500 text-white p-1">Units (Lab)</th>
-                            <th class="w-1/12 bg-blue-500 text-white p-1">Total Units</th>
                             <th class="w-2/12 bg-blue-500 text-white p-1">Pre-Req 1</th>
                             <th class="w-2/12 bg-blue-500 text-white p-1">Pre-Req 2</th>
+                            <th class="w-2/12 bg-blue-500 text-white p-1">Co-Req</th>
                             <th class="w-1/12 bg-blue-500 text-center text-white p-1">Actions</th>
                         </tr>
                     </thead>
@@ -52,9 +52,9 @@
                             <td class="border-dashed border-t border-gray-300 p-2">{{ $subject->subject_name }}</td>
                             <td class="border-dashed border-t border-gray-300 p-2">{{ $subject->units_lec }}</td>
                             <td class="border-dashed border-t border-gray-300 p-2">{{ $subject->units_lab }}</td>
-                            <td class="border-dashed border-t border-gray-300 p-2">{{ $subject->units_lec + $subject->units_lab }}</td>
                             <td class="border-dashed border-t border-gray-300 p-2">{{ $subject->prereq1 ?? '-'}}</td>
                             <td class="border-dashed border-t border-gray-300 p-2">{{ $subject->prereq2 ?? '-'}}</td>
+                            <td class="border-dashed border-t border-gray-300 p-2">{{ $subject->co_req ?? '-'}}</td>
                             <td class="border-dashed border-t border-gray-300 p-2 pr-4">
                                 <div class="flex justify-between gap-2">
                                     <button 
@@ -66,9 +66,10 @@
                                         selectedSubjectUnitsLec = {{ $subject->units_lec }}; 
                                         selectedSubjectUnitsLab = {{ $subject->units_lab }}; 
                                         selectedPreReq1 = '{{ $subject->prereq1 }}'; 
-                                        selectedPreReq2 = '{{ $subject->prereq2 }}';" 
-                                    class="bg-blue-500 text-sm text-white p-1 rounded hover:bg-blue-600">Update</button>
-                                    <button @click.stop="showDeleteModal=true; selectedId = {{$subject->subject_id}}" class="bg-red-500 text-sm text-white p-1 rounded hover:bg-red-600 transition ease-in-out duration-150">Delete</button>
+                                        selectedPreReq2 = '{{ $subject->prereq2 }}'; 
+                                        selectedPreReq2 = '{{ $subject->co_req }}';" 
+                                    class="bg-blue-500 text-xs text-white p-1 rounded hover:bg-blue-600">Update</button>
+                                    <button @click.stop="showDeleteModal=true; selectedId = {{$subject->subject_id}}" class="bg-red-500 text-xs text-white p-1 rounded hover:bg-red-600 transition ease-in-out duration-150">Delete</button>
                                 </div>
                             </td>
                         </tr>
@@ -115,6 +116,10 @@
                     <div>
                         <label for="prereq2" class="block text-sm font-medium text-gray-700">Pre-Requisite 2:</label>
                         <select id="prereq2" name="prereq2" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" style="width: 100%;"></select>
+                    </div>
+                    <div>
+                        <label for="co_req" class="block text-sm font-medium text-gray-700">Co-Requisite:</label>
+                        <select id="co_req" name="co_req" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" style="width: 100%;"></select>
                     </div>
                     <div class="flex justify-end space-x-4">
                         <button type="button" @click="showModal = false" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition ease-in-out duration-150">Cancel</button>
@@ -176,6 +181,10 @@
                         <label for="prereqUpdate2" class="block text-sm font-medium text-gray-700">Pre-Requisite 2:</label>
                         <select id="prereqUpdate2" name="prereqUpdate2" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" style="width: 100%;"></select>
                     </div>
+                    <div>
+                        <label for="co_req2" class="block text-sm font-medium text-gray-700">Co-Requisite:</label>
+                        <select id="co_req2" name="co_req2" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" style="width: 100%;"></select>
+                    </div>
                     <div class="flex justify-end space-x-4">
                         <button type="button" @click="showUpdateModal = false" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition ease-in-out duration-150">Cancel</button>
                         <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition ease-in-out duration-150">Update Subject</button>
@@ -187,7 +196,7 @@
 
 <script>
 $(document).ready(function() {
-    $('#prereq1, #prereq2, #prereqUpdate1, #prereqUpdate2').select2({
+    $('#prereq1, #prereq2, #prereqUpdate1, #prereqUpdate2, #co_req, #co_req2').select2({
         width: 'resolve',
         placeholder: "Subject Code or Subject Name",
         allowClear: true,
