@@ -171,6 +171,7 @@ Route::middleware(['auth','isAdminUser'])->group(function() {
     Route::post('/admin/functions/sections/assign-schedule',[SectionSubjectsController::class, 'store'])->name('section-subject.store');
     Route::post('/admin/functions/sections/store-subjects-free',[SectionSubjectsController::class, 'store_free'])->name('section-subject-free.store');
     Route::post('/admin/functions/sections/store-subjects-free/set_schedule',[SectionSubjectSchedulesController::class, 'store_schedule_free_section'])->name('section-subject-free-schedule.store');
+    Route::delete('/admin/functions/sections/store-subjects-free/remove/{id}', [SectionSubjectSchedulesController::class, 'destroy_free'])->name('section-subject.destroy');
 /* Appointments */
     Route::get('admin/appointments/dashboard', [AppointmentsController::class, 'index'])->name('appointments.dashboard');
     Route::get('admin/appointments/json', [AppointmentsController::class, 'appointmentsCalendarJson'])->name('appointments.json');

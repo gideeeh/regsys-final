@@ -2,14 +2,17 @@
 <div x-data="{
     manageSchedule:false,
     addSubjectToSection:false,
+    showDeleteModal:false,
     selectedSubjectId: null,
     selectedSectionId: null,
     selectedSecSubId: null,
+    selectedSectionSubjectId: null,
     selectedSubjectCode: '',
     selectedSubjectName: ''
     }"
     @keydown.escape.window = "
         manageSchedule=false;
+        showDeleteModal=false;
         addSubjectToSection=false;"
 >
 
@@ -66,8 +69,12 @@
             @else
 
             <!-- IF ITS FREEEEEEEEEEEEEEEEEE -->
-                <h2>Subjects Schedules</h2>
-                <button @click="addSubjectToSection=true" class="bg-green-500 text-white text-xs px-1 py-1 rounded hover:bg-green-600 transition ease-in-out duration-150">Add Subject</button>
+                <div class="flex justify-between px-2">
+                    <h2>Subjects Schedules</h2>
+                    <div class="flex items-center">
+                        <button @click="addSubjectToSection=true" class="bg-green-500 text-white text-xs px-1 py-1 rounded hover:bg-green-600 transition ease-in-out duration-150">Add Subject</button>
+                    </div>
+                </div>
                 <div class="max-h-[40vh] max-w-md overflow-y-scroll nice-scroll text-xs">
                     <table class="border-separate border-spacing-2">
                         <thead>
@@ -108,67 +115,91 @@
         </div>
         <div>
             <h1>Section Details</h1>
-            <table class="border-separate border-spacing-1 text-sm max-h-[40vh] overflow-y-scroll nice-scroll">
-                <thead>
-                    <tr class="text-left">
-                        <th>Subject Code</th>
-                        <th>Subject Name</th>
-                        <th>Sched F2F</th>
-                        <th>Sched OL</th>
-                        <th>Prof</th>
-                        <th>Room</th>
-                        <th>Limit</th>
-                        <th>Pax</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($sectionSubjects as $sectionSubject)
-                    <tr>
-                        <td>{{$sectionSubject->subject?->subject_code}}</td>
-                        <td>{{$sectionSubject->subject?->subject_name}}</td>
-                        @php
-                            $daysF2F = json_decode($sectionSubject->subjectSectionSchedule?->class_days_f2f, true) ?? [];
-                            $daysOL = json_decode($sectionSubject->subjectSectionSchedule?->class_days_online, true) ?? [];
-
-                            $dayMap = [
-                                'Monday' => 'Mon',
-                                'Tuesday' => 'Tue',
-                                'Wednesday' => 'Wed',
-                                'Thursday' => 'Thu',
-                                'Friday' => 'Fri',
-                                'Saturday' => 'Sat',
-                                'Sunday' => 'Sun',
-                            ];
-
-                            $abbreviatedDaysF2F = array_map(function($day) use ($dayMap) {
-                                return $dayMap[$day] ?? $day;
-                            }, $daysF2F);
-
-                            $abbreviatedDaysOL = array_map(function($day) use ($dayMap) {
-                                return $dayMap[$day] ?? $day;
-                            }, $daysOL);
-                        @endphp
-                        <td class="text-xs">{{ implode(', ', $abbreviatedDaysF2F) }} {{\Carbon\Carbon::parse($sectionSubject->subjectSectionSchedule?->start_time_f2f)->format('h:i A') ?? 'No recorded time.' }} - {{\Carbon\Carbon::parse($sectionSubject->subjectSectionSchedule?->end_time_f2f)->format('h:i A') ?? 'No recorded time.'}}</td>
-                        <td class="text-xs">{{ implode(', ', $abbreviatedDaysOL) }} {{\Carbon\Carbon::parse($sectionSubject->subjectSectionSchedule?->start_time_online)->format('h:i A') ?? 'No recorded time.' }} - {{\Carbon\Carbon::parse($sectionSubject->subjectSectionSchedule?->end_time_online)->format('h:i A') ?? 'No recorded time.'}}</td>
-                        <td>{{substr($sectionSubject->subjectSectionSchedule?->professor->first_name,0,1).'.'}} {{$sectionSubject->subjectSectionSchedule?->professor->last_name}}</td>
-                        <td>{{$sectionSubject->subjectSectionSchedule?->room}}</td>
-                        <td>{{$sectionSubject->subjectSectionSchedule?->class_limit}}</td>
-                        <td class="text-left">
-                            @php
-                                $enrolledCount = $sectionSubject->enrolledStudentsCount();
-                                $classLimit = $sectionSubject->subjectSectionSchedule?->class_limit ?? 0;
-                            @endphp
-
-                            @if($enrolledCount >= $classLimit)
-                                <p class="bg-red-100 text-red-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">Full</p>
-                            @else
-                                <p>{{ $enrolledCount }}</p>
+            <div class="text-sm max-h-[40vh] overflow-y-scroll nice-scroll">
+                <table class="border-separate border-spacing-1">
+                    <thead>
+                        <tr class="text-left">
+                            <th>Subject Code</th>
+                            <th>Subject Name</th>
+                            <th>Sched F2F</th>
+                            <th>Sched OL</th>
+                            <th>Prof</th>
+                            <th>Room</th>
+                            <th>Limit</th>
+                            <th>Pax</th>
+                            @if($section->section_type->section_type==='free')
+                            <th>Action</th>
                             @endif
-                        </td>
-                    </tr>
-                    @endforeach
-                </tbody>
-            </table>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($sectionSubjects as $sectionSubject)
+                        <tr>
+                            <td>{{$sectionSubject->subject?->subject_code}}</td>
+                            <td>{{$sectionSubject->subject?->subject_name}}</td>
+                            @php
+                                $daysF2F = json_decode($sectionSubject->subjectSectionSchedule?->class_days_f2f, true) ?? [];
+                                $daysOL = json_decode($sectionSubject->subjectSectionSchedule?->class_days_online, true) ?? [];
+
+                                $dayMap = [
+                                    'Monday' => 'Mon',
+                                    'Tuesday' => 'Tue',
+                                    'Wednesday' => 'Wed',
+                                    'Thursday' => 'Thu',
+                                    'Friday' => 'Fri',
+                                    'Saturday' => 'Sat',
+                                    'Sunday' => 'Sun',
+                                ];
+
+                                $abbreviatedDaysF2F = array_map(function($day) use ($dayMap) {
+                                    return $dayMap[$day] ?? $day;
+                                }, $daysF2F);
+
+                                $abbreviatedDaysOL = array_map(function($day) use ($dayMap) {
+                                    return $dayMap[$day] ?? $day;
+                                }, $daysOL);
+                            @endphp
+                            @if($sectionSubject->subjectSectionSchedule?->class_days_f2f && $sectionSubject->subjectSectionSchedule?->start_time_f2f)
+                            <td class="text-xs">{{ implode(', ', $abbreviatedDaysF2F) }} {{\Carbon\Carbon::parse($sectionSubject->subjectSectionSchedule?->start_time_f2f)->format('h:i A') ?? 'No recorded time.' }} - {{\Carbon\Carbon::parse($sectionSubject->subjectSectionSchedule?->end_time_f2f)->format('h:i A') ?? 'No recorded time.'}}</td>
+                            @else
+                            <td>-</td>
+                            @endif
+                            @if($sectionSubject->subjectSectionSchedule?->class_days_online && $sectionSubject->subjectSectionSchedule?->start_time_online)
+                            <td class="text-xs">{{ implode(', ', $abbreviatedDaysF2F) }} {{\Carbon\Carbon::parse($sectionSubject->subjectSectionSchedule?->start_time_f2f)->format('h:i A') ?? 'No recorded time.' }} - {{\Carbon\Carbon::parse($sectionSubject->subjectSectionSchedule?->end_time_f2f)->format('h:i A') ?? 'No recorded time.'}}</td>
+                            @else
+                            <td>-</td>
+                            @endif
+                            @if($sectionSubject->subjectSectionSchedule?->professor)
+                            <td>{{substr($sectionSubject->subjectSectionSchedule?->professor->first_name,0,1).'.'}} {{$sectionSubject->subjectSectionSchedule?->professor->last_name}}</td>
+                            @else
+                            <td>-</td>
+                            @endif
+                            <td>{{$sectionSubject->subjectSectionSchedule?->room ?? '-' }}</td>
+                            <td>{{$sectionSubject->subjectSectionSchedule?->class_limit ?? '-' }}</td>
+                            @if($sectionSubject->subjectSectionSchedule?->class_limit)
+                            <td class="text-left">
+                                @php
+                                    $enrolledCount = $sectionSubject->enrolledStudentsCount();
+                                    $classLimit = $sectionSubject->subjectSectionSchedule?->class_limit ?? 0;
+                                @endphp
+
+                                @if($enrolledCount >= $classLimit)
+                                    <p class="bg-red-100 text-red-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">Full</p>
+                                @else
+                                    <p>{{ $enrolledCount }}</p>
+                                @endif
+                            </td>
+                            @else
+                            <td>-</td>
+                            <td>
+                                <button @click="showDeleteModal=true; selectedSectionSubjectId = {{ $sectionSubject->id }}" class="bg-red-500 text-white text-xs p-1 rounded hover:bg-red-600 transition ease-in-out duration-150">Remove</button>
+                            </td>
+                            @endif
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
@@ -197,6 +228,24 @@
             </form>
         </div>        
     </div>        
+    <!-- Delete Section Selection Modal for Free -->
+    <div x-cloak x-show="showDeleteModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center px-4 z-50">
+        <div class="modal-content bg-white p-8 rounded-lg shadow-lg overflow-auto max-w-md w-full">
+            <h3 class="text-lg font-bold mb-4">Confirm Deletion</h3>
+            <p>Are you sure you want to remove this subject?</p>
+            <div class="flex justify-end mt-4">
+            <div class="flex items-center">
+                <button @click="showDeleteModal = false" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition ease-in-out duration-150 mr-2">Cancel</button>
+                <form :action="'/admin/functions/sections/store-subjects-free/remove/' + selectedSectionSubjectId" method="POST">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition ease-in-out duration-150">Remove</button>
+                </form>
+            </div>
+            </div>
+        </div>
+    </div>
+            
     <!-- Manage Schedule Modal -->
     <div x-cloak id="manageSchedule" x-show="manageSchedule" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center px-4 z-50" data-section-id="${subject.section_id}">
         <div class="modal-content bg-white p-8 rounded-lg shadow-lg overflow-auto min-wd-lg max-w-xl w-full min-h-[85vh] max-h-[90vh]">
