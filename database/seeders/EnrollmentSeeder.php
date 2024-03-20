@@ -2,10 +2,11 @@
 
 namespace Database\Seeders;
 
+use App\Models\Enrolled_Subject;
 use App\Models\Enrollment;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use League\Csv\Reader;
+use Illuminate\Support\Facades\File;
 
 class EnrollmentSeeder extends Seeder
 {
@@ -14,26 +15,42 @@ class EnrollmentSeeder extends Seeder
      */
     public function run(): void
     {
-        $csvFilePath = database_path('seeds/sample_enrollments_seeder.csv');
-        $csv = Reader::createFromPath($csvFilePath, 'r');
-        $csv->setHeaderOffset(0);
-
-        foreach($csv->getRecords() as $offset=>$record)
-        {
-            $status = empty($record['status']) ? 'pending' : $record['status'];
-            $enrollment_method = empty($record['enrollment_method']) ? 'continuing' : $record['enrollment_method'];
+        $jsonFilePathEnrollment = database_path('seeds/enrollment_seed.json');
+        $jsonFilePathEnrolledSubjects = database_path('seeds/enrolled_subject.json');
+        
+        $enrollmentData = json_decode(File::get($jsonFilePathEnrollment), true);
+        $enrolledSubjectsData = json_decode(File::get($jsonFilePathEnrolledSubjects), true);
+        
+        foreach ($enrollmentData as $item) {
             Enrollment::create([
-                'student_id' => $record['student_id'],
-                'program_id' => $record['program_id'],
-                'academic_year' => $record['academic_year'],
-                'term' => $record['term'],
-                'year_level' => $record['year_level'],
-                'batch' => $record['batch'] ?: null,
-                'enrollment_date' => $record['enrollment_date'] ?: now(),
-                'scholarship_type' => $record['scholarship_type'],
-                'status' => $status,
-                'enrollment_method' => $enrollment_method,
+                'student_id' => $item['student_id'],
+                'program_id' => $item['program_id'],
+                'academic_year' => $item['academic_year'],
+                'term' => $item['term'],
+                'year_level' => $item['year_level'],
+                'batch' => $item['batch'],
+                'enrollment_date' => $item['enrollment_date'],
+                'scholarship_type' => $item['scholarship_type'],
+                'status' => $item['status'],
+                'enrollment_method' => $item['enrollment_method'],
+                'created_at' => $item['created_at'],
+                'updated_at' => $item['updated_at'],
+                'enrollment_code' => $item['enrollment_code'],
             ]);
         }
+
+        foreach ($enrolledSubjectsData as $item) {
+            Enrolled_Subject::create([
+                'enrollment_id' => $item['enrollment_id'],
+                'subject_id' => $item['subject_id'],
+                'sec_sub_id' => $item['sec_sub_id'],
+                'final_grade' => $item['final_grade'],
+                'created_at' => $item['created_at'],
+                'updated_at' => $item['updated_at'],
+                'enrolledSubject_code' => $item['enrolledSubject_code'],
+                'remarks' => $item['remarks'],
+            ]);
+        }
+        
     }
 }

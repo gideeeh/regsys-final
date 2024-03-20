@@ -207,6 +207,11 @@ Route::middleware(['auth','isAdminUser'])->group(function() {
 /* Gradeslip */
 Route::get('/gradeslip/pdf/print/{enrollmentId}', [PrintablesController::class, 'printGradeSlip'])->name('gradeslip.pdf');
 Route::get('/gradeslip/pdf/view/{enrollmentId}', [PrintablesController::class, 'view_gradeslip'])->name('gradeslip.view');
+
+/* TOR */
+Route::get('/tor/pdf/view/{student_id}/{program_id}', [PrintablesController::class, 'view_tor'])->name('tor.view');
+Route::get('/tor/pdf/print/{student_id}/{program_id}', [PrintablesController::class, 'print_tor'])->name('tor.print');
+Route::get('/layout/pdf/view', [PrintablesController::class, 'layout'])->name('practice.layout');
 });
 
 require __DIR__.'/auth.php';

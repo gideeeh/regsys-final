@@ -9,7 +9,6 @@
         @endif
         <h2>Student Number: {{$student->student_number}}</h2>
         <div>
-            <h1>Enrollment Records</h1>
             @foreach($groupedEnrollments as $programId => $enrollments)
                 @php
                     $program = $enrollments->first()->program;
@@ -23,11 +22,11 @@
                 @foreach($enrollmentsByYear as $year => $enrollmentsByTerm)
                     <h4>Year Level: {{ $year }}</h4>
                     @foreach($enrollmentsByTerm->groupBy('term') as $term => $enrollments)
-                        <h5>Term: {{ $term }}</h5>
-                        <button>Print Gradeslip</button>
                         @foreach($enrollments as $enrollment)
+                            <a href="{{ url('/gradeslip/pdf/print/' . $enrollment->enrollment_id) }}">Print Gradeslip</a>
+                            <h5>Acad Year: {{ $enrollment->academic_year }} - T{{ $term }}</h5>
                             <div>
-                                <p>Enrollment Code: {{ $enrollment->enrollment_code }} - Academic Year: {{ $enrollment->academic_year }}</p>
+                                <p>Enrollment Code: {{ $enrollment->enrollment_code }}</p>
                                 <table>
                                     <thead>
                                         <tr>

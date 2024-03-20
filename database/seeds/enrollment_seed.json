@@ -1,0 +1,18 @@
+[
+    {
+      "student_id": 1,
+      "program_id": 1,
+      "academic_year": "2023-2024",
+      "term": 2,
+      "year_level": 1,
+      "batch": "",
+      "enrollment_date": "2024-03-20",
+      "scholarship_type": "none",
+      "status": "success",
+      "enrollment_method": "new",
+      "created_at": "2024-03-20 15:07:54",
+      "updated_at": "2024-03-20 15:07:54",
+      "enrollment_code": "1234-5678_2023-2024_2_1"
+    }
+  ]
+  

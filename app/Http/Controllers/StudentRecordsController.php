@@ -117,41 +117,46 @@ class StudentRecordsController extends Controller
         $latestEnrollment = Student::with(['latestEnrollment', 'latestEnrollment.program', 'notes'])->findOrFail($student_id);
         $student = Student::findOrFail($student_id);
         // $latestYearLevel = $student->enrollments()->orderByDesc('year_level')->first()->year_level ?? null;
-        $enrollmentDetails = DB::table('enrollments as e')
-        ->join('students as s', 'e.student_id', '=', 's.student_id')
-        ->join('enrolled_subjects as esj', 'e.enrollment_id', '=', 'esj.enrollment_id')
-        ->join('subjects as sj', 'esj.subject_id', '=', 'sj.subject_id')
-        ->leftJoin('subjects as pr1', 'sj.prerequisite_1', '=', 'pr1.subject_id')
-        ->leftJoin('subjects as pr2', 'sj.prerequisite_2', '=', 'pr2.subject_id')
-        ->select(
-            's.student_id',
-            's.student_number',
-            's.user_id',
-            'sj.subject_code',
-            'sj.subject_name',
-            'pr1.subject_name as Prerequisite_Name_1',
-            'pr2.subject_name as Prerequisite_Name_2',
-            'e.year_level',
-            'e.term',
-            'sj.units_lec',
-            'sj.units_lab',
-            DB::raw('(sj.units_lec + sj.units_lab) AS TOTAL'),
-            'esj.final_grade'
-        )
-        ->where('s.student_id', $student_id)
-        ->orderByDesc('e.year_level')
-        ->orderByDesc('e.term')
-        ->orderBy('sj.subject_name')
-        ->get();
+
     
         $notes = StudentNote::where('student_id', $student_id)->get();
 
         $files = DB::table('files')->where('student_id', $student_id)->get();
-        
+
+        $enrollments = Enrollment::with(['program', 'enrolledSubjects'])
+            ->where('student_id', $student_id)
+            ->get();     
+            
+        $organizedEnrollments = [];
+        foreach ($student->enrollments as $enrollment) {
+            $programName = $enrollment->program->program_name;
+            $yearLevel = $enrollment->year_level;
+            $term = $enrollment->term;
+    
+            if (!isset($organizedEnrollments[$programName])) {
+                $organizedEnrollments[$programName] = [];
+            }
+            if (!isset($organizedEnrollments[$programName][$yearLevel])) {
+                $organizedEnrollments[$programName][$yearLevel] = [];
+            }
+            if (!isset($organizedEnrollments[$programName][$yearLevel][$term])) {
+                $organizedEnrollments[$programName][$yearLevel][$term] = [];
+            }
+    
+            foreach ($enrollment->enrolledSubjects as $subject) {
+                $organizedEnrollments[$programName][$yearLevel][$term][] = $subject;
+            }
+    
+            usort($organizedEnrollments[$programName][$yearLevel][$term], function ($a, $b) {
+                return strcmp($a->subject->subject_code, $b->subject->subject_code);
+            });
+        }   
+
         return view('admin.indiv-student-record', [
             'student' => $student,
+            'enrollments' => $enrollments,
             'latestEnrollment' => $latestEnrollment,
-            'enrollmentDetails' => $enrollmentDetails,
+            'organizedEnrollments' => $organizedEnrollments,
             'notes' => $notes,
             'files' => $files,
         ]);

@@ -24,7 +24,7 @@ class SubjectCatalogController extends Controller
                 's.units_lab',
                 'pr1.subject_name as prereq1',
                 'pr2.subject_name as prereq2',
-                'cr.subject_id as co_req',
+                'cr.subject_name as co_req',
             ); 
 
         // Search

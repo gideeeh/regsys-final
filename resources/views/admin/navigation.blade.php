@@ -44,6 +44,7 @@
                     </div>
                     <div @mouseover="openEnrollments = true" @mouseleave="openEnrollments = false" class="relative sm:flex sm:items-center">
                         <x-nav-link 
+                            class="sm:flex sm:items-center h-full" 
                             :href="route('enrollment-records')" 
                             :active="request()->routeIs([
                                 'enrollment-records',

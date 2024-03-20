@@ -13,13 +13,10 @@ class SectionSubjectSchedulesSeeder extends Seeder
      */
     public function run()
     {
-        // Path to the JSON file
         $jsonFilePath = database_path('seeds/section_subject_schedules.json');
         
-        // Decode the JSON file to an array
         $data = json_decode(File::get($jsonFilePath), true);
         
-        // Iterate over each item and insert it into the database
         foreach ($data as $item) {
             SectionSubjectSchedule::create([
                 'sec_sub_id' => $item['sec_sub_id'],

@@ -50,7 +50,7 @@ $(document).ready(function() {
 
         let uniqueSectionSelectId = 'select_section_' + Date.now();
 
-        let newRow = `<tr data-subject-id="${subjectDetails.id}">
+        let newRow = `<tr data-subject-id="${subjectDetails.id}" class="text-sm">
             <td class="border border-gray-300 text-center""><strong>${subjectDetails.subject_code}</strong></td>
             <td class="border border-gray-300 text-center"">${subjectDetails.subject_name}</td>
             <td class="border border-gray-300 text-center"><p class="section-name"></p><select id="${uniqueSectionSelectId}" name="select_section[]" style="width: 100%;"></select></td>

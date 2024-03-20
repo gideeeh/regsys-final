@@ -23,7 +23,6 @@ class DatabaseSeeder extends Seeder
             ProgramSeeder::class,
             UserSeeder::class,
             StudentSeeder::class,
-            // EnrollmentSeeder::class,
             AcademicYearSeeder::class,
             // SectionSeeder::class,
             // EnrolledSubjectsSeeder::class,
@@ -35,8 +34,9 @@ class DatabaseSeeder extends Seeder
             ServicesTableSeeder::class,
             SectionTypesSeeder::class,
             SectionsSeeder::class,
-            // SectionSubjectSeeder::class,
-            // SectionSubjectSchedulesSeeder::class,
+            SectionSubjectSeeder::class,
+            SectionSubjectSchedulesSeeder::class,
+            EnrollmentSeeder::class,
         ]);
     }
 }

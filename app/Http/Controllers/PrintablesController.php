@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Enrollment;
+use App\Models\Program;
 use App\Models\Student;
 use PDF;
 
@@ -32,7 +33,7 @@ class PrintablesController extends Controller
                 'subject_code' => $enrolledSubject->subject->subject_code,
                 'subject_name' => $enrolledSubject->subject->subject_name,
                 'final_grade' => $enrolledSubject->final_grade ?? 'Not Graded',
-                'remarks' => $enrolledSubject->remarks ?? 'No remarks',
+                'remarks' => $enrolledSubject->remarks !== null && $enrolledSubject->remarks !== '' ? $enrolledSubject->remarks : 'No remarks',
                 'total_units' => $total_units,
             ];
         });
@@ -86,5 +87,105 @@ class PrintablesController extends Controller
             'enrolledSubjectsData',
             'student_name'
         ));
+    }
+
+    public function view_tor($student_id, $program_id)
+    {
+        if (auth()->user()->role !== 'admin') {
+            abort(403, 'You are not authorized to perform this action.');
+        }
+        
+        $student = Student::with([
+            'enrollments' => function($query) use ($program_id) {
+                $query->where('program_id', $program_id)
+                      ->with('program', 'enrolledSubjects.subject', 'enrolledSubjects.sectionSubject.subjectSectionSchedule.professor');
+            }
+        ])->findOrFail($student_id);
+    
+        // You may still need to organize enrollments by year and term if needed
+        $organizedEnrollments = [];
+        foreach ($student->enrollments as $enrollment) {
+            $yearLevel = $enrollment->year_level;
+            $term = $enrollment->term;
+    
+            if (!isset($organizedEnrollments[$yearLevel])) {
+                $organizedEnrollments[$yearLevel] = [];
+            }
+            if (!isset($organizedEnrollments[$yearLevel][$term])) {
+                $organizedEnrollments[$yearLevel][$term] = [];
+            }
+    
+            foreach ($enrollment->enrolledSubjects as $subject) {
+                $organizedEnrollments[$yearLevel][$term][] = $subject;
+            }
+            
+            // Sort subjects within each term by their code
+            usort($organizedEnrollments[$yearLevel][$term], function ($a, $b) {
+                return strcmp($a->subject->subject_code, $b->subject->subject_code);
+            });
+        }
+    
+        // Fetch the program details separately if needed
+        $program = Program::findOrFail($program_id);
+    
+        return view('admin.printable_templates.tor-template', [
+            'student' => $student,
+            'program' => $program,
+            'organizedEnrollments' => $organizedEnrollments,
+        ]);
+    }
+    
+    public function print_tor($student_id, $program_id)
+    {
+        if (auth()->user()->role !== 'admin') {
+            abort(403, 'You are not authorized to perform this action.');
+        }
+        
+        $student = Student::with([
+            'enrollments' => function($query) use ($program_id) {
+                $query->where('program_id', $program_id)
+                      ->with('program', 'enrolledSubjects.subject', 'enrolledSubjects.sectionSubject.subjectSectionSchedule.professor');
+            }
+        ])->findOrFail($student_id);
+    
+        // You may still need to organize enrollments by year and term if needed
+        $organizedEnrollments = [];
+        foreach ($student->enrollments as $enrollment) {
+            $yearLevel = $enrollment->year_level;
+            $term = $enrollment->term;
+    
+            if (!isset($organizedEnrollments[$yearLevel])) {
+                $organizedEnrollments[$yearLevel] = [];
+            }
+            if (!isset($organizedEnrollments[$yearLevel][$term])) {
+                $organizedEnrollments[$yearLevel][$term] = [];
+            }
+    
+            foreach ($enrollment->enrolledSubjects as $subject) {
+                $organizedEnrollments[$yearLevel][$term][] = $subject;
+            }
+            
+            // Sort subjects within each term by their code
+            usort($organizedEnrollments[$yearLevel][$term], function ($a, $b) {
+                return strcmp($a->subject->subject_code, $b->subject->subject_code);
+            });
+        }
+        
+        $program = Program::findOrFail($program_id);
+    
+        $pdf = PDF::loadView('admin.printable_templates.tor-template', [
+            'student' => $student,
+            'program' => $program,
+            'organizedEnrollments' => $organizedEnrollments,
+        ]);
+    
+        $filename = 'TOR-' . $program->program_code . '-' . $student->student_number . '-' . $student->last_name . '.pdf';
+    
+        return $pdf->download($filename);
+    }
+
+    public function layout()
+    {
+        return view('admin.printable_templates.layout-tool');
     }
 }

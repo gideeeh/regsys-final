@@ -31,7 +31,6 @@
                                     }
                                 }
                             @endphp
-
                             <div class="flex justify-center items-center border-none">
                                 @if($profileImageExists)
                                 <img src="{{ $profileImagePath }}" alt="{{ $student->last_name }}" class="rounded-full border border-1 border-sky-950 p-1" style="width: 100%;" >
@@ -73,50 +72,63 @@
                         </div>
                     </div>
                     <!-- Academic Info Section -->
-                     <div class="stu-academic-info mt-4 bg-white border border-1 rounded-lg p-6 gap-4 cursor-default lg:min-h-[45h] md:min-h-[38vh] sm:min-h-[31vh]">
+
+
+
+                    <div class="stu-academic-info mt-4 bg-white border border-1 rounded-lg p-6 gap-4 cursor-default lg:min-h-[45h] md:min-h-[38vh] sm:min-h-[31vh]">
                         <h3 class="flex w-full justify-center bg-sky-600 px-4 rounded-md text-white mb-4">Academic History</h3>
-                        @if($enrollmentDetails->isNotEmpty())
-                        @foreach($enrollmentDetails->groupBy('year_level') as $yearLevel => $yearDetails)
-                        <h2 class="text-center bg-sky-950 text-white rounded-md">{{ ordinal($yearLevel) }} Year</h2>
-                            @foreach($yearDetails->groupBy('term') as $term => $details)
-                            <h2>Term: {{ ordinal($term) }}</h2>
-                            <div class="overflow-x-auto bg-white rounded-lg shadow overflow-y-auto relative">
-                                <table class="min-w-full">
-                                    <thead>
-                                        <tr class="text-left text-sm bg-slate-300">
-                                            <th class="w-2/12 px-4 py-2">Subject Code</th>
-                                            <th class="w-2/12 px-4 py-2">Subject Name</th>
-                                            <th class="w-2/12 px-4 py-2">Pre-req 1</th>
-                                            <th class="w-2/12 px-4 py-2">Pre-req 2</th>
-                                            <th class="px-4 py-2">Units (Lec)</th>
-                                            <th class="px-4 py-2">Units (Lab)</th>
-                                            <th class="px-4 py-2">Total Units</th>
-                                            <th class="px-4 py-2">Final Grade</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                    @foreach($details as $detail)
-                                        <tr class="">
-                                            <td class="px-4 py-2">{{ $detail->subject_code }}</td>
-                                            <td class="px-4 py-2">{{ $detail->subject_name }}</td>
-                                            <td class="px-4 py-2">{{ $detail->Prerequisite_Name_1 ?? '-' }}</td>
-                                            <td class="px-4 py-2">{{ $detail->Prerequisite_Name_2 ?? '-' }}</td>
-                                            <td class="px-4 py-2">{{ $detail->units_lec }}</td>
-                                            <td class="px-4 py-2">{{ $detail->units_lab }}</td>
-                                            <td class="px-4 py-2">{{ $detail->TOTAL }}</td>
-                                            <td class="px-4 py-2">{{ $detail->final_grade }}</td>
-                                        </tr>
+                        @foreach($organizedEnrollments as $programName => $years)
+                            <h4>{{ $programName }}</h4> <!-- Program Name -->
+                            @foreach($years as $yearLevel => $terms)
+                                <div>
+                                    <strong>{{ $yearLevel }} Year</strong>
+                                    @foreach($terms as $term => $subjects)
+                                        <p>Term {{ $term }}</p>
+                                        <table class="min-w-full table-auto">
+                                            <thead>
+                                                <tr>
+                                                    <th class="border px-4 py-2">Subject Code</th>
+                                                    <th class="border px-4 py-2">Subject Name</th>
+                                                    <th class="border px-4 py-2">Grade</th>
+                                                    <th class="border px-4 py-2">Remarks</th>
+                                                    <!-- Add more <th> here for additional fields -->
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach($subjects as $enrolledSubject)
+                                                    <tr>
+                                                        <td class="border px-4 py-2">{{ $enrolledSubject->subject->subject_code }}</td>
+                                                        <td class="border px-4 py-2">{{ $enrolledSubject->subject->subject_name }}</td>
+                                                        <td class="border px-4 py-2">{{ $enrolledSubject->final_grade ?? 'Not Graded' }}</td>
+                                                        <td class="border px-4 py-2">{{ $enrolledSubject->remarks !== null && $enrolledSubject->remarks !== '' ? $enrolledSubject->remarks : 'No remarks' }}</td>
+                                                        <!-- Add more <td> here for additional details -->
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
                                     @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
+                                </div>
                             @endforeach
                         @endforeach
-                        @else
-                        <h3 class="mt-16 text-rose-600 text-center bg-slate-100">Student Has No Enrollment History.</h3>
-                        @endif
                     </div>
+
                 </main>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                 <aside class="indiv-student-sidepanel cursor-default">
                     <div class="stu-notes bg-white border border-1 rounded-lg p-6 mb-4 lg:min-h-[47h] md:min-h-[40vh] sm:min-h-[33vh] lg:max-h-[47h] md:max-h-[40vh] sm:max-h-[33vh] overflow-y-auto nice-scroll">
                         <div class="flex justify-between mb-6">

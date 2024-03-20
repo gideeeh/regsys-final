@@ -72,7 +72,7 @@
                     <td>{{ $data['subject_name'] }}</td>
                     <td>{{ $data['total_units'] }}</td>
                     <td>{{ $data['final_grade'] }}</td>
-                    <td>{{ $data['remarks'] }}</td>
+                    <td>{{ $data['remarks'] ?? 'No remarks'}}</td>
                 </tr>
             @endforeach
             </tbody>
