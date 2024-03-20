@@ -135,17 +135,22 @@ class ProgramController extends Controller
         }, []);
         
         $program_subjects = Program_Subject::with('subject')
-                        ->join('subjects as s', 'program_subjects.subject_id', '=', 's.subject_id')
-                        ->leftJoin('subjects as pr1', 's.prerequisite_1', '=', 'pr1.subject_id')
-                        ->leftJoin('subjects as pr2', 's.prerequisite_2', '=', 'pr2.subject_id')
-                        ->where('program_subjects.program_id', $program_id)
-                        ->select([
-                            'program_subjects.*', 
-                            'pr1.subject_name as prerequisite_1',
-                            'pr2.subject_name as prerequisite_2', 
-                        ])
-                        ->get()
-                        ->groupBy(['year', 'term']);
+            ->join('subjects as s', 'program_subjects.subject_id', '=', 's.subject_id')
+            ->leftJoin('subjects as pr1', 's.prerequisite_1', '=', 'pr1.subject_id')
+            ->leftJoin('subjects as pr2', 's.prerequisite_2', '=', 'pr2.subject_id')
+            ->leftJoin('subjects as cr', 's.co_requisite', '=', 'cr.subject_id')
+            ->where('program_subjects.program_id', $program_id)
+            ->select([
+                'program_subjects.*', 
+                's.subject_code', 
+                'pr1.subject_name as prerequisite_1',
+                'pr2.subject_name as prerequisite_2', 
+                'cr.subject_name as co_req', 
+            ])
+            ->orderBy('s.subject_code') 
+            ->get()
+            ->groupBy(['year', 'term']);
+
 
 
         $selectedSubjectsIds = Program_Subject::where('program_id', $program_id)

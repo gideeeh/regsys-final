@@ -119,7 +119,7 @@
                 <table class="border-separate border-spacing-1">
                     <thead>
                         <tr class="text-left">
-                            <th>Subject Code</th>
+                            <th>Code</th>
                             <th>Subject Name</th>
                             <th>Sched F2F</th>
                             <th>Sched OL</th>
@@ -356,19 +356,19 @@
                             <div class="w-1/2 pl-4">
                                 <div>
                                     <label class="flex items-center space-x-3">
-                                        <input type="checkbox" name="online_days[]" value="Wednesday" class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded">
+                                        <input type="checkbox" name="online_days[]" value="Thursday" class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded">
                                         <span class="text-gray-700">Thursday</span>
                                     </label>
                                 </div>
                                 <div>
                                     <label class="flex items-center space-x-3">
-                                        <input type="checkbox" name="online_days[]" value="Wednesday" class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded">
+                                        <input type="checkbox" name="online_days[]" value="Friday" class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded">
                                         <span class="text-gray-700">Friday</span>
                                     </label>
                                 </div>
                                 <div>
                                     <label class="flex items-center space-x-3">
-                                        <input type="checkbox" name="online_days[]" value="Wednesday" class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded">
+                                        <input type="checkbox" name="online_days[]" value="Saturday" class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded">
                                         <span class="text-gray-700">Saturday</span>
                                     </label>
                                 </div>

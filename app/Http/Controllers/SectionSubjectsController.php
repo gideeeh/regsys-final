@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 class SectionSubjectsController extends Controller
 {
 
+    // Store free subejct here, block subjects are stored in SectionSubjectController
     public function store_free(Request $request)
     {
         $section_subjects = SectionSubject::firstOrCreate([
@@ -33,7 +34,7 @@ class SectionSubjectsController extends Controller
             'section_id' => $request->section_id,
             'subject_id' => $request->subject_id,
         ]);
-    
+
         $scheduleData = [
             'prof_id' => $request->prof_id,
             'class_days_f2f' => is_array($request->f2f_days) ? json_encode($request->f2f_days) : $request->f2f_days,
@@ -45,7 +46,45 @@ class SectionSubjectsController extends Controller
             'room' => $request->room,
             'class_limit' => $request->class_limit,
         ];
+
+        $f2fDays = is_array($request->f2f_days) ? $request->f2f_days : json_decode($request->f2f_days);
+        $onlineDays = is_array($request->online_days) ? $request->online_days : json_decode($request->online_days);
     
+        // Convert times to a comparable format
+        $startTimeF2F = strtotime($request->start_time_f2f);
+        $endTimeF2F = strtotime($request->end_time_f2f);
+        $startTimeOnline = strtotime($request->start_time_online);
+        $endTimeOnline = strtotime($request->end_time_online);
+    
+        // Query for potential conflicts within the same section oh yeaaa
+        $potentialConflicts = SectionSubjectSchedule::whereHas('sectionSubject', function($query) use ($request) {
+            $query->where('section_id', $request->section_id);
+        })->get();
+    
+        foreach ($potentialConflicts as $conflict) {
+            $conflictDaysF2F = json_decode($conflict->class_days_f2f);
+            $conflictDaysOnline = json_decode($conflict->class_days_online);
+    
+            foreach ($f2fDays as $day) {
+                if (in_array($day, $conflictDaysF2F)) {
+                    // Check time overlap for F2F
+                    if ($startTimeF2F < strtotime($conflict->end_time_f2f) && $endTimeF2F > strtotime($conflict->start_time_f2f)) {
+                        return redirect()->back()->with('error', 'Schedule conflict detected for F2F.');
+                    }
+                }
+            }
+    
+            foreach ($onlineDays as $day) {
+                if (in_array($day, $conflictDaysOnline)) {
+                    // Check time overlap for Online
+                    if ($startTimeOnline < strtotime($conflict->end_time_online) && $endTimeOnline > strtotime($conflict->start_time_online)) {
+                        return redirect()->back()->with('error', 'Schedule conflict detected for Online.');
+                    }
+                }
+            }
+        }
+    
+        // Proceed if no conflicts are found
         $section_subject_schedule = SectionSubjectSchedule::updateOrCreate([
             'sec_sub_id' => $section_subject->id,
         ], $scheduleData);

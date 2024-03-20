@@ -1,4 +1,4 @@
-<nav x-data="{ openFunctions: false, openRecords: false, openAppointments: false, notifs: false, }" class="bg-white border-b border-gray-100">
+<nav x-data="{ openFunctions: false, openEnrollments:false, openRecords: false, openAppointments: false, notifs: false, }" class="bg-white border-b border-gray-100">
     <!-- Primary Navigation Menu -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
@@ -42,14 +42,30 @@
                             </x-dropdown-link>
                         </div>
                     </div>
-                    <x-nav-link 
-                        :href="route('enrollment-records')" 
-                        :active="request()->routeIs([
-                            'enrollment-records',
-                            'enrollments.enroll',
-                            ])">
-                        {{ __('Enrollments') }}
-                    </x-nav-link>
+                    <div @mouseover="openEnrollments = true" @mouseleave="openEnrollments = false" class="relative sm:flex sm:items-center">
+                        <x-nav-link 
+                            :href="route('enrollment-records')" 
+                            :active="request()->routeIs([
+                                'enrollment-records',
+                                'enrollments.enroll',
+                                ])">
+                            {{ __('Enrollments') }}
+                        </x-nav-link>
+                        <div class="dropdown-content absolute bg-white shadow-md z-50 w-40" 
+                            x-cloak 
+                            x-show="openEnrollments" 
+                            x-transition:enter="transition ease-out duration-100"
+                            x-transition:enter-start="opacity-0 transform scale-90"
+                            x-transition:enter-end="opacity-100 transform scale-100">
+                            <!-- Dropdown links -->
+                            <x-dropdown-link :href="route('enrollment-records')">
+                                        {{ __('Enrollment Records') }}
+                            </x-dropdown-link>
+                            <x-dropdown-link :href="route('enrollments.enroll')">
+                                        {{ __('Enroll Student') }}
+                            </x-dropdown-link>
+                        </div>
+                    </div>
 
                     <div @mouseover="openFunctions = true" @mouseleave="openFunctions = false" class="relative sm:flex sm:items-center">
                         <x-nav-link 

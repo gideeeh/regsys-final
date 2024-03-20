@@ -51,7 +51,9 @@
                                                 <td>{{ $enrolledSubject->sec_sub_id ?? 'No sec_sub' }}</td>
                                                 <td>{{ $enrolledSubject->sectionSubject->subjectSectionSchedule->professor->first_name ?? 'No professor record' }}</td>
                                                 <td>{{ $enrolledSubject->enrolledSubject_code ?? 'No enrolled subject code' }}</td>
-                                                <td><button>Update</button></td>
+                                                <td>
+                                                    <button>Update</button>
+                                                </td>
                                             </tr>
                                         @endforeach
                                     </tbody>

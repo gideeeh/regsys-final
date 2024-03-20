@@ -29,7 +29,7 @@
     <span class="py-8"><em>{{ trim($program->program_desc) ? $program->program_desc : 'No Description' }}</em></span>
     <div class="flex py-4 flex-col">
         <span><strong>Program Coordinator:</strong> {{ trim($program->program_coordinator) ? $program->program_coordinator : 'Not Set' }}</span>
-        <span><strong>Total Enrolled Students:</strong></span>
+        <!-- <span><strong>Total Enrolled Students:</strong></span> -->
         <span><strong>Total Units:</strong> {{$total_units}}</span>
     </div>
     <!-- Display subjects Year 1 to 3 -->
@@ -48,13 +48,14 @@
                         $term = $termKey + 1;
                     @endphp
                     @if(isset($program_subjects[$year][$term]))
-                    <table class="border-solid table-auto w-full whitespace-no-wrap bg-white table-striped relative">
+                    <table class="border-solid table-auto w-full whitespace-no-wrap bg-white table-striped relative text-xs">
                         <thead>
                             <tr class="text-left">
                                 <th class="w-1/12 bg-sky-600 text-white p-2 pl-4">Code</th>
                                 <th class="w-3/12 bg-sky-600 text-white p-2">Name</th>
-                                <th class="w-3/12 bg-sky-600 text-white p-2">Pre-req 1</th>
-                                <th class="w-3/12 bg-sky-600 text-white p-2">Pre-req 2</th>
+                                <th class="bg-sky-600 text-white p-2">Pre-req 1</th>
+                                <th class="bg-sky-600 text-white p-2">Pre-req 2</th>
+                                <th class="bg-sky-600 text-white p-2">Co req</th>
                                 <th class="w-1/12 text-center bg-sky-600 text-white p-2">Units(Lec)</th>
                                 <th class="w-1/12 text-center bg-sky-600 text-white p-2 pr-4">Units(Lab)</th>
                             </tr>
@@ -66,6 +67,7 @@
                                 <td class="border-dashed border-t border-gray-200 p-2 py-4">{{$program_subject->subject->subject_name}}</td>
                                 <td class="border-dashed border-t border-gray-200 p-2 py-4">{{ $program_subject->prerequisite_1 ?? '-' }}</td>
                                 <td class="border-dashed border-t border-gray-200 p-2 py-4">{{ $program_subject->prerequisite_2 ?? '-' }}</td>
+                                <td class="border-dashed border-t border-gray-200 p-2 py-4">{{ $program_subject->co_req ?? '-' }}</td>
                                 <td class="border-dashed text-center border-t border-gray-200 p-2 py-4">{{$program_subject->subject->units_lec}}</td>
                                 <td class="border-dashed text-center border-t border-gray-200 p-2 py-4 pr-4">{{$program_subject->subject->units_lab}}</td>
                             </tr>
@@ -98,12 +100,13 @@
                 $term = 1;
             @endphp
             @if(isset($program_subjects[$year][$term]))
-            <table class="border-solid table-auto w-full whitespace-no-wrap bg-white table-striped relative">
+            <table class="border-solid table-auto w-full whitespace-no-wrap bg-white table-striped relative text-xs">
                 <thead>
                     <th class="w-1/12 bg-sky-600 text-white p-2">Code</th>
                     <th class="w-3/12 bg-sky-600 text-white p-2">Name</th>
                     <th class="w-3/12 bg-sky-600 text-white p-2">Pre-req 1</th>
                     <th class="w-3/12 bg-sky-600 text-white p-2">Pre-req 2</th>
+                    <th class="w-3/12 bg-sky-600 text-white p-2">Co-req</th>
                     <th class="w-1/12 bg-sky-600 text-white p-2">Units(Lec)</th>
                     <th class="w-1/12 bg-sky-600 text-white p-2">Units(Lab)</th>
                 </thead>
@@ -114,6 +117,7 @@
                         <td class="border-dashed border-t border-gray-200 p-2 py-4">{{$program_subject->subject->subject_name}}</td>
                         <td class="border-dashed border-t border-gray-200 p-2 py-4">{{$program_subject->prerequisite_1}}</td>
                         <td class="border-dashed border-t border-gray-200 p-2 py-4">{{$program_subject->prerequisite_2}}</td>
+                        <td class="border-dashed border-t border-gray-200 p-2 py-4">{{$program_subject->co_req}}</td>
                         <td class="border-dashed border-t border-gray-200 p-2 py-4">{{$program_subject->subject->units_lec}}</td>
                         <td class="border-dashed border-t border-gray-200 p-2 py-4">{{$program_subject->subject->units_lab}}</td>
                     </tr>

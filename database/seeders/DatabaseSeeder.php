@@ -35,8 +35,8 @@ class DatabaseSeeder extends Seeder
             ServicesTableSeeder::class,
             SectionTypesSeeder::class,
             SectionsSeeder::class,
-            SectionSubjectSeeder::class,
-            SectionSubjectSchedulesSeeder::class,
+            // SectionSubjectSeeder::class,
+            // SectionSubjectSchedulesSeeder::class,
         ]);
     }
 }

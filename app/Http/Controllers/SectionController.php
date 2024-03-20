@@ -124,6 +124,7 @@ class SectionController extends Controller
         $blockSubjects = Program_Subject::join('subjects', 'program_subjects.subject_id', '=', 'subjects.subject_id')
             ->select('program_subjects.*', 'subjects.subject_code', 'subjects.subject_name') // Include subject details
             ->where('year', $section->year_level)
+            ->where('term', $section->term)
             ->orderBy('subjects.subject_code')
             ->get()
             ->unique('subject_id'); 
