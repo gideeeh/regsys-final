@@ -68,7 +68,12 @@
                                     <span class="mt-4 bg-sky-500 text-white text-sm p-1 rounded hover:bg-sky-600 transition ease-in-out duration-150">Personal Information</span>
                                 </a>
                             </div>
-                            <a onclick="event.stopPropagation(); window.open('{{ route('student.edit', $student->student_id) }}', '_blank');" class="cursor-pointer absolute top-2 right-2 text-xs p-1 rounded bg-slate-300 text-white hover:bg-slate-400 transition ease-in-out duration-150">Update</a>
+                            <a 
+                                onclick="event.stopPropagation(); 
+                                window.open('{{ route('student.edit', $student->student_id) }}', '_blank');" 
+                                class="cursor-pointer absolute top-2 right-2 text-xs p-1 rounded bg-slate-300 text-white hover:bg-slate-400 transition ease-in-out duration-150">
+                                Update
+                            </a>
                         </div>
                     </div>
                     <!-- Academic Info Section -->
@@ -77,9 +82,10 @@
 
                     <div class="stu-academic-info mt-4 bg-white border border-1 rounded-lg p-6 gap-4 cursor-default lg:min-h-[45h] md:min-h-[38vh] sm:min-h-[31vh]">
                         <h3 class="flex w-full justify-center bg-sky-600 px-4 rounded-md text-white mb-4">Academic History</h3>
-                        @foreach($organizedEnrollments as $programName => $years)
-                            <h4>{{ $programName }}</h4> <!-- Program Name -->
-                            @foreach($years as $yearLevel => $terms)
+                        @foreach($organizedEnrollments as $programName => $data)
+                            <h4>{{ $programName }}</h4> 
+                            <a href="{{ url('/tor/pdf/print/'. $student->student_id .'/' . $data['programId']) }}">Print TOR</a>
+                            @foreach($data['years'] as $yearLevel => $terms)
                                 <div>
                                     <strong>{{ $yearLevel }} Year</strong>
                                     @foreach($terms as $term => $subjects)
@@ -91,7 +97,7 @@
                                                     <th class="border px-4 py-2">Subject Name</th>
                                                     <th class="border px-4 py-2">Grade</th>
                                                     <th class="border px-4 py-2">Remarks</th>
-                                                    <!-- Add more <th> here for additional fields -->
+                                
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -101,7 +107,7 @@
                                                         <td class="border px-4 py-2">{{ $enrolledSubject->subject->subject_name }}</td>
                                                         <td class="border px-4 py-2">{{ $enrolledSubject->final_grade ?? 'Not Graded' }}</td>
                                                         <td class="border px-4 py-2">{{ $enrolledSubject->remarks !== null && $enrolledSubject->remarks !== '' ? $enrolledSubject->remarks : 'No remarks' }}</td>
-                                                        <!-- Add more <td> here for additional details -->
+                                                    
                                                     </tr>
                                                 @endforeach
                                             </tbody>

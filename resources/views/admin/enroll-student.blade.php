@@ -70,11 +70,15 @@
                 <input type="text" id="student_number" name="student_number" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" required>
             </div>
             <div class="flex flex-col items-start mr-4 w-2/12">
-                <label for="program_id" class="block text-sm font-medium text-gray-700 mr-2">Course:</label>
+                <label for="program_id" class="block text-sm font-medium text-gray-700 mr-2">Program:</label>
                 <select id="program_id" name="program_id" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" required>
                     <option value="" disabled selected hidden></option>
                     @foreach($programs as $program)
-                    <option value="{{ $program->program_id }}">{{ $program->program_code }}</option>
+                    @if($program->program_major !== null && $program->program_major !== '')
+                    <option value="{{ $program->program_id }}">{{ $program->program_code .' Major in '. $program->program_major}}</option>
+                    @else
+                    <option value="{{ $program->program_id }}">{{ $program->program_code}}</option>
+                    @endif
                     @endforeach
                 </select>
             </div>

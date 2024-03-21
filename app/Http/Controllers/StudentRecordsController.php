@@ -130,27 +130,32 @@ class StudentRecordsController extends Controller
         $organizedEnrollments = [];
         foreach ($student->enrollments as $enrollment) {
             $programName = $enrollment->program->program_name;
+            $programId = $enrollment->program->program_id;
             $yearLevel = $enrollment->year_level;
             $term = $enrollment->term;
-    
+        
             if (!isset($organizedEnrollments[$programName])) {
-                $organizedEnrollments[$programName] = [];
+                $organizedEnrollments[$programName] = [
+                    'programId' => $programId, // Store programId here
+                    'years' => [],
+                ];
             }
-            if (!isset($organizedEnrollments[$programName][$yearLevel])) {
-                $organizedEnrollments[$programName][$yearLevel] = [];
+        
+            if (!isset($organizedEnrollments[$programName]['years'][$yearLevel])) {
+                $organizedEnrollments[$programName]['years'][$yearLevel] = [];
             }
-            if (!isset($organizedEnrollments[$programName][$yearLevel][$term])) {
-                $organizedEnrollments[$programName][$yearLevel][$term] = [];
+            if (!isset($organizedEnrollments[$programName]['years'][$yearLevel][$term])) {
+                $organizedEnrollments[$programName]['years'][$yearLevel][$term] = [];
             }
-    
+        
             foreach ($enrollment->enrolledSubjects as $subject) {
-                $organizedEnrollments[$programName][$yearLevel][$term][] = $subject;
+                $organizedEnrollments[$programName]['years'][$yearLevel][$term][] = $subject;
             }
-    
-            usort($organizedEnrollments[$programName][$yearLevel][$term], function ($a, $b) {
+        
+            usort($organizedEnrollments[$programName]['years'][$yearLevel][$term], function ($a, $b) {
                 return strcmp($a->subject->subject_code, $b->subject->subject_code);
             });
-        }   
+        }
 
         return view('admin.indiv-student-record', [
             'student' => $student,
