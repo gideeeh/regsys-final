@@ -6,26 +6,25 @@ use App\Models\SectionSubject;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use League\Csv\Reader;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 
 class SectionSubjectSeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
-    public function run(): void
+    public function run()
     {
-        $csvFilePath = database_path('seeds/sample_section_subject_seeder.csv');
-        $csv = Reader::createFromPath($csvFilePath, 'r');
-        $csv->setHeaderOffset(0);
-
-        foreach($csv->getRecords() as $offset=>$record)
-        {
-            SectionSubject::create([
-                'section_id' => $record['section_id'],
-                'subject_id' => $record['subject_id'],
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]); 
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        
+        $jsonFilePath = database_path('seeds/section_subjects.json');
+        $data = json_decode(File::get($jsonFilePath), true);
+        
+        foreach ($data as $item) {
+            SectionSubject::create($item);
         }
+
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
     }
 }

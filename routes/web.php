@@ -125,10 +125,14 @@ Route::middleware(['auth','isAdminUser'])->group(function() {
     Route::get('/admin/enrollment-records', [EnrollmentsController::class, 'index'])->name('enrollment-records');
     Route::get('/admin/enrollment-records/{enrollment_id}', [EnrollmentsController::class, 'show'])->name('enrollment-records.show');
     Route::get('/admin/enrollments/enroll', [EnrollmentsController::class, 'enroll'])->name('enrollments.enroll');
+    Route::get('/admin/enrollments/credit-subject', [EnrollmentsController::class, 'credit_student'])->name('enrollments.credit-subject');
     Route::post('/admin/enrollments/enroll/enroll_student',[EnrollmentsController::class, 'store'])->name('enrollments.store');
     Route::post('/admin/enrollments/validate', [EnrollmentsController::class, 'validateSelections'])->name('enrollment.validate');
-    /* Enroll Subjects */
+    Route::delete('/admin/faculty-records/delete/{enrollment_id}', [EnrollmentsController::class, 'destroy_enrollment'])->name('enrollment.destroy');
+/* Enroll Subjects */
     Route::post('/admin/enrollments/enroll/enroll_subjects/{enrollment_id}',[EnrolledSubjectsController::class, 'store'])->name('enroll.subjects');
+/* Update grade */
+    Route::patch('/admin/enrollment-records/{enrollment_id}/{enrolledSubject_id}', [GradesController::class, 'update_grade'])->name('update.grade');
 /* Departments */
     Route::get('/admin/functions/program-course-management/departments', [DepartmentsController::class, 'index'])->name('departments');
     Route::post('/admin/functions/program-course-management/departments/create-dept-record', [DepartmentsController::class, 'store'])->name('departments.store');
@@ -162,12 +166,14 @@ Route::middleware(['auth','isAdminUser'])->group(function() {
     Route::post('/admin/functions/program-course-management/academic_year/add_acad_year',[AcademicYearController::class, 'store'])->name('academic-year.store');
     Route::patch('/admin/functions/program-course-management/academic_year/update_acad_year/{id}',[AcademicYearController::class, 'update'])->name('academic-year.update');
     Route::delete('/admin/functions/program-course-management/academic_year/delete_acad_year/{id}',[AcademicYearController::class, 'destroy'])->name('academic-year.delete');
-/* Class Schedules */
+/* Sections, Section Subjects */
+    /* Class Schedules */
     Route::get('/admin/functions/program-course-management/sections',[SectionController::class, 'index'])->name('sections');
     Route::get('/admin/functions/program-course-management/sections/{id}',[SectionController::class, 'show'])->name('sections.show');
+    Route::patch('/admin/functions/program-course-management/update-sections/{section_id}',[SectionController::class, 'update_section'])->name('sections.update');
+    Route::delete('/admin/functions/program-course-management/delete-sections/{section_id}',[SectionController::class, 'delete_section'])->name('sections.delete');
     // Route::get('/admin/functions/program-course-management/sections/create',[SectionController::class, 'create_section'])->name('section.create');
     Route::post('/admin/functions/program-course-management/sections/create',[SectionController::class, 'store'])->name('section.create');
-/* Sections, Section Subjects */
     Route::post('/admin/functions/sections/assign-schedule',[SectionSubjectsController::class, 'store'])->name('section-subject.store');
     Route::post('/admin/functions/sections/store-subjects-free',[SectionSubjectsController::class, 'store_free'])->name('section-subject-free.store');
     Route::post('/admin/functions/sections/store-subjects-free/set_schedule',[SectionSubjectSchedulesController::class, 'store_schedule_free_section'])->name('section-subject-free-schedule.store');

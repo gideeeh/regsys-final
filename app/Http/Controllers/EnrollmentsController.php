@@ -10,8 +10,10 @@ use App\Models\Program;
 use App\Models\SectionSubject;
 use App\Models\Student;
 use App\Models\Subject;
+use App\Models\User;
 use App\Services\AcademicYearService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -88,7 +90,6 @@ class EnrollmentsController extends Controller
 
     public function show($student_id)
     {
-        // Eager load enrollments with programs and their enrolled subjects (including the subject details).
         $student = Student::with([
             'enrollments.program',
             'enrollments.enrolledSubjects.subject',
@@ -97,11 +98,13 @@ class EnrollmentsController extends Controller
                 $query->orderBy('year_level', 'desc')->orderBy('term');
             }
         ])->findOrFail($student_id);
+
+        $user = Auth::user();
     
         // Group enrollments by program_id.
         $groupedEnrollments = $student->enrollments->groupBy('program_id');
     
-        return view('admin.enrollment-records-show', compact('groupedEnrollments', 'student'));
+        return view('admin.enrollment-records-show', compact('groupedEnrollments', 'student', 'user'));
     }
     
     
@@ -228,5 +231,43 @@ class EnrollmentsController extends Controller
         $enrollments = Enrollment::all();
         return EnrollmentResource::collection($enrollments);
         
+    }
+
+    public function destroy_enrollment(Request $request, $enrollment_id)
+    {
+        if (Auth::user()->role !== 'admin') { 
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
+        // Verify if password is correct
+        if (!Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
+            return response()->json(['message' => 'Password verification failed'], 403);
+        }
+
+        DB::beginTransaction();
+        try {
+            Enrolled_Subject::where('enrollment_id', $enrollment_id)->delete();
+            $enrollment = Enrollment::find($enrollment_id);
+            if ($enrollment) {
+                $enrollment->delete();
+                DB::commit();
+                return back()->with('success', 'Enrollment Record has been deleted.');
+            } else {
+                DB::rollBack();
+                return redirect()->back()->with('error', 'Error in deleting enrollment record!');
+            }
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Error in deleting enrollment record!');
+        }
+    }
+
+    public function credit_student()
+    {
+        $students = Student::all();
+
+        return view('admin.credit-subject',[
+            'students' => $students,
+        ]);
     }
 }

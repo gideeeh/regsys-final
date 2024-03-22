@@ -11,6 +11,7 @@ use App\Models\SectionSubjectSchedule;
 use App\Models\SectionType;
 use App\Services\AcademicYearService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class SectionController extends Controller
 {
@@ -22,6 +23,10 @@ class SectionController extends Controller
     }
     public function index(Request $request)
     {
+        if (Auth::check()) {
+            $user = Auth::user();
+        }
+
         $acad_years = Academic_Year::all();
         $activeAcadYearAndTerm  = $this->academicYearService->determineActiveAcademicYearAndTerm();
         if (!$activeAcadYearAndTerm ) {
@@ -58,13 +63,13 @@ class SectionController extends Controller
         if ($request->filled('filter_section_type') && $request->filter_section_type != 'all') {
             $query->where('section_type_id', $request->filter_section_type);
         }
-        if ($request->filled('filter_year_level')) {
+        if ($request->filled('filter_year_level') && $request->filter_year_level != 'all') {
             $query->where('year_level', $request->filter_year_level);
-        }
+        }        
     
-        $sections = $query->get();
+        $sections = $query->paginate(10);
     
-        return view('admin.sections', compact('sections', 'programs', 'acad_years', 'activeAcadYear', 'activeTerm', 'uniqueSections', 'initial_sections', 'section_types'));
+        return view('admin.sections', compact('user', 'sections', 'programs', 'acad_years', 'activeAcadYear', 'activeTerm', 'uniqueSections', 'initial_sections', 'section_types'));
     }
 
     public function store(Request $request)
@@ -143,5 +148,48 @@ class SectionController extends Controller
     
         return view('admin.section-show', compact('section', 'blockSubjects', 'sectionSubjects'));
     }
+
+    public function update_section(Request $request, $section_id)
+    {
+        $section = Section::findOrFail($section_id);
+
+        if($section) {
+            $section->section_name = $request->section_name;
+            $section->save();
+            return back()->with('success', 'Section successfully updated');
+        } else {
+            return back()->with('error', 'Error in updating section.');
+        }
+    }
+
+    public function delete_section($section_id, Request $request)
+    {
+        
+        if (!Auth::user()->role === 'admin') { 
+            return back()->with('error', 'Unauthorized');
+        }
+
+        // Verify if password is correct
+        if (!Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
+            return back()->with('error', 'Verification failed');
+        }
+
+        $section = Section::find($section_id);
+        if ($section) {
+            $sectionSubjects = $section->sectionSubject()->get();
     
+            foreach ($sectionSubjects as $sectionSubject) {
+                $sectionSubject->subjectSectionSchedule()->delete();
+                $sectionSubject->enrolledSubject()->delete();
+            }
+    
+            $section->sectionSubject()->delete();
+    
+            $section->delete();
+    
+            return redirect()->back()->with('success', 'Section and related records deleted successfully!');
+        } else {
+            return redirect()->back()->with('error', 'Error in deleting section.');
+        }
+    }
 }

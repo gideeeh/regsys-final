@@ -35,6 +35,7 @@ class DatabaseSeeder extends Seeder
             SectionSubjectSeeder::class,
             SectionSubjectSchedulesSeeder::class,
             EnrollmentSeeder::class,
+            ApiSeeder::class,
         ]);
     }
 }

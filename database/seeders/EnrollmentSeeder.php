@@ -15,8 +15,8 @@ class EnrollmentSeeder extends Seeder
      */
     public function run(): void
     {
-        $jsonFilePathEnrollment = database_path('seeds/enrollment_seed.json');
-        $jsonFilePathEnrolledSubjects = database_path('seeds/enrolled_subject.json');
+        $jsonFilePathEnrollment = database_path('seeds/enrollments.json');
+        $jsonFilePathEnrolledSubjects = database_path('seeds/enrolled_subjects.json');
         
         $enrollmentData = json_decode(File::get($jsonFilePathEnrollment), true);
         $enrolledSubjectsData = json_decode(File::get($jsonFilePathEnrolledSubjects), true);

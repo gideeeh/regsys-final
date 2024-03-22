@@ -56,7 +56,7 @@
                             <td class="border-dashed border-t border-gray-300 p-2">{{ $subject->prereq2 ?? '-'}}</td>
                             <td class="border-dashed border-t border-gray-300 p-2">{{ $subject->co_req ?? '-'}}</td>
                             <td class="border-dashed border-t border-gray-300 p-2 pr-4">
-                                <div class="flex justify-between gap-2">
+                                <div class="flex gap-2">
                                     <button 
                                         @click.stop="showUpdateModal=true; 
                                         selectedId = {{$subject->subject_id}};

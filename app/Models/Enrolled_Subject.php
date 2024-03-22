@@ -19,6 +19,7 @@ class Enrolled_Subject extends Model
         'sec_sub_id',
         'final_grade',
         'enrolledSubject_code',
+        'remarks',
     ];
 
     public function subject()

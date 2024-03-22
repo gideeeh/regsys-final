@@ -4,12 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\Enrolled_Subject;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
 class GradesController extends Controller
 {
+    // From API Grading System
     public function submitGrades(Request $request)
     {
         $gradesData = $request->input('grades');
@@ -47,5 +49,33 @@ class GradesController extends Controller
             Log::error('Failed to update grades: ' . $e->getMessage());
             return response()->json(['message' => 'Failed to update grades', 'error' => $e->getMessage()], 500);
         }
+    }
+
+    public function update_grade(Request $request, $enrollment_id, $enrolledSubject_id)
+    {
+        // Check if user is 'admin'
+        if (!Auth::user()->role === 'admin') { 
+            return back()->with('error', 'Unauthorized');
+        }
+
+        // Verify if password is correct
+        if (!Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
+            return back()->with('error', 'Verification failed');
+        }
+
+        // Update Enrolled_Subject model
+        $enrolledSubject = Enrolled_Subject::where('enrollment_id', $enrollment_id)
+                            ->where('en_subjects_id', $enrolledSubject_id) 
+                            ->first();
+
+        if ($enrolledSubject) {
+            $enrolledSubject->final_grade = $request->grade;
+            $enrolledSubject->remarks = $request->remarks;
+            $enrolledSubject->save();
+
+            return back()->with('success','Grade successfully updated!');
+        }
+
+        return back()->with('error', 'Error in updating grade');
     }
 }
