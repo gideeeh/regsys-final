@@ -5,12 +5,18 @@ namespace App\Http\Controllers;
 use App\Models\Enrollment;
 use App\Models\Program;
 use App\Models\Student;
+use Illuminate\Support\Facades\Auth;
 use PDF;
 
 class PrintablesController extends Controller
 {
     public function printGradeSlip($enrollmentId)
     {
+        $user = Auth::user(); 
+        $user_firstname = $user->first_name; 
+        $user_lastname = $user->last_name;
+        $full_name = $user_firstname .' '. $user_lastname;
+
         $enrollment = Enrollment::with([
             'program',
             'student',
@@ -26,8 +32,21 @@ class PrintablesController extends Controller
         $student_name .= $student->last_name;
     
         // Prepare enrolled subjects data for PDF rendering
-        $enrolledSubjectsData = $enrollment->enrolledSubjects->map(function ($enrolledSubject) {
+
+        $gradedSubjectsCount = 0;
+        $gradesSum = 0;
+        $total_units_enrollment = 0;
+
+        $enrolledSubjectsData = $enrollment->enrolledSubjects->map(function ($enrolledSubject) use (&$gradesSum, &$gradedSubjectsCount, &$total_units_enrollment) {
             $total_units = $enrolledSubject->subject->units_lec + $enrolledSubject->subject->units_lab;
+
+            if ($enrolledSubject->final_grade !== null && is_numeric($enrolledSubject->final_grade)) {
+                $gradesSum += $enrolledSubject->final_grade;
+                $gradedSubjectsCount++;
+            }
+
+            $total_units_enrollment +=$total_units;
+
             return [
                 'program_code' => $enrolledSubject->enrollment->program->program_code ?? 'N/A',
                 'subject_code' => $enrolledSubject->subject->subject_code,
@@ -37,6 +56,10 @@ class PrintablesController extends Controller
                 'total_units' => $total_units,
             ];
         });
+
+        $averageGrade = $gradedSubjectsCount > 0 ? number_format($gradesSum / $gradedSubjectsCount, 2) : 'No Grades';
+        $dateToday = \Carbon\Carbon::parse(now())->format('M d, Y');
+
     
         // Generate PDF using the prepared data
         $pdf = PDF::loadView('admin.printable_templates.gradeslip-template', [
@@ -44,6 +67,10 @@ class PrintablesController extends Controller
             'enrollment' => $enrollment,
             'student_name' => $student_name,
             'enrolledSubjectsData' => $enrolledSubjectsData,
+            'averageGrade' => $averageGrade,
+            'dateToday' => $dateToday,
+            'full_name' => $full_name,
+            'total_units_enrollment' => $total_units_enrollment,
         ]);
     
         $filename = 'Gradeslip-' . $enrollment->academic_year . '-T' . $enrollment->term . '-(' . $student->student_number . ')' . $student->last_name . ',' . substr($student->first_name, 0, 1) . '.pdf';
@@ -54,6 +81,11 @@ class PrintablesController extends Controller
 
     public function view_gradeslip($enrollmentId)
     {
+        $user = Auth::user(); 
+        $user_firstname = $user->first_name; 
+        $user_lastname = $user->last_name;
+        $full_name = $user_firstname .' '. $user_lastname;
+
         $enrollment = Enrollment::with([
             'program',
             'student',
@@ -67,10 +99,22 @@ class PrintablesController extends Controller
             $student_name += $student->middle_name.' ';
         }
         $student_name .= $student->last_name;
+
+        $gradedSubjectsCount = 0;
+        $gradesSum = 0;
+        $total_units_enrollment = 0;
     
         // Prepare enrolled subjects data
-        $enrolledSubjectsData = $enrollment->enrolledSubjects->map(function ($enrolledSubject) {
+        $enrolledSubjectsData = $enrollment->enrolledSubjects->map(function ($enrolledSubject) use (&$gradesSum, &$gradedSubjectsCount, &$total_units_enrollment) {
             $total_units = $enrolledSubject->subject->units_lec + $enrolledSubject->subject->units_lab;
+
+            if ($enrolledSubject->final_grade !== null && is_numeric($enrolledSubject->final_grade)) {
+                $gradesSum += $enrolledSubject->final_grade;
+                $gradedSubjectsCount++;
+            }
+
+            $total_units_enrollment +=$total_units;
+
             return [
                 'program_code' => $enrolledSubject->enrollment->program->program_code ?? 'N/A',
                 'subject_code' => $enrolledSubject->subject->subject_code,
@@ -80,12 +124,19 @@ class PrintablesController extends Controller
                 'total_units' => $total_units,
             ];
         });
+
+        $averageGrade = $gradedSubjectsCount > 0 ? number_format($gradesSum / $gradedSubjectsCount, 2) : 'No Grades';
+        $dateToday = \Carbon\Carbon::parse(now())->format('M d, Y');
     
         return view('admin.printable_templates.gradeslip-template', compact(
             'student', 
             'enrollment', 
             'enrolledSubjectsData',
-            'student_name'
+            'total_units_enrollment',
+            'student_name',
+            'averageGrade',
+            'dateToday',
+            'full_name' 
         ));
     }
 
@@ -123,6 +174,11 @@ class PrintablesController extends Controller
             usort($organizedEnrollments[$yearLevel][$term], function ($a, $b) {
                 return strcmp($a->subject->subject_code, $b->subject->subject_code);
             });
+        }
+
+        ksort($organizedEnrollments); 
+        foreach ($organizedEnrollments as $yearLevel => &$terms) {
+            ksort($terms); 
         }
     
         // Fetch the program details separately if needed
@@ -170,6 +226,12 @@ class PrintablesController extends Controller
                 return strcmp($a->subject->subject_code, $b->subject->subject_code);
             });
         }
+
+        ksort($organizedEnrollments); 
+        foreach ($organizedEnrollments as $yearLevel => &$terms) {
+            ksort($terms); 
+        }
+        
         
         $program = Program::findOrFail($program_id);
     

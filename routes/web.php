@@ -17,6 +17,7 @@ use App\Http\Controllers\EnrollmentsController;
 use App\Http\Controllers\FacultyRecordsController;
 use App\Http\Controllers\FilesController;
 use App\Http\Controllers\GradesController;
+use App\Http\Controllers\InfosystemsController;
 use App\Http\Controllers\PrintablesController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProgramController;
@@ -68,6 +69,7 @@ Route::middleware('api.key')->get('/api/protected-route', function () {
 });
 
 Route::middleware('api.key')->post('/api/submit-grades', [GradesController::class, 'submitGrades']);
+Route::middleware('api.key')->get('/api/grading-system-get-data', [InfosystemsController::class, 'grading_system_get_data'])->name('grading_system-getdata');
 
 
 

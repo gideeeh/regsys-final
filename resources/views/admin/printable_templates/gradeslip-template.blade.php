@@ -5,8 +5,14 @@
     <meta charset="UTF-8">
     <title>Gradeslip</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap');
+        
+        @font-face {
+        font-family: 'Lato';
+        src: url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap') format('truetype');
+        }
         body {
-            font-family: 'Georgia', 'Arial', sans-serif;
+            font-family: 'Lato', sans-serif;
             padding: 20px;
         }
         .gradeslip-container {
@@ -21,39 +27,76 @@
         table, th, td {
             border: 1px solid black;
         }
+        thead {
+            background-color: #00A9FF;
+            color: white;
+        }
         th, td {
             padding: 8px;
             text-align: left;
         }
         .header {
             text-align: center;
-            position: relative;
+            margin-bottom: 1rem;
+        }
+        h2 {
+            text-align: center;
+        }
+        .student-information-container, footer {
+            width: 100%;
+            margin-bottom: 20px; 
+        }
+        .student-information, .academic-information, .admin-information, .grade-information {
+            width: 49%; 
+            display: inline-block;
+            vertical-align: top;
+            margin-right: 1%;
+        }
+       
+        .academic-information, .grade-information {
+            margin-right: 0;
+        }
+        footer {
+            display: block; 
+            line-height: 0.4rem;
+            margin-top: 1rem;
         }
         .info-logo {
             width: 7rem;
-            position: absolute;
-            top: 0;
-            left: 0;
+            margin-bottom: 20px; 
+        }
+        .issued-by {
+            display: inline-block;
+            text-align: center;
+            vertical-align: bottom;
+            margin-left: 1rem;
+        }
+        .issued-by .full-name {
+            border-bottom: 1px solid black;
+            padding-bottom: 0.2rem;
         }
     </style>
+
 </head>
 <body>
     <div class="gradeslip-container">
-        <div class="header">
+        <div class="header" style="line-height: 0.5rem;">
             <p>Informatics College Northgate Inc.</p>
             <p>Cyberzone Filinvest, Indo China Drive, Corporate Ave.</p>
             <p>Alabang, Muntinlupa, Metro Manila</p>
-            <p>Gradeslip</p>
             <!-- <h3>Gradeslip for {{ $student->first_name }} {{ $student->last_name }}</h3> -->
         </div>
-        <div>
-            <p>Name: {{ $student_name}}</p>
-            <p>Student No: {{$student->student_number}}</p>
-            <p>Academic Year: {{$enrollment->academic_year}}</p>
-            <p>Term: {{$enrollment->term}}</p>
-            <p>Program: {{$enrollment->program->program_code}}</p>
-            <p>Year Level: {{$enrollment->year_level}}</p>
-            <p>Enrollment Code: {{$enrollment->enrollment_code}}</p>
+        <h2>Student Grade Slip</h2>
+        <div class="student-information-container" style="line-height: 0.5rem;">
+            <div class="student-information">
+                <p><strong>Name:</strong> {{ $student_name}}</p>
+                <p><strong>Student No:</strong> {{$student->student_number}}</p>
+            </div>
+            <div class="academic-information">
+                <p><strong>Program:</strong> {{$enrollment->program->program_code}} - {{$enrollment->year_level}}</p>
+                <p><strong>S.Y.:</strong> {{$enrollment->academic_year}} - Term {{$enrollment->term}}</p>
+                <p><strong>Date issued:</strong> {{$dateToday}}</p>
+            </div>
         </div>
         <table>
             <thead>
@@ -72,11 +115,24 @@
                     <td>{{ $data['subject_name'] }}</td>
                     <td>{{ $data['total_units'] }}</td>
                     <td>{{ $data['final_grade'] }}</td>
-                    <td>{{ $data['remarks'] ?? 'No remarks'}}</td>
+                    <td>{{ ucfirst($data['remarks']) ?? 'No remarks'}}</td>
                 </tr>
             @endforeach
             </tbody>
         </table>
+        <footer>
+            <div class="grade-information" style="margin-top: 1rem;">
+                <p><strong>Total Units:</strong> {{$total_units_enrollment}}</p>
+                <p><strong>General Weighted Average:</strong> {{$averageGrade}}</p>
+            </div>
+            <div class="admin-information">
+                <span><strong>Issued by:</strong></span>
+                <div class="issued-by">
+                    <p class="full-name">{{$full_name}}</p>
+                    <p class="label"><strong>Registrar</strong></p>
+                </div>
+            </div>
+        </footer>
     </div>
 </body>
 </html>

@@ -13,22 +13,25 @@
     @keydown.escape.window = "
         manageSchedule=false;
         showDeleteModal=false;
-        addSubjectToSection=false;"
->
-
-    <div>
-        <h1>{{$section->section_name}} - {{ucfirst($section->section_type->section_type)}}</h1>
-        <p>Year Level: {{$section->year_level}}</p>
-        <p>Academic Year: {{$section->academic_year}} T-{{$section->term}}</p>
+        addSubjectToSection=false;">
+    <h3 class="flex w-full justify-center bg-sky-950 px-4 rounded-md text-white mt-6 mb-2">Section Management</h3>
+    <div class="p-6 flex justify-center">
+        <div class="p-3 bg-white min-w-[98vw] rounded-md flex justify-between">
+            <p><strong>{{$section->section_name}} - {{ucfirst($section->section_type->section_type)}}</strong></p>
+                <p><strong>Academic Year:</strong> {{$section->academic_year}} T-{{$section->term}}</p>
+                <p><strong>Year Level:</strong> {{$section->year_level}}</p>
+        </div>
     </div>
-    <div class="flex justify-left gap-4">
+    <div class="flex justify-center gap-2 bg-white rounded p-2">
         <div>
             @if($section->section_type->section_type==='block')
-            <h2>Subjects Offered</h2>
-            <div class="max-h-[40vh] max-w-md overflow-y-scroll nice-scroll text-xs">
-                <table class="border-separate border-spacing-1">
+            <div class="text-center">
+                <h3>Subjects Offered</h3>
+            </div>
+            <div class="max-h-[50vh] max-w-md overflow-y-scroll nice-scroll text-xs">
+                <table class="table-auto">
                     <thead>
-                        <tr class="text-left">
+                        <tr class="text-left bg-blue-500 text-white">
                             <th>Subj Code</th>
                             <th>Subj Name</th>
                             <th>Action</th>
@@ -38,9 +41,9 @@
                     <tbody>
                         @foreach($blockSubjects as $blockSubject)
                         <tr>
-                            <td>{{$blockSubject->subject->subject_code}}</td>
-                            <td>{{$blockSubject->subject->subject_name}}</td>
-                            <td class="text-center cursor-default">
+                            <td class="border">{{$blockSubject->subject->subject_code}}</td>
+                            <td class="border">{{$blockSubject->subject->subject_name}}</td>
+                            <td class="border text-center cursor-default">
                                 @php
                                 $isScheduleSet = $sectionSubjects->first(function ($sectionSubject) use ($blockSubject) {
                                     return $sectionSubject->subject_id == $blockSubject->subject->subject_id;
@@ -52,14 +55,17 @@
                                 <p class="bg-red-100 text-red-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">Not Set</p>
                                 @endif
                             </td>
-                            <td>
-                                <button @click="
-                                    manageSchedule=true; 
-                                    selectedSectionId={{$section->section_id}}; 
-                                    selectedSubjectId={{$blockSubject->subject->subject_id}}; 
-                                    selectedSubjectCode='{{$blockSubject->subject->subject_code}}'; 
-                                    selectedSubjectName='{{$blockSubject->subject->subject_name}}';" 
-                                    class='bg-sky-950 text-xs text-white text-xs p-1 rounded hover:bg-sky-800 transition ease-in-out duration-150'>Manage</button>
+                            <td class="border">
+                                <button 
+                                    @click="
+                                        manageSchedule=true; 
+                                        selectedSectionId={{$section->section_id}}; 
+                                        selectedSubjectId={{$blockSubject->subject->subject_id}}; 
+                                        selectedSubjectCode='{{$blockSubject->subject->subject_code}}'; 
+                                        selectedSubjectName=`{{$blockSubject->subject->subject_name}};" 
+                                    class='bg-sky-950 text-xs text-white text-xs p-1 rounded hover:bg-sky-800 transition ease-in-out duration-150'>
+                                    Manage
+                                </button>
                             </td>
                         </tr>
                         @endforeach
@@ -69,67 +75,20 @@
             @else
 
             <!-- IF ITS FREEEEEEEEEEEEEEEEEE -->
-                <div class="flex justify-between px-2">
-                    <h2>Subjects Schedules</h2>
-                    <div class="flex items-center">
-                        <button @click="addSubjectToSection=true" class="bg-green-500 text-white text-xs px-1 py-1 rounded hover:bg-green-600 transition ease-in-out duration-150">Add Subject</button>
-                    </div>
+            <div class="flex justify-between px-2">
+                <h3>Subjects Schedules</h3>
+                <div class="flex items-center">
+                    <button @click="addSubjectToSection=true" class="bg-green-500 text-white text-xs px-1 py-1 rounded hover:bg-green-600 transition ease-in-out duration-150">Add Subject</button>
                 </div>
-                <div class="max-h-[40vh] max-w-md overflow-y-scroll nice-scroll text-xs">
-                    <table class="border-separate border-spacing-2">
-                        <thead>
-                            <tr>
-                                <th>Subject Code</th>
-                                <th>Subject Name</th>
-                                <th>Status</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($sectionSubjects as $sectionSubject)
-                            <tr>
-                                <td>{{$sectionSubject->subject?->subject_code}}</td>
-                                <td>{{$sectionSubject->subject?->subject_name}}</td>
-                                <td class="cursor-default">
-                                    @if($sectionSubject->subjectSectionSchedule)
-                                        <span class="bg-green-100 text-green-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">Set</span>
-                                    @else
-                                        <span class="bg-red-100 text-red-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">Not Set</span>
-                                    @endif
-                                </td>
-                                <td>
-                                    <button @click="
-                                        manageSchedule=true; 
-                                        selectedSectionId={{$section->section_id}}; 
-                                        selectedSecSubId={{$sectionSubject->id}}; 
-                                        selectedSubjectName='{{$sectionSubject->subject?->subject_name}}'; 
-                                        selectedSubjectId={{$sectionSubject->subject_id}};" 
-                                        class='bg-sky-950 text-white text-xs px-1 py-1 rounded hover:bg-sky-800 transition ease-in-out duration-150'>Manage</button>
-                                </td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-            @endif
-        </div>
-        <div>
-            <h1>Section Details</h1>
-            <div class="text-sm max-h-[40vh] overflow-y-scroll nice-scroll">
-                <table class="border-separate border-spacing-1">
+            </div>
+            <div class="max-h-[50vh] max-w-md overflow-y-scroll nice-scroll text-xs">
+                <table class="border-separate border-spacing-2">
                     <thead>
-                        <tr class="text-left">
-                            <th>Code</th>
+                        <tr>
+                            <th>Subject Code</th>
                             <th>Subject Name</th>
-                            <th>Sched F2F</th>
-                            <th>Sched OL</th>
-                            <th>Prof</th>
-                            <th>Room</th>
-                            <th>Limit</th>
-                            <th>Pax</th>
-                            @if($section->section_type->section_type==='free')
+                            <th>Status</th>
                             <th>Action</th>
-                            @endif
                         </tr>
                     </thead>
                     <tbody>
@@ -137,6 +96,56 @@
                         <tr>
                             <td>{{$sectionSubject->subject?->subject_code}}</td>
                             <td>{{$sectionSubject->subject?->subject_name}}</td>
+                            <td class="cursor-default">
+                                @if($sectionSubject->subjectSectionSchedule)
+                                    <span class="bg-green-100 text-green-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">Set</span>
+                                @else
+                                    <span class="bg-red-100 text-red-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">Not Set</span>
+                                @endif
+                            </td>
+                            <td>
+                                <button @click="
+                                    manageSchedule=true; 
+                                    selectedSectionId={{$section->section_id}}; 
+                                    selectedSecSubId={{$sectionSubject->id}}; 
+                                    selectedSubjectName='{{$sectionSubject->subject?->subject_name}}'; 
+                                    selectedSubjectId={{$sectionSubject->subject_id}};" 
+                                    class='bg-sky-950 text-white text-xs px-1 py-1 rounded hover:bg-sky-800 transition ease-in-out duration-150'>Manage</button>
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+            @endif
+        </div>
+        <!-- Section Details regardless if free or block section -->
+        <div>
+            <div class="text-center">
+                <h3>Section Details</h3>
+            </div>
+            <div class="text-sm max-h-[50vh] overflow-y-scroll nice-scroll">
+                <table class="table-auto">
+                    <thead>
+                        <tr class="text-left bg-blue-500 text-white">
+                            <th class="border px-4 py-2">Code</th>
+                            <th class="border px-4 py-2">Subject Name</th>
+                            <th class="border px-4 py-2">Sched F2F</th>
+                            <th class="border px-4 py-2">Sched OL</th>
+                            <th class="border px-4 py-2">Prof</th>
+                            <th class="border px-4 py-2">Room</th>
+                            <th class="border px-4 py-2">Limit</th>
+                            <th class="border px-4 py-2">Pax</th>
+                            @if($section->section_type->section_type==='free')
+                            <th>Action</th>
+                            @endif
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($sectionSubjects as $sectionSubject)
+                        <tr class="even:bg-gray-200 odd:bg-white">
+                            <td class="border px-4 py-2">{{$sectionSubject->subject?->subject_code}}</td>
+                            <td class="border px-4 py-2">{{$sectionSubject->subject?->subject_name}}</td>
                             @php
                                 $daysF2F = json_decode($sectionSubject->subjectSectionSchedule?->class_days_f2f, true) ?? [];
                                 $daysOL = json_decode($sectionSubject->subjectSectionSchedule?->class_days_online, true) ?? [];
@@ -160,24 +169,24 @@
                                 }, $daysOL);
                             @endphp
                             @if($sectionSubject->subjectSectionSchedule?->class_days_f2f && $sectionSubject->subjectSectionSchedule?->start_time_f2f)
-                            <td class="text-xs">{{ implode(', ', $abbreviatedDaysF2F) }} {{\Carbon\Carbon::parse($sectionSubject->subjectSectionSchedule?->start_time_f2f)->format('h:i A') ?? 'No recorded time.' }} - {{\Carbon\Carbon::parse($sectionSubject->subjectSectionSchedule?->end_time_f2f)->format('h:i A') ?? 'No recorded time.'}}</td>
+                            <td class="border px-4 py-2 text-xs">{{ implode(', ', $abbreviatedDaysF2F) }} {{\Carbon\Carbon::parse($sectionSubject->subjectSectionSchedule?->start_time_f2f)->format('h:i A') ?? 'No recorded time.' }} - {{\Carbon\Carbon::parse($sectionSubject->subjectSectionSchedule?->end_time_f2f)->format('h:i A') ?? 'No recorded time.'}}</td>
                             @else
-                            <td>-</td>
+                            <td class="border px-4 py-2">-</td>
                             @endif
                             @if($sectionSubject->subjectSectionSchedule?->class_days_online && $sectionSubject->subjectSectionSchedule?->start_time_online)
-                            <td class="text-xs">{{ implode(', ', $abbreviatedDaysF2F) }} {{\Carbon\Carbon::parse($sectionSubject->subjectSectionSchedule?->start_time_f2f)->format('h:i A') ?? 'No recorded time.' }} - {{\Carbon\Carbon::parse($sectionSubject->subjectSectionSchedule?->end_time_f2f)->format('h:i A') ?? 'No recorded time.'}}</td>
+                            <td class="border px-4 py-2 text-xs">{{ implode(', ', $abbreviatedDaysF2F) }} {{\Carbon\Carbon::parse($sectionSubject->subjectSectionSchedule?->start_time_f2f)->format('h:i A') ?? 'No recorded time.' }} - {{\Carbon\Carbon::parse($sectionSubject->subjectSectionSchedule?->end_time_f2f)->format('h:i A') ?? 'No recorded time.'}}</td>
                             @else
-                            <td>-</td>
+                            <td class="border px-4 py-2">-</td>
                             @endif
                             @if($sectionSubject->subjectSectionSchedule?->professor)
-                            <td>{{substr($sectionSubject->subjectSectionSchedule?->professor->first_name,0,1).'.'}} {{$sectionSubject->subjectSectionSchedule?->professor->last_name}}</td>
+                            <td class="border px-4 py-2">{{substr($sectionSubject->subjectSectionSchedule?->professor->first_name,0,1).'.'}} {{$sectionSubject->subjectSectionSchedule?->professor->last_name}}</td>
                             @else
-                            <td>-</td>
+                            <td class="border px-4 py-2">-</td>
                             @endif
-                            <td>{{$sectionSubject->subjectSectionSchedule?->room ?? '-' }}</td>
-                            <td>{{$sectionSubject->subjectSectionSchedule?->class_limit ?? '-' }}</td>
+                            <td class="border px-4 py-2">{{$sectionSubject->subjectSectionSchedule?->room ?? '-' }}</td>
+                            <td class="border px-4 py-2">{{$sectionSubject->subjectSectionSchedule?->class_limit ?? '-' }}</td>
                             @if($sectionSubject->subjectSectionSchedule?->class_limit)
-                            <td class="text-left">
+                            <td class="border px-4 py-2 text-left">
                                 @php
                                     $enrolledCount = $sectionSubject->enrolledStudentsCount();
                                     $classLimit = $sectionSubject->subjectSectionSchedule?->class_limit ?? 0;
@@ -190,8 +199,8 @@
                                 @endif
                             </td>
                             @else
-                            <td>-</td>
-                            <td>
+                            <td class="border px-4 py-2">-</td>
+                            <td class="border px-4 py-2">
                                 <button @click="showDeleteModal=true; selectedSectionSubjectId = {{ $sectionSubject->id }}" class="bg-red-500 text-white text-xs p-1 rounded hover:bg-red-600 transition ease-in-out duration-150">Remove</button>
                             </td>
                             @endif

@@ -157,6 +157,14 @@ class StudentRecordsController extends Controller
             });
         }
 
+        foreach ($organizedEnrollments as $programName => &$programData) {
+            ksort($programData['years']); 
+    
+            foreach ($programData['years'] as $yearLevel => &$terms) {
+                ksort($terms); 
+            }
+        }
+
         return view('admin.indiv-student-record', [
             'student' => $student,
             'enrollments' => $enrollments,

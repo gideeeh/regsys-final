@@ -17,7 +17,7 @@
                                 <ul x-show="open" class="submenu">
                                     <li><a href="{{ route('enrollment-records') }}" class="{{ request()->routeIs('enrollment-records') ? 'active-main' : '' }} block py-2 hover:bg-gray-200">Enrollment Records</a></li>
                                     <li><a href="{{ route('enrollments.enroll') }}" class="{{ request()->routeIs('enrollments.enroll') ? 'active-main' : '' }} block py-2 px-6 hover:bg-gray-200">Enroll Student</a></li>
-                                    <li><a href="{{ route('enrollments.credit-subject') }}" class="{{ request()->routeIs('enrollments.credit-subject') ? 'active-main' : '' }} block py-2 px-6 hover:bg-gray-200">Credit Subject</a></li>
+                                    <!-- <li><a href="{{ route('enrollments.credit-subject') }}" class="{{ request()->routeIs('enrollments.credit-subject') ? 'active-main' : '' }} block py-2 px-6 hover:bg-gray-200">Credit Subject</a></li> -->
                                 </ul>
                                 <!-- Section for further updates -->
                             </li>

@@ -83,57 +83,68 @@
                     <div class="stu-academic-info mt-4 bg-white border border-1 rounded-lg p-6 gap-4 cursor-default lg:min-h-[45h] md:min-h-[38vh] sm:min-h-[31vh]">
                         <h3 class="flex w-full justify-center bg-sky-600 px-4 rounded-md text-white mb-4">Academic History</h3>
                         @foreach($organizedEnrollments as $programName => $data)
-                            <h4>{{ $programName }}</h4> 
-                            <a href="{{ url('/tor/pdf/print/'. $student->student_id .'/' . $data['programId']) }}">Print TOR</a>
+                            <h2 class="text-center bg-sky-950 rounded-md text-white p-1">{{ $programName }}</h2> 
+                            <div class="flex justify-end">
+                                <a 
+                                    href="{{ url('/tor/pdf/print/'. $student->student_id .'/' . $data['programId']) }}" 
+                                    class="bg-neutral-500 text-white text-sm text-lg p-1 rounded hover:bg-neutral-600 transition ease-in-out duration-150">
+                                    Print TOR
+                                </a>
+                            </div>
                             @foreach($data['years'] as $yearLevel => $terms)
                                 <div>
-                                    <strong>{{ $yearLevel }} Year</strong>
+                                    @php
+                                        switch($yearLevel) {
+                                            case 1:
+                                                $year_level_name = "1st";
+                                                break;
+                                            case 2:
+                                                $year_level_name = "2nd";
+                                                break;
+                                            case 3:
+                                                $year_level_name = "3rd";
+                                                break;
+                                            case 4:
+                                                $year_level_name = "4th";
+                                                break;
+                                            default:
+                                                $year_level_name = $yearLevel . "th"; // Fallback for other numbers
+                                        }
+                                    @endphp
+                                    <h2 class="text-center"><strong>{{ $year_level_name }} Year</strong></h2>
                                     @foreach($terms as $term => $subjects)
-                                        <p>Term {{ $term }}</p>
-                                        <table class="min-w-full table-auto">
-                                            <thead>
-                                                <tr>
-                                                    <th class="border px-4 py-2">Subject Code</th>
-                                                    <th class="border px-4 py-2">Subject Name</th>
-                                                    <th class="border px-4 py-2">Grade</th>
-                                                    <th class="border px-4 py-2">Remarks</th>
-                                
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @foreach($subjects as $enrolledSubject)
+                                    <div class="mb-6">
+                                        <p class="text-md mb-2 pl-4"><strong>Term {{ $term }}</strong></p>
+                                        <div class="border-2 border-slate-300 rounded-md shadow-md">
+                                            <table class="min-w-full table-auto">
+                                                <thead class="text-left bg-blue-500 text-white">
                                                     <tr>
-                                                        <td class="border px-4 py-2">{{ $enrolledSubject->subject->subject_code }}</td>
-                                                        <td class="border px-4 py-2">{{ $enrolledSubject->subject->subject_name }}</td>
-                                                        <td class="border px-4 py-2">{{ $enrolledSubject->final_grade ?? 'Not Graded' }}</td>
-                                                        <td class="border px-4 py-2">{{ $enrolledSubject->remarks !== null && $enrolledSubject->remarks !== '' ? $enrolledSubject->remarks : 'No remarks' }}</td>
-                                                    
+                                                        <th class="border px-4 py-2">Subject Code</th>
+                                                        <th class="border px-4 py-2">Subject Name</th>
+                                                        <th class="border px-4 py-2">Grade</th>
+                                                        <th class="border px-4 py-2">Remarks</th>
+                                    
                                                     </tr>
-                                                @endforeach
-                                            </tbody>
-                                        </table>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach($subjects as $enrolledSubject)
+                                                        <tr>
+                                                            <td class="border px-4 py-2">{{ $enrolledSubject->subject->subject_code }}</td>
+                                                            <td class="border px-4 py-2">{{ $enrolledSubject->subject->subject_name }}</td>
+                                                            <td class="border px-4 py-2">{{ $enrolledSubject->final_grade ?? 'Not Graded' }}</td>
+                                                            <td class="border px-4 py-2">{{ $enrolledSubject->remarks !== null && $enrolledSubject->remarks !== '' ? $enrolledSubject->remarks : 'No remarks' }}</td>
+                                                        </tr>
+                                                    @endforeach
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
                                     @endforeach
                                 </div>
                             @endforeach
                         @endforeach
                     </div>
-
                 </main>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
                 <aside class="indiv-student-sidepanel cursor-default">
                     <div class="stu-notes bg-white border border-1 rounded-lg p-6 mb-4 lg:min-h-[47h] md:min-h-[40vh] sm:min-h-[33vh] lg:max-h-[47h] md:max-h-[40vh] sm:max-h-[33vh] overflow-y-auto nice-scroll">
