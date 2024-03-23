@@ -1,4 +1,5 @@
-<div x-data='{requestForm: false}'>
+<div x-data='{requestForm: false,
+        viewQRCodeModal: false}'>
 <x-app-layout>
     <x-alert-message />
     <x-slot name="header">
@@ -9,7 +10,8 @@
         <button @click="requestForm=true" class="bg-sky-500 text-white text-sm p-1 rounded hover:bg-sky-600 transition ease-in-out duration-150">Request Appointment</button>
     </x-slot>
     
-    <div x-data="{ selectedAppointment: @js($mostRecentAppointment) }">
+    <div x-data="{ 
+        selectedAppointment: @js($mostRecentAppointment)}">
         <div class="py-8">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="flex gap-4 overflow-hidden sm:min-h-[48vh] md:min-h-[54vh] lg:min-h-[60vh] xl:min-h-[66vh]">
@@ -42,6 +44,7 @@
                                 </div>
                             </div>
                             <div class="flex justify-end gap-2">
+                                <button @click="viewQRCodeModal=true" class="bg-stone-500 text-white text-sm p-2 rounded hover:bg-stone-600 transition ease-in-out duration-150">QR Code</button>
                                 <button @click="responseModal=true" class="bg-sky-500 text-white text-sm p-2 rounded hover:bg-sky-600 transition ease-in-out duration-150">Respond</button>
                                 <button class="bg-green-500 text-white text-sm p-2 rounded hover:bg-green-600 transition ease-in-out duration-150">Mark as Complete</button><!-- Disabled until there is a response -->
                             </div>
@@ -88,6 +91,19 @@
                 </div>
             </form>
         </div>
+    </div>
+    <!-- QR Code View -->
+    <div x-cloak x-show="viewQRCodeModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center px-4 z-50">
+        @if($mostRecentAppointment)
+        <div class="bg-white p-8 rounded-lg shadow-lg overflow-hidden max-w-md w-full min-h-[70vh]">
+            <div class="flex justify-center mb-6">
+                <img src="{{ $mostRecentAppointment->qrCodeUrl }}" alt="QR Code for Appointment">
+            </div>
+            <div class="w-full">
+                <button type="button" @click="viewQRCodeModal = false" class="w-full bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition ease-in-out duration-150">Close</button>
+            </div>
+        </div>
+        @endif
     </div>
 </x-app-layout>
 </div>

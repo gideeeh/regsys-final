@@ -17,6 +17,7 @@ class Appointment extends Model
         'service_id',
         'appointment_datetime',
         'notes',
+        'appointment_code',
     ];
 
     // Relationship to a user
@@ -34,5 +35,10 @@ class Appointment extends Model
     public function responses()
     {
         return $this->hasMany(AppointmentResponse::class);
+    }
+
+    public function getQrCodeUrlAttribute()
+    {
+        return route('appointments.generate-qr', ['qr_code' => $this->appointment_code]);
     }
 }

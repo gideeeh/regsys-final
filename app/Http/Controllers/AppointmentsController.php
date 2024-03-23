@@ -9,6 +9,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class AppointmentsController extends Controller
 {
@@ -198,6 +199,7 @@ class AppointmentsController extends Controller
             ->select([
                 'appointments.user_id',
                 'appointments.id',
+                'appointments.appointment_code',
                 'students.student_id',
                 'students.first_name as student_first_name',
                 'students.last_name as student_last_name',
@@ -225,7 +227,8 @@ class AppointmentsController extends Controller
                 $query->where('students.first_name', 'LIKE', "%{$searchTerm}%")
                     ->orWhere('students.last_name', 'LIKE', "%{$searchTerm}%")
                     ->orWhere('students.student_number', 'LIKE', "%{$searchTerm}%")
-                    ->orWhere('programs.program_name', 'LIKE', "%{$searchTerm}%");
+                    ->orWhere('programs.program_name', 'LIKE', "%{$searchTerm}%")
+                    ->orWhere('appointments.appointment_code', 'LIKE', "%{$searchTerm}%");
             });
         }
 
@@ -240,15 +243,23 @@ class AppointmentsController extends Controller
     
     public function request_appointment(Request $request)
     {
+        $student = Student::where('user_id', $request->user_id)->first();
+    
+        if (!$student) {
+            return response()->json(['error' => 'Student not found'], 404);
+        }
+    
+        $datetime_code = \Carbon\Carbon::now()->format('mdyHis');
+        $appointment_code = $student->student_number . '_' . $request->service_id . '_' . $datetime_code;
         $appointment = Appointment::create([
             'user_id' => $request->user_id,
             'service_id' => $request->service_id,
-            'notes' => $request->notes,
+            'notes' => $request->notes ?? null,
             'appointment_datetime' => now(),
+            'appointment_code' => $appointment_code,
         ]);
         
         return redirect()->back()->with('success', 'Request sent! Please wait for a response from the registrar.');
-
     }
 
     public function getUserAppointments(Request $request)
@@ -278,31 +289,62 @@ class AppointmentsController extends Controller
         return response()->json($appointments);
     }
 
-public function getUserCompletedAppointments(Request $request)
-{
-    $userId = Auth::id();
+    public function getUserCompletedAppointments(Request $request)
+    {
+        $userId = Auth::id();
 
-    $appointments = Appointment::join('services', 'appointments.service_id', '=', 'services.id')
-                        ->where('appointments.user_id', $userId)
-                        ->where('appointments.status', '=', 'complete')
-                        ->get([
-                            'appointments.user_id',
-                            'services.service_name', 
-                            'appointments.status',
-                            'appointments.viewed_date',
-                            'appointments.complete_date',
-                        ])
-                        ->map(function ($appointment) {
-                            return [
-                                'user_id' => $appointment->user_id,
-                                'service_name' => $appointment->service_name, 
-                                'status' => $appointment->status,
-                                'viewed_date' => $appointment->viewed_date,
-                                'complete_date' => $appointment->complete_date,
-                            ];
-                        });
+        $appointments = Appointment::join('services', 'appointments.service_id', '=', 'services.id')
+                            ->where('appointments.user_id', $userId)
+                            ->where('appointments.status', '=', 'complete')
+                            ->get([
+                                'appointments.user_id',
+                                'services.service_name', 
+                                'appointments.status',
+                                'appointments.viewed_date',
+                                'appointments.complete_date',
+                            ])
+                            ->map(function ($appointment) {
+                                return [
+                                    'user_id' => $appointment->user_id,
+                                    'service_name' => $appointment->service_name, 
+                                    'status' => $appointment->status,
+                                    'viewed_date' => $appointment->viewed_date,
+                                    'complete_date' => $appointment->complete_date,
+                                ];
+                            });
 
-    return response()->json($appointments);
-}
+        return response()->json($appointments);
+    }
 
+    public function sample_qr()
+    {
+        $code = '1234-5678_1_032324114312'; 
+        $qrCode = QrCode::size(300)->generate($code);
+    
+        return response($qrCode)->header('Content-Type', 'image/svg+xml');
+    }
+
+    public function generate_qr($qr_code)
+    {
+        $qrCode = QrCode::size(300)->generate(url('appointments/retrieve_qr/' . $qr_code));
+    
+        return response($qrCode)->header('Content-Type', 'image/svg+xml');
+    }
+
+    public function retrieveByQRCode($appointment_code)
+    {
+        $appointment = Appointment::with('service')->where('appointment_code', $appointment_code)->first();
+    
+        if (!$appointment) {
+            return redirect('/')->with('error', 'Appointment not found.');
+        }
+    
+        $student = Student::where('user_id', $appointment->user_id)->first();
+    
+        if (!$student) {
+            return redirect('/')->with('error', 'Student not found.');
+        }
+    
+        return view('admin.appointments-details', compact('appointment', 'student'));
+    }
 }

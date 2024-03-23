@@ -103,11 +103,11 @@
                     </div>
                     <div>
                         <label for="units_lec" class="block text-sm font-medium text-gray-700">Units Lecture:</label>
-                        <input type="number" id="units_lec" name="units_lec" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                        <input type="number" id="units_lec" name="units_lec" step="0.1" min="0" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
                     </div>
                     <div>
                         <label for="units_lab" class="block text-sm font-medium text-gray-700">Units Lab:</label>
-                        <input type="number" id="units_lab" name="units_lab" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                        <input type="number" id="units_lab" name="units_lab" step="0.1" min="0" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
                     </div>
                     <div>
                         <label for="prereq1" class="block text-sm font-medium text-gray-700">Pre-Requisite 1:</label>
@@ -167,11 +167,11 @@
                     </div>
                     <div>
                         <label for="units_lec" class="block text-sm font-medium text-gray-700">Units Lecture:</label>
-                        <input type="number" id="units_lec" name="units_lec" x-model="selectedSubjectUnitsLec" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                        <input type="number" id="units_lec" name="units_lec" step="0.1" min="0" x-model="selectedSubjectUnitsLec" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
                     </div>
                     <div>
                         <label for="units_lab" class="block text-sm font-medium text-gray-700">Units Lab:</label>
-                        <input type="number" id="units_lab" name="units_lab" x-model="selectedSubjectUnitsLab" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                        <input type="number" id="units_lab" name="units_lab" step="0.1" min="0" x-model="selectedSubjectUnitsLab" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
                     </div>
                     <div>
                         <label for="prereqUpdate1" class="block text-sm font-medium text-gray-700">Pre-Requisite 1:</label>

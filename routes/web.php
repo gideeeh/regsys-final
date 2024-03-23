@@ -63,31 +63,45 @@ Route::get('/', function () {
 
 /* API Route for Integration */
 Route::middleware('auth:sanctum')->get('/enrollments', [EnrollmentsController::class, 'apiGradingIndex']);
+
 /* API Keys */
-Route::middleware('api.key')->get('/api/protected-route', function () {
-    return response()->json(['message' => 'You have access']);
+// Route::middleware('api.key')->get('/api/protected-route', function () {
+//     return response()->json(['message' => 'You have access']);
+// });
+
+// Route::middleware('api.key')->post('/api/submit-grades', [GradesController::class, 'submitGrades']);
+// Route::middleware('api.key')->get('/api/grading-system-get-data', [InfosystemsController::class, 'grading_system_get_data'])->name('grading_system-getdata');
+
+Route::middleware('api.key')->group(function () {
+    Route::get('/api/protected-route', function () {
+        return response()->json(['message' => 'You have access']);
+    });
+    Route::post('/api/submit-grades', [GradesController::class, 'submitGrades']);
+    Route::get('/api/grading-system-get-data', [InfosystemsController::class, 'grading_system_get_data'])->name('grading_system-getdata');
 });
 
-Route::middleware('api.key')->post('/api/submit-grades', [GradesController::class, 'submitGrades']);
-Route::middleware('api.key')->get('/api/grading-system-get-data', [InfosystemsController::class, 'grading_system_get_data'])->name('grading_system-getdata');
-
-
-
-
-
 Route::middleware('auth')->group(function () {
+    // Profile management
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    
+    // User dashboard
     Route::get('/user/dashboard', [UserDashboardController::class, 'index'])->name('user.dashboard');
-    /* Appointments */
+    
+    // Appointment-related routes
     Route::get('/user/appointments', [AppointmentsUser::class, 'index'])->name('user.appointments');
+    Route::get('/user/sample_qr', [AppointmentsController::class, 'sample_qr'])->name('user.appointments-qr');
     Route::post('/appointments/create-appointment', [AppointmentsController::class, 'request_appointment'])->name('appointments.request');
-    /* Public Json */
+    Route::get('/appointments/generate-qr/{qr_code}', [AppointmentsController::class, 'generate_qr'])->name('appointments.generate-qr');
+    Route::get('/appointments/retrieve_qr/{qr_code}', [AppointmentsController::class, 'retrieveByQRCode'])->name('appointments.retrieve-qr');
     Route::get('/public/api/get_services', [ServicesController::class, 'all_services_json'])->name('all_services_json');
+    
+    // User-specific appointment requests
     Route::get('/user/pending-requests', [AppointmentsController::class, 'getUserAppointments'])->name('user.pending-requests');
     Route::get('/user/complete-requests', [AppointmentsController::class, 'getUserCompletedAppointments'])->name('user.complete-requests');
 });
+
 
 /* Admin Middleware */
 Route::middleware(['auth','isAdminUser'])->group(function() {
@@ -212,14 +226,14 @@ Route::middleware(['auth','isAdminUser'])->group(function() {
     Route::get('/admin/functions/get-section-subjects', [SectionSubjectsController::class, 'search'])->name('sec_sub.search');
 /* Printables */
 
-/* Gradeslip */
-Route::get('/gradeslip/pdf/print/{enrollmentId}', [PrintablesController::class, 'printGradeSlip'])->name('gradeslip.pdf');
-Route::get('/gradeslip/pdf/view/{enrollmentId}', [PrintablesController::class, 'view_gradeslip'])->name('gradeslip.view');
+    /* Gradeslip */
+    Route::get('/gradeslip/pdf/print/{enrollmentId}', [PrintablesController::class, 'printGradeSlip'])->name('gradeslip.pdf');
+    Route::get('/gradeslip/pdf/view/{enrollmentId}', [PrintablesController::class, 'view_gradeslip'])->name('gradeslip.view');
 
-/* TOR */
-Route::get('/tor/pdf/view/{student_id}/{program_id}', [PrintablesController::class, 'view_tor'])->name('tor.view');
-Route::get('/tor/pdf/print/{student_id}/{program_id}', [PrintablesController::class, 'print_tor'])->name('tor.print');
-Route::get('/layout/pdf/view', [PrintablesController::class, 'layout'])->name('practice.layout');
+    /* TOR */
+    Route::get('/tor/pdf/view/{student_id}/{program_id}', [PrintablesController::class, 'view_tor'])->name('tor.view');
+    Route::get('/tor/pdf/print/{student_id}/{program_id}', [PrintablesController::class, 'print_tor'])->name('tor.print');
+    Route::get('/layout/pdf/view', [PrintablesController::class, 'layout'])->name('practice.layout');
 });
 
 require __DIR__.'/auth.php';

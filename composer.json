@@ -20,6 +20,7 @@
         "league/csv": "^9.14",
         "livewire/livewire": "^3.4",
         "ryangjchandler/blade-tabler-icons": "^2.2",
+        "simplesoftwareio/simple-qrcode": "^4.2",
         "symfony/browser-kit": "^6.4",
         "symfony/http-client": "^6.4"
     },

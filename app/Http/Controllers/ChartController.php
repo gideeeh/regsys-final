@@ -38,7 +38,7 @@ class ChartController extends Controller
     {
         $enrollmentTrends = DB::table('enrollments')
             ->select(
-                DB::raw('CONCAT(academic_year, " - Term ", term) as term_label'),
+                DB::raw('CONCAT(SUBSTRING(academic_year, 3, 2), "-", SUBSTRING(academic_year, 8, 2), " T-", term) as term_label'),
                 DB::raw('COUNT(*) as total')
             )
             ->groupBy('academic_year', 'term')
