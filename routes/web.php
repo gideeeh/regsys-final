@@ -73,11 +73,21 @@ Route::middleware('auth:sanctum')->get('/enrollments', [EnrollmentsController::c
 // Route::middleware('api.key')->get('/api/grading-system-get-data', [InfosystemsController::class, 'grading_system_get_data'])->name('grading_system-getdata');
 
 Route::middleware('api.key')->group(function () {
+    // Connection Testing
     Route::get('/api/protected-route', function () {
         return response()->json(['message' => 'You have access']);
     });
-    Route::post('/api/submit-grades', [GradesController::class, 'submitGrades']);
+
+    // Grading System API
+    Route::post('/api/submit-grades', [GradesController::class, 'submitGrades'])->name('api.submit-grades');
     Route::get('/api/grading-system-get-data', [InfosystemsController::class, 'grading_system_get_data'])->name('grading_system-getdata');
+    
+    // Admission System API
+    Route::post('/api/submit-student-records', [InfosystemsController::class, 'submitStudentRecords'])->name('api.submit-student-records');
+    
+    // Cashier System API
+    Route::get('/api/cashier-system-get-data', [InfosystemsController::class, 'cashier_system_get_data'])->name('cashier_system-getdata');
+    Route::post('/api/submit-cashier-records', [InfosystemsController::class, 'submitEnrollmentPaymentRecords'])->name('api.submit-enrollment-payment-records');
 });
 
 Route::middleware('auth')->group(function () {
@@ -145,6 +155,7 @@ Route::middleware(['auth','isAdminUser'])->group(function() {
     Route::post('/admin/enrollments/enroll/enroll_student',[EnrollmentsController::class, 'store'])->name('enrollments.store');
     Route::post('/admin/enrollments/validate', [EnrollmentsController::class, 'validateSelections'])->name('enrollment.validate');
     Route::delete('/admin/faculty-records/delete/{enrollment_id}', [EnrollmentsController::class, 'destroy_enrollment'])->name('enrollment.destroy');
+    Route::patch('/admin/enrollment-records/validate/{enrollment_id}', [EnrollmentsController::class, 'validate_enrollment'])->name('enrollments.validate');
 /* Enroll Subjects */
     Route::post('/admin/enrollments/enroll/enroll_subjects/{enrollment_id}',[EnrolledSubjectsController::class, 'store'])->name('enroll.subjects');
 /* Update grade */
@@ -234,6 +245,11 @@ Route::middleware(['auth','isAdminUser'])->group(function() {
     Route::get('/tor/pdf/view/{student_id}/{program_id}', [PrintablesController::class, 'view_tor'])->name('tor.view');
     Route::get('/tor/pdf/print/{student_id}/{program_id}', [PrintablesController::class, 'print_tor'])->name('tor.print');
     Route::get('/layout/pdf/view', [PrintablesController::class, 'layout'])->name('practice.layout');
+
+    /* COR */
+
+    Route::get('/cor/word/print/sample/', [PrintablesController::class, 'print_cor_sample']);
+    Route::get('/cor/word/print/{enrollment_id}', [PrintablesController::class, 'print_cor']);
 });
 
 require __DIR__.'/auth.php';

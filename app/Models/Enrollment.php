@@ -23,6 +23,10 @@ class Enrollment extends Model
         'status',
         'enrollment_method',
         'enrollment_code',
+        'paid_clearance',
+        'paid_enrollment',
+        'date_validation_registrar',
+        'date_validation_cashier',
     ];
 
     public function enrolledSubjects()

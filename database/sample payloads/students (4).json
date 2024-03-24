@@ -1,0 +1,7 @@
+data = {
+    students": [
+        {"student_number":"5678-2323","first_name":"Bran","middle_name":null,"last_name":"Cruz","suffix":null,"sex":null,"birthdate":null,"birthplace":null,"civil_status":null,"nationality":null,"religion":null,"phone_number":null,"personal_email":"sophia@gmail.com","school_email":null,"house_num":null,"street":null,"brgy":null,"city_municipality":null,"province":null,"zipcode":null,"guardian_name":null,"guardian_contact":null,"elementary":null,"elem_yr_grad":null,"jr_highschool":null,"jr_hs_yr_grad":null,"sr_highschool":null,"sr_hs_yr_grad":null,"college":null,"college_year_ended":null,"is_transferee":"0","is_irregular":"0","file_path":"null"}
+    ]
+}
+
+

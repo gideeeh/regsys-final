@@ -62,7 +62,7 @@
                                         selectedSectionId={{$section->section_id}}; 
                                         selectedSubjectId={{$blockSubject->subject->subject_id}}; 
                                         selectedSubjectCode='{{$blockSubject->subject->subject_code}}'; 
-                                        selectedSubjectName=`{{$blockSubject->subject->subject_name}};" 
+                                        selectedSubjectName=`{{$blockSubject->subject->subject_name}}`;" 
                                     class='bg-sky-950 text-xs text-white text-xs p-1 rounded hover:bg-sky-800 transition ease-in-out duration-150'>
                                     Manage
                                 </button>
@@ -108,7 +108,7 @@
                                     manageSchedule=true; 
                                     selectedSectionId={{$section->section_id}}; 
                                     selectedSecSubId={{$sectionSubject->id}}; 
-                                    selectedSubjectName='{{$sectionSubject->subject?->subject_name}}'; 
+                                    selectedSubjectName=`{{$sectionSubject->subject?->subject_name}}`; 
                                     selectedSubjectId={{$sectionSubject->subject_id}};" 
                                     class='bg-sky-950 text-white text-xs px-1 py-1 rounded hover:bg-sky-800 transition ease-in-out duration-150'>Manage</button>
                             </td>
@@ -406,7 +406,7 @@
                 </div>
                 <div>
                     <label for="class_limit" class="block text-sm font-medium text-gray-700">Class Limit:</label>
-                    <input type="number" id="class_limit" name="class_limit" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                    <input type="number" id="class_limit" name="class_limit" value="50" max="50" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
                 </div>
                 <div class="flex justify-end space-x-4 pt-6">
                     <button type="button" @click="manageSchedule = false" class="hide-manage bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition ease-in-out duration-150">Cancel</button>

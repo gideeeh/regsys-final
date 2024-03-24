@@ -270,4 +270,14 @@ class EnrollmentsController extends Controller
             'students' => $students,
         ]);
     }
+
+    public function validate_enrollment($enrollment_id)
+    {
+        $enrollment = Enrollment::findOrFail($enrollment_id);
+
+
+        $enrollment->date_validation_registrar = now();
+        $enrollment->save();
+        return back()->with('success', 'Successfully validated enrollment record.');
+    }
 }

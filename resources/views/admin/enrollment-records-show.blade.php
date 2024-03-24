@@ -1,6 +1,7 @@
 <x-app-layout>
 <div x-data="{
     updateGradeModal:false,
+    validateEnrollment:false,
     confirmModal:false,
     deleteEnrollmentModal:false,
     selectedEnrollmentId:null,
@@ -31,10 +32,26 @@
                                 <div class="bg-white shadow rounded-lg p-4 mt-4">
                                     <div class="flex justify-between items-center">
                                         <h5 class="text-gray-900 font-semibold">Acad Year: {{ $enrollment->academic_year }} - Term {{ $term }}</h5>
-                                        <a href="{{ url('/gradeslip/pdf/print/' . $enrollment->enrollment_id) }}" class="text-blue-600 hover:text-blue-800 transition duration-150 ease-in-out">Print Gradeslip</a>
+                                        <div class="space-x-4">
+                                            <a href="{{ url('/cor/word/print/' . $enrollment->enrollment_id) }}" class="text-blue-600 hover:text-blue-800 transition duration-150 ease-in-out">Print COR</a>
+                                            <a href="{{ url('/gradeslip/pdf/print/' . $enrollment->enrollment_id) }}" class="text-blue-600 hover:text-blue-800 transition duration-150 ease-in-out">Print Gradeslip</a>
+                                        </div>
                                     </div>
                                     <p class="text-sm text-gray-600 mt-2">Enrollment Code: {{ $enrollment->enrollment_code }}</p>
-                                    <button @click="deleteEnrollmentModal = true; selectedEnrollmentId = {{$enrollment->enrollment_id}}" class="mt-2 text-white bg-red-500 hover:bg-red-700 transition duration-150 ease-in-out px-3 py-1 rounded text-sm">Delete Enrollment</button>
+                                    @if($enrollment->date_validation_cashier)
+                                    <p class="text-sm text-gray-600 mt-2">Cashier Validation Date: {{\Carbon\Carbon::parse($enrollment->date_validation_cashier )->format('M d, Y') ?? 'Not validated.' }}</p>
+                                    @else
+                                    <p class="text-sm text-gray-600 mt-2">Cashier Validation Date: Not Validated</p>
+                                    @endif
+                                    @if($enrollment->date_validation_registrar)
+                                    <p class="text-sm text-gray-600 mt-2">Registrar Validation Date: {{\Carbon\Carbon::parse($enrollment->date_validation_registrar )->format('M d, Y') ?? 'Not validated.' }}</p>
+                                    @else
+                                    <p class="text-sm text-gray-600 mt-2">Registrar Validation Date: Not Validated</p>
+                                    @endif
+                                    <div class="flex justify-between">
+                                        <button @click="validateEnrollment = true; selectedEnrollmentId = {{$enrollment->enrollment_id}}" class="mt-2 text-white bg-green-500 hover:bg-green-700 transition duration-150 ease-in-out px-3 py-1 rounded text-sm">Validate</button>
+                                        <button @click="deleteEnrollmentModal = true; selectedEnrollmentId = {{$enrollment->enrollment_id}}" class="mt-2 text-white bg-red-500 hover:bg-red-700 transition duration-150 ease-in-out px-3 py-1 rounded text-sm">Delete Enrollment</button>
+                                    </div>
 
                                     <!-- Enrollment Table -->
                                     <div class="overflow-x-auto mt-4">
@@ -50,13 +67,17 @@
                                                     <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                                                 </tr>
                                             </thead>
-                                            <tbody class="bg-white divide-y divide-gray-200">
+                                            <tbody class="bg-white divide-y divide-gray-200 text-xs">
                                                 @foreach($enrollment->enrolledSubjects as $enrolledSubject)
                                                     <tr>
                                                         <td class="px-3 py-2 whitespace-no-wrap">{{ $enrolledSubject->subject->subject_code }}</td>
                                                         <td class="px-3 py-2 whitespace-no-wrap">{{ $enrolledSubject->subject->subject_name }}</td>
                                                         <td class="px-3 py-2 whitespace-no-wrap">{{ $enrolledSubject->final_grade ?? 'Not Graded' }}</td>
-                                                        <td class="px-3 py-2 whitespace-no-wrap">{{ ucfirst($enrolledSubject->remarks) ?? 'No remarks' }}</td>
+                                                        @if(!empty($enrolledSubject->remarks))
+                                                            <td class="px-3 py-2 whitespace-no-wrap">{{ $enrolledSubject->remarks }}</td>
+                                                        @else
+                                                            <td class="px-3 py-2 whitespace-no-wrap">No remarks</td>
+                                                        @endif
                                                         <td class="px-3 py-2 whitespace-no-wrap">{{ $enrolledSubject->sectionSubject->subjectSectionSchedule->professor->first_name . ' ' . $enrolledSubject->sectionSubject->subjectSectionSchedule->professor->last_name ?? 'No professor record' }}</td>
                                                         <td class="px-3 py-2 whitespace-no-wrap">{{ $enrolledSubject->enrolledSubject_code ?? 'No enrolled subject code' }}</td>
                                                         <td class="px-3 py-2 whitespace-no-wrap">
@@ -126,6 +147,26 @@
                 <div class="flex justify-end space-x-4">
                     <button type="button" @click="deleteEnrollmentModal=false" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition ease-in-out duration-150">Cancel</button>
                     <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition ease-in-out duration-150">Confirm Delete</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- Validate Enrollment -->
+    <div x-cloak x-show="validateEnrollment" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center px-4 z-50">
+        <div class="modal-content bg-white p-8 rounded-lg shadow-lg overflow-auto max-w-lg w-full min-h-[35vh] max-h-[35vh]">
+            <h3>Validate Enrollment</h3>
+            <p>Please enter your password to validate the selected enrollment record.</p>
+            <form :action="'/admin/enrollment-records/validate/' + selectedEnrollmentId" method="POST" class="space-y-4">
+                @csrf
+                @method('PATCH')
+                <input type="hidden" name="email" value="{{$user->email}}">
+                <div class="mb-4">
+                    <label for="password" class="block text-sm font-medium text-gray-700">Enter Password (Admin):</label>
+                    <input type="password" name="password" @paste.prevent="" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                </div>
+                <div class="mt-4 flex justify-end space-x-4">
+                    <button type="button" @click="validateEnrollment=false" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition ease-in-out duration-150">Cancel</button>
+                    <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition ease-in-out duration-150">Confirm Validation</button>
                 </div>
             </form>
         </div>

@@ -339,6 +339,12 @@ class AppointmentsController extends Controller
             return redirect('/')->with('error', 'Appointment not found.');
         }
     
+        $user = auth()->user(); 
+    
+        if ($user->id !== $appointment->user_id && $user->role !== 'admin') {
+            return redirect('/')->with('error', 'Unauthorized to access this appointment.');
+        }
+    
         $student = Student::where('user_id', $appointment->user_id)->first();
     
         if (!$student) {
@@ -347,4 +353,5 @@ class AppointmentsController extends Controller
     
         return view('admin.appointments-details', compact('appointment', 'student'));
     }
+    
 }

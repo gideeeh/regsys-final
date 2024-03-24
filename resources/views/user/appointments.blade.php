@@ -99,11 +99,16 @@
             <div class="flex justify-center mb-6">
                 <img src="{{ $mostRecentAppointment->qrCodeUrl }}" alt="QR Code for Appointment">
             </div>
+            @else
+        <div class="bg-white p-8 rounded-lg shadow-lg overflow-hidden max-w-md w-full min-h-[40vh]">
+            <div class="flex justify-center mb-6">
+                <h2>No selected appointment.</h2>
+            </div>
+            @endif
             <div class="w-full">
                 <button type="button" @click="viewQRCodeModal = false" class="w-full bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition ease-in-out duration-150">Close</button>
             </div>
         </div>
-        @endif
     </div>
 </x-app-layout>
 </div>
