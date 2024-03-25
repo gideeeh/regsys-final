@@ -18,6 +18,7 @@
         @keydown.escape.window="showModal = false;showUpdateModal=false">
         <x-alert-message />
         <h3 class="flex w-full justify-center bg-sky-950 px-4 rounded-md text-white mb-6 cursor-default">Subjects Catalog</h3>
+        @if(Auth::check() && Auth::user()->role === 'admin')
         <div class="flex justify-between mb-6">
             <button @click="showModal = true" class="bg-green-500 text-white text-sm p-2 rounded hover:bg-green-600 transition ease-in-out duration-150">+ Add Subject</button>
             <!-- <a href="{{ route('subject-catalog') }}" class="font-semibold text-xl text-gray-800 leading-tight no-underline hover:underline">
@@ -25,6 +26,11 @@
             </a> -->
             <x-search-form action="{{ route('subject-catalog') }}" placeholder="Search Subject" />
         </div>
+        @else 
+        <div class="flex justify-end mb-6">
+            <x-search-form action="{{ route('dean-access.subject-catalog') }}" placeholder="Search Subject" />
+        </div>
+        @endif
         <!-- Subjects Table -->
         <div>
             {{ $subjects->links() }}
@@ -41,7 +47,9 @@
                             <th class="w-2/12 bg-blue-500 text-white p-1">Pre-Req 1</th>
                             <th class="w-2/12 bg-blue-500 text-white p-1">Pre-Req 2</th>
                             <th class="w-2/12 bg-blue-500 text-white p-1">Co-Req</th>
+                            @if(Auth::check() && Auth::user()->role === 'admin')
                             <th class="w-1/12 bg-blue-500 text-center text-white p-1">Actions</th>
+                            @endif
                         </tr>
                     </thead>
                     <tbody>
@@ -55,6 +63,7 @@
                             <td class="border-dashed border-t border-gray-300 p-2">{{ $subject->prereq1 ?? '-'}}</td>
                             <td class="border-dashed border-t border-gray-300 p-2">{{ $subject->prereq2 ?? '-'}}</td>
                             <td class="border-dashed border-t border-gray-300 p-2">{{ $subject->co_req ?? '-'}}</td>
+                            @if(Auth::check() && Auth::user()->role === 'admin')
                             <td class="border-dashed border-t border-gray-300 p-2 pr-4">
                                 <div class="flex gap-2">
                                     <button 
@@ -72,6 +81,7 @@
                                     <button @click.stop="showDeleteModal=true; selectedId = {{$subject->subject_id}}" class="bg-red-500 text-xs text-white p-1 rounded hover:bg-red-600 transition ease-in-out duration-150">Delete</button>
                                 </div>
                             </td>
+                            @endif
                         </tr>
                         @endforeach
                         @else

@@ -40,7 +40,9 @@
             <div class="mb-6">
                 <div class="flex items-end justify-center mb-2">
                     <h2 class="mr-1 mb-0">{{ $termValue }}</h2>
+                    @if(Auth::check() && Auth::user()->role === 'admin')
                     <span class="underline text-gray-500 text-xs pb-1.5 hover:text-blue-600 cursor-pointer" @click.prevent="openModalAndFetchSubjects({{ $yearKey + 1 }}, {{ $termKey + 1 }})">Manage</span>
+                    @endif
                 </div>
                 <div class="overflow-x-auto bg-white rounded-lg shadow overflow-y-auto relative">
                     @php
@@ -92,7 +94,9 @@
         <h2 class="text-center bg-sky-950 px-4 rounded-md shadow text-white mb-6">4th Year</h2>
         <div class="flex items-end justify-center mb-2">
             <h2 class="mr-1 mb-0">Term 1</h2>
+            @if(Auth::check() && Auth::user()->role === 'admin')
             <span class="underline text-gray-500 text-xs pb-0.5 hover:text-blue-600 cursor-pointer" @click.prevent="openModalAndFetchSubjects(4, 1)">Manage</span>
+            @endif
         </div>
         <div class="overflow-x-auto bg-white rounded-lg shadow overflow-y-auto relative">
             @php

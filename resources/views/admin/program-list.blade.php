@@ -39,7 +39,11 @@
                     </thead>
                     <tbody>
                         @foreach ($programs as $program)
+                        @if(Auth::check() && Auth::user()->role === 'admin')
                         <tr class="text-sm border-b hover:bg-gray-100 cursor-pointer" x-data="{}" @click="window.location.href='{{ route('program-list.show', $program->program_id) }}'">
+                        @elseif((Auth::check() && Auth::user()->role === 'dean'))
+                        <tr class="text-sm border-b hover:bg-gray-100 cursor-pointer" x-data="{}" @click="window.location.href='{{ route('dean-access.program-list.show', $program->program_id) }}'">
+                        @endif
                             <td class="border-dashed border-t border-gray-200 py-2 pl-4">{{ $program->program_code }}</td>
                             <td class="border-dashed border-t border-gray-200 p-1">{{ $program->program_name }}</td>
                             <td class="border-dashed border-t border-gray-200 p-1">{{ $program->program_major }}</td>

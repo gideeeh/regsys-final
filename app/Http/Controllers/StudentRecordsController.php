@@ -110,10 +110,10 @@ class StudentRecordsController extends Controller
     public function show($student_id)
     {
 
-        if (auth()->user()->role !== 'admin') {
+        if (!in_array(auth()->user()->role, ['admin', 'dean'])) {
             abort(403, 'You are not authorized to perform this action.');
         }
-        
+
         $latestEnrollment = Student::with(['latestEnrollment', 'latestEnrollment.program', 'notes'])->findOrFail($student_id);
         $student = Student::findOrFail($student_id);
         // $latestYearLevel = $student->enrollments()->orderByDesc('year_level')->first()->year_level ?? null;

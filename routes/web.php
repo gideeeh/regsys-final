@@ -9,6 +9,7 @@ use App\Http\Controllers\AppointmentsUser;
 use App\Http\Controllers\ChartController;
 use App\Http\Controllers\CourseListingsController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DeanUserController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\DepartmentsController;
 use App\Http\Controllers\DeptHeadsController;
@@ -53,6 +54,8 @@ Route::get('/', function () {
     if (Auth::check()) {
         if (Auth::user()->role === 'admin') {
             return redirect('/admin/dashboard'); // Redirect admins to the admin dashboard
+        } else if(Auth::user()->role === 'dean') {
+            return redirect('/dean/dashboard');
         } else {
             return redirect('/user/dashboard'); // Redirect regular users to the user dashboard
         }
@@ -112,6 +115,63 @@ Route::middleware('auth')->group(function () {
     Route::get('/user/complete-requests', [AppointmentsController::class, 'getUserCompletedAppointments'])->name('user.complete-requests');
 });
 
+
+/* Dean's Access */
+Route::middleware(['auth','isDeanUser'])->group(function() {
+    /* Dashboard */
+    Route::get('/dean/dashboard', [DeanUserController::class, 'index'])->name('dean.dashboard');
+    Route::get('/dean/dashboard/get-active-classes', [DashboardController::class, 'getActiveClasses'])->name('dean-access.active-classes.json');
+    // Route::get('/admin/dashboard/get-articles', [DashboardController::class, 'scrapedNews'])->name('scraped-news.json');
+    Route::get('/dean/dashboard/get-calendar-events', [DashboardController::class, 'calendarEvents'])->name('dean-access.calendar-events.json');
+    Route::get('/dean/dashboard/get-daily-quote', [ScrapingController::class, 'scrapeDailyQuotes'])->name('dean-access.daily-quote.json');
+    Route::get('dean/appointments/latest-appt-json', [AppointmentsDashboardController::class, 'latestAppointment'])->name('dean-access.appointments.queue-latest');
+
+    
+    /* Student Records */
+
+    Route::get('/dean/student-records', [StudentRecordsController::class, 'index'])->name('dean-access.student-records');
+    Route::get('/dean/student-records/{student}', [StudentRecordsController::class, 'show'])->name('dean-access.student-records.show');
+
+    /* Program Management */
+    Route::get('/dean/functions/program-course-management/program_list', [ProgramController::class, 'index'])->name('dean-access.program-list');
+    Route::get('/dean/functions/program-course-management/program_list/{program_id}', [ProgramController::class, 'show'])->name('dean-access.program-list.show');
+
+    /* Subjects */
+    Route::get('/dean/functions/program-course-management/subject_catalog', [SubjectCatalogController::class, 'index'])->name('dean-access.subject-catalog');
+    Route::get('/dean/functions/program-course-management/subject_catalog', [SubjectCatalogController::class, 'index'])->name('dean-access.subject-catalog');
+
+    /* Sections */
+    Route::get('/dean/functions/program-course-management/sections',[SectionController::class, 'index'])->name('dean-access.sections');
+    Route::get('/dean/functions/program-course-management/sections/{id}',[SectionController::class, 'show'])->name('dean-access.sections.show');
+    Route::post('/dean/functions/program-course-management/sections/create',[SectionController::class, 'store'])->name('dean-access.section.create');
+    Route::post('/dean/functions/sections/assign-schedule',[SectionSubjectsController::class, 'store'])->name('dean-access.section-subject.store');
+    Route::post('/dean/functions/sections/store-subjects-free',[SectionSubjectsController::class, 'store_free'])->name('dean-access.section-subject-free.store');
+    // Route::post('/admin/functions/sections/store-subjects-free/set_schedule',[SectionSubjectSchedulesController::class, 'store_schedule_free_section'])->name('section-subject-free-schedule.store');
+
+    /* Calendar */
+    Route::get('/dean/functions/program-course-management/academic_calendar', [AcademicCalendarController::class, 'index'])->name('dean-access.academic-calendar');    
+    Route::post('/dean/functions/program-course-management/academic_calendar/add-event', [AcademicCalendarController::class, 'store'])->name('dean-access.academic-calendar-add-event');
+    // Route::delete('/admin/functions/program-course-management/academic_calendar/delete-event/{id}', [AcademicCalendarController::class, 'destroy'])->name('academic-calendar-delete-event');
+
+    /* Local APIs */
+    Route::get('/admin/students/get-students/', [StudentRecordsController::class, 'student_json'])->name('students.json');
+    Route::get('/admin/functions/get-subjects', [SubjectController::class, 'search'])->name('gimme-subjects');
+    Route::get('/admin/students/get-students/{student_id}', [StudentRecordsController::class, 'fetch_student_json'])->name('students.fetch');
+    Route::get('/admin/functions/get-subjects/{subject_id}', [SubjectCatalogController::class, 'fetch_subject'])->name('subject.fetch');
+    Route::get('/admin/functions/get-programs', [ProgramController::class, 'program_json'])->name('program.jsonn');
+    Route::get('/admin/functions/get-programs/{program_id}', [ProgramController::class, 'fetch_program_json'])->name('program.json');
+    // Route::get('/admin/functions/get-program-subjects/', [ProgramSubjectController::class, 'program_subjects_json'])->name('program-subjects.json');
+    Route::get('/admin/functions/get-program-subjects/', [ProgramSubjectController::class, 'fetchProgramSubjects'])->name('program-subjects.json');
+    Route::get('/admin/functions/get-program-subjects/all', [ProgramSubjectController::class, 'program_subjects_json'])->name('program-subjects-all.json');
+    Route::get('/program/{program_id}/subjects/{year}/{term}', [ProgramSubjectController::class, 'fetchSubjects'])->name('fetch.subjects');
+    Route::get('/sections/fetch', [SectionController::class,'fetchSections'])->name('fetch.sections');
+    Route::get('/admin/functions/get-faculty', [FacultyRecordsController::class, 'faculty_json'])->name('faculty_json');
+    Route::get('/admin/functions/faculty/search', [FacultyRecordsController::class, 'searchFaculty'])->name('faculty.search');
+    Route::get('/admin/functions/get-faculty/{prof_id}', [FacultyRecordsController::class, 'fetch_faculty_json'])->name('faculty_json.fetch');
+    Route::get('/admin/functions/get-schedules', [SectionSubjectSchedulesController::class, 'sec_sub_schedule_json'])->name('sec_sub_schedule_json');
+    Route::get('/admin/functions/fetch-schedule', [SectionSubjectSchedulesController::class, 'fetchScheduleDetailsForSectionAndSubject'])->name('sec_sub_schedule.fetch');
+    Route::get('/admin/functions/get-section-subjects', [SectionSubjectsController::class, 'search'])->name('sec_sub.search');
+});
 
 /* Admin Middleware */
 Route::middleware(['auth','isAdminUser'])->group(function() {

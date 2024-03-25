@@ -17,6 +17,7 @@ class Kernel extends HttpKernel
         // ... existing middleware ...
         'isAdminUser' => \App\Http\Middleware\IsAdminUser::class,
         'api.key' => \App\Http\Middleware\CheckApiKey::class,
+        'isDeanUser' => \App\Http\Middleware\DeanMiddleware::class,
     ];
     
     protected $middleware = [
@@ -72,5 +73,6 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'IsAdminUser' => \App\Http\Middleware\isAdminUser::class,
+        'IsDeanUser' => \App\Http\Middleware\DeanMiddleware::class,
     ];
 }

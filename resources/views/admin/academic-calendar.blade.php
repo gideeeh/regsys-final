@@ -14,7 +14,11 @@
     <div x-cloak x-show="showModal" id="addEventModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center px-4 z-50">
         <div class="modal-content bg-white p-8 rounded-lg shadow-lg overflow-auto max-w-md w-full max-h-[80vh]">
             <h3 class="text-lg font-bold mb-4">Add New Event</h3>
+            @if(Auth::check() && Auth::user()->role === 'admin')
             <form method="POST" action="{{route('academic-calendar-add-event')}}"  id="addEventForm" class="space-y-4">
+            @else
+            <form method="POST" action="{{route('dean-access.academic-calendar-add-event')}}"  id="addEventForm" class="space-y-4">
+            @endif
                 @csrf
                 <label for="eventTitle" class="block text-sm font-medium text-gray-700">Event Title</label>
                 <input type="text" id="eventTitle" placeholder="Event Title" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">

@@ -77,9 +77,11 @@
             <!-- IF ITS FREEEEEEEEEEEEEEEEEE -->
             <div class="flex justify-between px-2">
                 <h3>Subjects Schedules</h3>
+                @if(Auth::check() && Auth::user()->role === 'admin')
                 <div class="flex items-center">
                     <button @click="addSubjectToSection=true" class="bg-green-500 text-white text-xs px-1 py-1 rounded hover:bg-green-600 transition ease-in-out duration-150">Add Subject</button>
                 </div>
+                @endif
             </div>
             <div class="max-h-[50vh] max-w-md overflow-y-scroll nice-scroll text-xs">
                 <table class="border-separate border-spacing-2">
@@ -137,7 +139,9 @@
                             <th class="border px-4 py-2">Limit</th>
                             <th class="border px-4 py-2">Pax</th>
                             @if($section->section_type->section_type==='free')
+                            @if(Auth::check() && Auth::user()->role === 'admin')
                             <th>Action</th>
+                            @endif
                             @endif
                         </tr>
                     </thead>
@@ -200,9 +204,11 @@
                             </td>
                             @else
                             <td class="border px-4 py-2">-</td>
+                            @if(Auth::check() && Auth::user()->role === 'admin')
                             <td class="border px-4 py-2">
                                 <button @click="showDeleteModal=true; selectedSectionSubjectId = {{ $sectionSubject->id }}" class="bg-red-500 text-white text-xs p-1 rounded hover:bg-red-600 transition ease-in-out duration-150">Remove</button>
                             </td>
+                            @endif
                             @endif
                         </tr>
                         @endforeach
@@ -222,11 +228,11 @@
 
     <!-- Add Subject -->
     <div x-cloak id="addSubjectToSection" x-show="addSubjectToSection" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center px-4 z-50" data-section-id="${subject.section_id}">
-        <div class="modal-content bg-white p-8 rounded-lg shadow-lg overflow-auto min-wd-lg max-w-xl w-full min-h-[55vh] max-h-[90vh] flex flex-col justify-between">
+        <div class="modal-content bg-white p-8 rounded-lg shadow-lg overflow-auto min-wd-lg max-w-xl w-full min-h-[35vh] max-h-[45vh] flex flex-col justify-between">
             <form method="POST" action="{{route('section-subject-free.store')}}">
             @csrf
                 <input type="hidden" name="section_id" value="{{$section->section_id}}">
-                <div>
+                <div class="mb-4">
                     <h1>Add Subject</h1>
                     <select id="subject_to_add" name="subject_to_add" x-model="subject_to_add" style="width: 100%;"></select>
                 </div>
@@ -260,10 +266,20 @@
         <div class="modal-content bg-white p-8 rounded-lg shadow-lg overflow-auto min-wd-lg max-w-xl w-full min-h-[85vh] max-h-[90vh]">
             <h2>Manage Section</h2>
             <!-- F2F Class Schedule -->
+            @if(Auth::check() && Auth::user()->role === 'admin')
+            <!-- If user is admin -->
             @if($section->section_type->section_type==='block')
             <form id="createSectionSchedule" action="{{route('section-subject.store')}}" method="POST">
             @else    
             <form id="createSectionSchedule" action="{{route('section-subject-free-schedule.store')}}" method="POST">
+            @endif
+            @else(Auth::check() && Auth::user()->role === 'dean')
+            <!-- If user is dean -->
+            @if($section->section_type->section_type==='block')
+            <form id="createSectionSchedule" action="{{route('dean-access.section-subject.store')}}" method="POST">
+            @else    
+            <form id="createSectionSchedule" action="{{route('dean-access.section-subject-free.store')}}" method="POST">
+            @endif
             @endif
                 @csrf
                 @if($section->section_type->section_type==='free')

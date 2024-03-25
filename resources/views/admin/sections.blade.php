@@ -32,8 +32,13 @@
             </thead>
             <tbody>
                 @foreach($sections as $section)
+                @if(Auth::check() && Auth::user()->role === 'admin')
                 <tr class="border-dashed border-t border-gray-200 text-sm border-b hover:bg-gray-100 cursor-pointer"
                     @click="window.location.href='{{ route('sections.show', $section->section_id) }}'">
+                @else
+                <tr class="border-dashed border-t border-gray-200 text-sm border-b hover:bg-gray-100 cursor-pointer"
+                    @click="window.location.href='{{ route('dean-access.sections.show', $section->section_id) }}'">
+                @endif
                     <td class="border-dashed border-t border-gray-200 p-2">{{$section->section_name}}</td>
                     <td class="border-dashed border-t border-gray-200 p-2">{{$section->academic_year}}</td>
                     <td class="border-dashed border-t border-gray-200 p-2">{{$section->term}}</td>

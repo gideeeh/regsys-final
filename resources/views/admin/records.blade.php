@@ -7,10 +7,15 @@
                 <nav class="registrar-functions-nav">
                     <ul class="mt-4">
                         <li class="menu-nav" @click.prevent="openStudents = !openStudents">
+                            @if(Auth::check() && Auth::user()->role === 'admin')
                             <a href="{{ route('student-records') }}" class="{{  request()->routeIs('student-records') || request()->routeIs('student.add') ? 'font-semibold' : '' }} block rounded-md py-2 px-4 hover:bg-gray-200">
+                            @else
+                            <a href="{{ route('dean-access.student-records') }}" class="{{  request()->routeIs('dean-access.student-records') || request()->routeIs('student.add') ? 'active-main' : '' }} block rounded-md py-2 px-4 hover:bg-gray-200">
+                            @endif
                             Student Records
                             </a>
                         </li>
+                        @if(Auth::check() && Auth::user()->role === 'admin')
                         <li>
                             <ul x-show="openStudents" class="submenu">
                                 <li>
@@ -30,6 +35,7 @@
                                 Faculty Records
                             </a>
                         </li>
+                        @endif
                     </ul>
                 </nav>
             </aside>

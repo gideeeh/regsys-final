@@ -43,8 +43,11 @@
         <x-alert-message />
         <div class="min-h-screen bg-stone-100">
         @can('isAdmin')
-            <!-- Include Admin Navigation -->
-            @include('admin.navigation')
+        <!-- Include Admin Navigation -->
+        @include('admin.navigation')
+        @elsecan('isDean')
+            <!-- Include Dean Navigation -->
+            @include('dean.navigation')
         @else
             <!-- Include Regular User Navigation -->
             @include('user.navigation')

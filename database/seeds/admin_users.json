@@ -1,6 +1,6 @@
 [
-    {"first_name":"CS Dean","last_name":"NG","email":"cs_dean@example.com","email_verified_at":"2024-03-21 13:44:52","password":"$2y$12$bZFdR9GJTFw0Hh8sw5Wlou5muk38nYcK6D0\/ko2MESIJAxq7H11lS","role":"admin","remember_token":null,"created_at":"2024-03-21 13:44:52","updated_at":"2024-03-21 13:44:52"},
-    {"first_name":"BA Dean","last_name":"NG","email":"ba_dean@example.com","email_verified_at":"2024-03-21 13:44:52","password":"$2y$12$bZFdR9GJTFw0Hh8sw5Wlou5muk38nYcK6D0\/ko2MESIJAxq7H11lS","role":"admin","remember_token":null,"created_at":"2024-03-21 13:44:52","updated_at":"2024-03-21 13:44:52"},
-    {"first_name":"OffAd Dean","last_name":"NG","email":"offad_dean@example.com","email_verified_at":"2024-03-21 13:44:52","password":"$2y$12$bZFdR9GJTFw0Hh8sw5Wlou5muk38nYcK6D0\/ko2MESIJAxq7H11lS","role":"admin","remember_token":null,"created_at":"2024-03-21 13:44:52","updated_at":"2024-03-21 13:44:52"}
+    {"first_name":"CS Dean","last_name":"NG","email":"cs_dean@example.com","email_verified_at":"2024-03-21 13:44:52","password":"$2y$12$bZFdR9GJTFw0Hh8sw5Wlou5muk38nYcK6D0\/ko2MESIJAxq7H11lS","role":"dean","remember_token":null,"created_at":"2024-03-21 13:44:52","updated_at":"2024-03-21 13:44:52"},
+    {"first_name":"BA Dean","last_name":"NG","email":"ba_dean@example.com","email_verified_at":"2024-03-21 13:44:52","password":"$2y$12$bZFdR9GJTFw0Hh8sw5Wlou5muk38nYcK6D0\/ko2MESIJAxq7H11lS","role":"dean","remember_token":null,"created_at":"2024-03-21 13:44:52","updated_at":"2024-03-21 13:44:52"},
+    {"first_name":"OffAd Dean","last_name":"NG","email":"offad_dean@example.com","email_verified_at":"2024-03-21 13:44:52","password":"$2y$12$bZFdR9GJTFw0Hh8sw5Wlou5muk38nYcK6D0\/ko2MESIJAxq7H11lS","role":"dean","remember_token":null,"created_at":"2024-03-21 13:44:52","updated_at":"2024-03-21 13:44:52"}
 ]
     

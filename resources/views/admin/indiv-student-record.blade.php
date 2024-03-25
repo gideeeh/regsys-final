@@ -68,12 +68,14 @@
                                     <span class="mt-4 bg-sky-500 text-white text-sm p-1 rounded hover:bg-sky-600 transition ease-in-out duration-150">Personal Information</span>
                                 </a>
                             </div>
+                            @if(Auth::check() && Auth::user()->role === 'admin')
                             <a 
                                 onclick="event.stopPropagation(); 
                                 window.open('{{ route('student.edit', $student->student_id) }}', '_blank');" 
                                 class="cursor-pointer absolute top-2 right-2 text-xs p-1 rounded bg-slate-300 text-white hover:bg-slate-400 transition ease-in-out duration-150">
                                 Update
                             </a>
+                            @endif
                         </div>
                     </div>
                     <!-- Academic Info Section -->
@@ -85,11 +87,13 @@
                         @foreach($organizedEnrollments as $programName => $data)
                             <h2 class="text-center bg-sky-950 rounded-md text-white p-1">{{ $programName }}</h2> 
                             <div class="flex justify-end">
+                            @if(Auth::check() && Auth::user()->role === 'admin')
                                 <a 
                                     href="{{ url('/tor/pdf/print/'. $student->student_id .'/' . $data['programId']) }}" 
                                     class="bg-neutral-500 text-white text-sm text-lg p-1 rounded hover:bg-neutral-600 transition ease-in-out duration-150">
                                     Print TOR
                                 </a>
+                            @endif
                             </div>
                             @foreach($data['years'] as $yearLevel => $terms)
                                 <div>
@@ -150,7 +154,9 @@
                     <div class="stu-notes bg-white border border-1 rounded-lg p-6 mb-4 lg:min-h-[47h] md:min-h-[40vh] sm:min-h-[33vh] lg:max-h-[47h] md:max-h-[40vh] sm:max-h-[33vh] overflow-y-auto nice-scroll">
                         <div class="flex justify-between mb-6">
                             <span class="font-semibold">Student Notes</span>
+                            @if(Auth::check() && Auth::user()->role === 'admin')
                             <button @click="showNotesModal = true" class="cursor-pointer bg-green-500 font-semibold text-xs rounded-md text-white p-1 hover:bg-green-600 transition ease-in-out duration-150">Manage</button>
+                            @endif
                         </div>
                         <div class="display-notes text-sm space-y-4 mb-4">
                             @if($notes)
@@ -175,6 +181,7 @@
                     <div class="bg-white border border-1 rounded-lg p-6 lg:min-h-[45h] md:min-h-[38vh] sm:min-h-[31vh] lg:max-h-[45h] md:max-h-[38vh] sm:max-h-[31vh] overflow-y-auto nice-scroll">
                         <div class="flex justify-between">
                             <span class="font-semibold">File Records</span>
+                            @if(Auth::check() && Auth::user()->role === 'admin')
                             <form action="{{ route('student-files.upload', $student->student_id) }}" method="post" enctype="multipart/form-data">
                                 @csrf
                                 <div class="flex justify-between">
@@ -184,6 +191,7 @@
                                     </label>
                                 </div>
                             </form>
+                            @endif
                             <!-- <button class="cursor-pointer bg-purple-500 font-semibold text-xs rounded-md text-white p-1 hover:bg-purple-600 transition ease-in-out duration-150">+ Add File</button> -->
                         </div>
                         <div>
