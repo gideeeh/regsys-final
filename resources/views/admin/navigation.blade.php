@@ -24,6 +24,7 @@
                                 'student.add',
                                 'student-records.show',
                                 'faculty-records',
+                                'faculty-records.show',
                                 ])">
                             {{ __('Records') }}
                         </x-nav-link>
@@ -78,6 +79,7 @@
                                 'academic-calendar',
                                 'academic-year',
                                 'sections',
+                                'sections.show',
                                 'departments',
                                 'program-list.show',
                                 ])">

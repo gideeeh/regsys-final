@@ -22,7 +22,8 @@
                             :active="request()->routeIs([
                                 'dean-access.student-records',
                                 'dean-access.student-records.show',
-                                'faculty-records',
+                                'dean-access.faculty-records',
+                                'dean-access.faculty-records.show',
                                 ])">
                             {{ __('Records') }}
                         </x-nav-link>
@@ -30,7 +31,16 @@
                     <!-- <x-nav-link :href="route('appointments.dashboard')" :active="request()->routeIs('appointments.dashboard')">
                         {{ __('Student Appointments') }}
                     </x-nav-link> -->
-                    <x-nav-link :href="route('dean-access.program-list')" :active="request()->routeIs('dean-access.program-list')">
+                    <x-nav-link 
+                        :href="route('dean-access.program-list')" 
+                        :active="request()->routeIs([
+                            'dean-access.program-list',
+                            'dean-access.subject-catalog',
+                            'dean-access.program-list.show',
+                            'dean-access.sections',
+                            'dean-access.sections.show',
+                            'dean-access.academic-calendar',
+                            ])">
                         {{ __('Functions') }}
                     </x-nav-link>
                 </div>

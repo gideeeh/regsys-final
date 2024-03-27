@@ -16,13 +16,14 @@
         selectedStudent: null }" 
     @keydown.escape.window="addProfessor=false;updateModal=false">
     <h3 class="flex w-full justify-center bg-sky-950 px-4 rounded-md text-white mb-6 cursor-default">Faculty Records</h3>
-
+    @if(Auth::check() && Auth::user()->role === 'admin')
     <div class="flex justify-between items-center h-10">
-        <!-- <a href="{{ route('faculty-records') }}" class="font-semibold text-xl text-gray-800 leading-tight no-underline hover:underline">
-            {{ __('Faculty Records') }}
-        </a> -->
         <button @click="addProfessor = true" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition ease-in-out duration-150">Create Record</button>
         <x-search-form action="{{ route('faculty-records') }}" placeholder="Search Faculty" />
+    @else
+    <div class="flex justify-end items-center h-10">
+        <x-search-form action="{{ route('dean-access.faculty-records') }}" placeholder="Search Faculty" />
+        @endif
     </div>
     <div class="mt-6">
         {{ $professors->links() }}
@@ -39,7 +40,11 @@
                 </thead>
                 <tbody>
                     @foreach($professors as $professor)
-                    <tr class="border-b hover:bg-gray-100 cursor-pointer text-sm">
+                    @if(Auth::check() && Auth::user()->role === 'admin')
+                    <tr class="border-b hover:bg-gray-100 cursor-pointer text-sm" @click="window.location.href='{{ route('faculty-records.show', $professor->prof_id) }}'">
+                    @else
+                    <tr class="border-b hover:bg-gray-100 cursor-pointer text-sm" @click="window.location.href='{{ route('dean-access.faculty-records.show', $professor->prof_id) }}'">
+                    @endif
                         @if($professor->middle_name)
                         <td class="border-dashed border-t border-gray-200 p-1 pl-4 py-2">{{$professor->first_name}} {{ substr($professor->middle_name, 0, 1)}}.  {{$professor->last_name.' '.$professor->suffix}}</td>
                         @else

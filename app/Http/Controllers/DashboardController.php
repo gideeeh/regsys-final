@@ -63,16 +63,16 @@ class DashboardController extends Controller
     
         // Separate and filter F2F and Online classes based on time and day
         $activeF2FClasses = $allClasses->filter(function ($class) use ($now, $today) {
-            $classDays = json_decode(json_decode($class->class_days_f2f));
+            $classDays = json_decode($class->class_days_f2f);
             return in_array($today, $classDays) && $now->between($class->start_time_f2f, $class->end_time_f2f);
         });
     
         $activeOnlineClasses = $allClasses->filter(function ($class) use ($now, $today) {
-            $classDays = json_decode(json_decode($class->class_days_online));
+            $classDays = json_decode($class->class_days_online);
             return in_array($today, $classDays) && $now->between($class->start_time_online, $class->end_time_online);
         });
     
-        // Format the output for active classes to include the necessary details
+        // // Format the output for active classes to include the necessary details
         $formattedF2FClasses = $activeF2FClasses->map(function ($class) {
             return [
                 'subject_code' => $class->subject_code,

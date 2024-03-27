@@ -24,7 +24,7 @@
                 <strong>Date Created:</strong> {{\Carbon\Carbon::parse($appointment->appointment_datetime)->format('M d, Y')}}
             </div>
             <div class="mb-4">
-                <strong>Request:</strong> {{$appointment->service->service_name}}
+                <strong>Request:</strong> {{$appointment->concern}}
             </div>
             <div>
                 <strong>Notes:</strong> {{$appointment->notes ?? 'Notes unavailable.'}}

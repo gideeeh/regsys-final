@@ -2,12 +2,23 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\ProfessorScheduleExport;
 use App\Models\Department;
 use App\Models\Professor;
+use App\Models\SectionSubject;
+use App\Services\AcademicYearService;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 
 class FacultyRecordsController extends Controller
 {
+    protected $academicYearService;
+
+    public function __construct(AcademicYearService $academicYearService)
+    {
+        $this->academicYearService = $academicYearService;
+    }
+    
     public function index(Request $request)
     {
         $query = Professor::query()
@@ -44,11 +55,28 @@ class FacultyRecordsController extends Controller
         ]);
     }
     
-    public function show($prof_id)
+    public function show(Request $request, $prof_id)
     {
-        $professorRecord = Professor::findOrFail($prof_id);
+        $activeAcadYearAndTerm  = $this->academicYearService->determineActiveAcademicYearAndTerm();
+        if (!$activeAcadYearAndTerm) {
+            return redirect()->back()->with('error', 'No active academic year found.');
+        }
+        $activeAcadYearDetails = $activeAcadYearAndTerm['activeAcadYear'];
+        $activeAcadYear = $activeAcadYearDetails->acad_year;
+        $activeTerm = $activeAcadYearAndTerm['activeTerm'];
 
-        return view('admin.indiv-professor-record', ['professor' => $professorRecord]);
+        $professorRecord = Professor::findOrFail($prof_id);
+        $classes = SectionSubject::with(['subjectSectionSchedule', 'section', 'subject'])
+            ->whereHas('section', function($query) use ($activeAcadYear, $activeTerm) {
+                $query->where('academic_year', $activeAcadYear)
+                    ->where('term', $activeTerm);
+            })
+            ->whereHas('subjectSectionSchedule', function($query) use ($prof_id) {
+                $query->where('prof_id', $prof_id);
+            })
+            ->get();
+
+        return view('admin.faculty-records-show', compact('classes', 'professorRecord', 'activeAcadYear', 'activeTerm'));
     }
 
     public function faculty_json(Request $request)
@@ -151,5 +179,24 @@ class FacultyRecordsController extends Controller
         } else {
             return redirect()->back()->with('error', 'Faculty record not found!');
         }
+    }
+
+    public function exportSchedule($prof_id)
+    {
+        $activeAcadYearAndTerm = $this->academicYearService->determineActiveAcademicYearAndTerm();
+        if (!$activeAcadYearAndTerm) {
+            return redirect()->back()->with('error', 'No active academic year found.');
+        }
+
+        $activeAcadYear = $activeAcadYearAndTerm['activeAcadYear']->acad_year;
+        $activeTerm = $activeAcadYearAndTerm['activeTerm'];
+
+        $professor = Professor::find($prof_id);
+        $professorName = "{$professor->first_name} {$professor->last_name}";
+        $filenameFriendlyProfessorName = str_replace([' ', '/'], '_', $professorName);
+        $formatTerm = 'T' . $activeTerm;
+        $filename = "{$filenameFriendlyProfessorName}_{$formatTerm}_{$activeAcadYear}.xlsx";
+
+        return Excel::download(new ProfessorScheduleExport($prof_id, $activeAcadYear, $activeTerm), $filename);
     }
 }

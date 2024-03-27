@@ -431,7 +431,27 @@ class PrintablesController extends Controller
             $templateProcessor->setValue("sect$placeholderIndex", $section);
         }
 
-        $fileName = uniqid() . '-filled-template.docx';
+        // $student_number = $enrollment->student->student_number ?? '-';
+        // $status = ucfirst($enrollment->enrollment_method) ?? '-';
+        // $validation = '-';
+        // $batch = '-';
+
+        // $term = $enrollment->term ?? '-';
+        // $school_year = $enrollment->academic_year ?? '-';
+        // $term_sy = $term . ' / '. $school_year;
+        // $program_code = $enrollment->program->program_code ?? '-';
+        // $year_level = $enrollment->year_level ?? '-';
+        // $year = '';
+        // $gender = $enrollment->student->gender ?? '-';
+        // $scholarship = ucfirst($enrollment->scholarship_type) ?? '-';
+        // $first_name = $enrollment->student->first_name ?? ' ';
+        // $middle_name = $enrollment->student->middle_name ?? '';
+        // $middle_initial = !empty($middle_name) ? substr($middle_name, 0, 1) . '.' : '';
+        // $last_name = $enrollment->student->last_name ?? ' ';
+        // $name = $last_name . ', ' . $first_name . ' ' . $middle_initial;
+        // $name = strtoupper($name);
+        $fileName = 'COR_' . $last_name .'_'. $first_name . '_' . $school_year . '_' . 'T' . $term . '_' . $student_number . '.docx';
+        $fileName = preg_replace('/[^A-Za-z0-9.\-_]/', '', $fileName); // Basic sanitization
         $templateProcessor->saveAs(storage_path("app/public/{$fileName}"));
 
         return response()->download(storage_path("app/public/{$fileName}"))->deleteFileAfterSend(true);

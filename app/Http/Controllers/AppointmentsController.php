@@ -333,7 +333,7 @@ class AppointmentsController extends Controller
 
     public function retrieveByQRCode($appointment_code)
     {
-        $appointment = Appointment::with('service')->where('appointment_code', $appointment_code)->first();
+        $appointment = Appointment::where('appointment_code', $appointment_code)->first();
     
         if (!$appointment) {
             return redirect('/')->with('error', 'Appointment not found.');

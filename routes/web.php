@@ -104,7 +104,9 @@ Route::middleware('auth')->group(function () {
     
     // Appointment-related routes
     Route::get('/user/appointments', [AppointmentsUser::class, 'index'])->name('user.appointments');
+    Route::get('/user/appointments/limit/', [AppointmentsUser::class, 'appointment_limit'])->name('appointments.limit');
     Route::get('/user/sample_qr', [AppointmentsController::class, 'sample_qr'])->name('user.appointments-qr');
+    Route::post('/appointments/submit-appointment-request', [AppointmentsUser::class, 'request_appointment'])->name('appointments.submit-appt-request');
     Route::post('/appointments/create-appointment', [AppointmentsController::class, 'request_appointment'])->name('appointments.request');
     Route::get('/appointments/generate-qr/{qr_code}', [AppointmentsController::class, 'generate_qr'])->name('appointments.generate-qr');
     Route::get('/appointments/retrieve_qr/{qr_code}', [AppointmentsController::class, 'retrieveByQRCode'])->name('appointments.retrieve-qr');
@@ -128,7 +130,6 @@ Route::middleware(['auth','isDeanUser'])->group(function() {
 
     
     /* Student Records */
-
     Route::get('/dean/student-records', [StudentRecordsController::class, 'index'])->name('dean-access.student-records');
     Route::get('/dean/student-records/{student}', [StudentRecordsController::class, 'show'])->name('dean-access.student-records.show');
 
@@ -152,6 +153,12 @@ Route::middleware(['auth','isDeanUser'])->group(function() {
     Route::get('/dean/functions/program-course-management/academic_calendar', [AcademicCalendarController::class, 'index'])->name('dean-access.academic-calendar');    
     Route::post('/dean/functions/program-course-management/academic_calendar/add-event', [AcademicCalendarController::class, 'store'])->name('dean-access.academic-calendar-add-event');
     // Route::delete('/admin/functions/program-course-management/academic_calendar/delete-event/{id}', [AcademicCalendarController::class, 'destroy'])->name('academic-calendar-delete-event');
+
+    /* Professors */
+    Route::get('/dean/export-schedule/{prof_id}', [FacultyRecordsController::class, 'exportSchedule'])->name('dean-access.export.schedule');
+    Route::get('/dean/faculty-records', [FacultyRecordsController::class, 'index'])->name('dean-access.faculty-records');
+    Route::get('/dean/faculty-records/{prof_id}', [FacultyRecordsController::class, 'show'])->name('dean-access.faculty-records.show'); 
+    Route::get('/dean/functions/faculty/search', [FacultyRecordsController::class, 'searchFaculty'])->name('dean-access.faculty.search');
 
     /* Local APIs */
     Route::get('/admin/students/get-students/', [StudentRecordsController::class, 'student_json'])->name('students.json');
@@ -200,7 +207,7 @@ Route::middleware(['auth','isAdminUser'])->group(function() {
     Route::get('/student-image/{studentId}/{filename}', [FilesController::class, 'getStudentImage'])->name('student.image');
 /* Faculty Records */
     Route::get('/admin/faculty-records', [FacultyRecordsController::class, 'index'])->name('faculty-records');
-    Route::get('/admin/faculty-records/{faculty}', [FacultyRecordsController::class, 'show'])->name('faculty-records.show');
+    Route::get('/admin/faculty-records/{prof_id}', [FacultyRecordsController::class, 'show'])->name('faculty-records.show'); /* Currently working */
     Route::post('/admin/faculty-records/create-faculty-record', [FacultyRecordsController::class, 'store'])->name('faculty-records.store');
     Route::patch('/admin/faculty-records/update-faculty-record/{id}', [FacultyRecordsController::class, 'update'])->name('faculty-records.update');
     Route::delete('/admin/faculty-records/delete-faculty-record/{id}', [FacultyRecordsController::class, 'destroy'])->name('faculty-records.destroy');
@@ -268,6 +275,7 @@ Route::middleware(['auth','isAdminUser'])->group(function() {
 /* Appointments */
     Route::get('admin/appointments/dashboard', [AppointmentsController::class, 'index'])->name('appointments.dashboard');
     Route::get('admin/appointments/json', [AppointmentsController::class, 'appointmentsCalendarJson'])->name('appointments.json');
+    Route::post('admin/appointments/set_availability', [AppointmentsDashboardController::class, 'set_availability'])->name('appointments.set-availability');
     Route::get('admin/appointments/queue-json', [AppointmentsDashboardController::class, 'appointmentsQueue'])->name('appointments.queue');
     Route::get('admin/appointments/latest-appt-json', [AppointmentsDashboardController::class, 'latestAppointment'])->name('appointments.queue-latest');
     Route::patch('/admin/dashboard/save-appt-mgmt-settings', [AppointmentsDashboardController::class, 'saveMgmtSettings'])->name('appointments.save-mgmt-settings');
@@ -310,6 +318,7 @@ Route::middleware(['auth','isAdminUser'])->group(function() {
 
     Route::get('/cor/word/print/sample/', [PrintablesController::class, 'print_cor_sample']);
     Route::get('/cor/word/print/{enrollment_id}', [PrintablesController::class, 'print_cor']);
+    Route::get('/export-schedule/{prof_id}', [FacultyRecordsController::class, 'exportSchedule'])->name('export.schedule');
 });
 
 require __DIR__.'/auth.php';

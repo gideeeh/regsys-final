@@ -7,7 +7,10 @@
         <!-- Make response modal? get data from json of appointments. Have appointments be dynamically generated using js and have values in them to attach data when clicking on a specific response -->
         <div class="w-9/12 bg-white shadow-sm sm:rounded-lg max-h-[80vh] overflow-x-hidden overlow-y-scroll text-xs calendar-scroll p-2">
             <div class="flex items-center justify-between">
-                <button @click="manage=true" id="manageAppt" class="bg-slate-500 text-white px-4 py-2 rounded hover:bg-slate-600 transition ease-in-out duration-150">Manage</button>
+                <div>
+                    <button @click="manage=true" id="manageAppt" class="bg-slate-500 text-white px-4 py-2 rounded hover:bg-slate-600 transition ease-in-out duration-150">Manage</button>
+                    <button id="availability" class="bg-green-700 text-white px-4 py-2 rounded hover:bg-green-800 transition ease-in-out duration-150">Available</button>
+                </div>
                 <div class="flex justify-end gap-2">
                     <input type="date" id="jumpToApptDate" class="rounded text-xs">
                     <button id="jumpToApptDateBtn" class="bg-slate-500 text-white px-4 py-2 rounded hover:bg-slate-600 transition ease-in-out duration-150">Go</button>
@@ -197,6 +200,29 @@ document.addEventListener('DOMContentLoaded', function() {
         if (dateInput) {
             calendar.gotoDate(dateInput);
         }
+    });
+
+    $('#availability').on("click", function() {
+        var button = $(this); 
+        $.ajax({
+            url: '/admin/appointments/set_availability',
+            type: 'POST', 
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') 
+            },
+            success: function(response) {
+                if (button.hasClass('bg-green-700')) {
+                    button.removeClass('bg-green-700 hover:bg-green-800').addClass('bg-red-700 hover:bg-red-800');
+                    button.text('Not Available');
+                } else {
+                    button.removeClass('bg-red-700 hover:bg-red-800').addClass('bg-green-700 hover:bg-green-800');
+                    button.text('Available');
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error("Error occurred: " + error);
+            }
+        });
     });
 });
 </script>

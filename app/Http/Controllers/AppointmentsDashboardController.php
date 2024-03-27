@@ -161,4 +161,13 @@ class AppointmentsDashboardController extends Controller
         }
     }
 
+    public function set_availability()
+    {
+        $settings = ApptMgmtSettings::findOrFail(1);
+
+        $settings->isAvailable = !$settings->isAvailable;
+
+        $settings->save();
+    }
+
 }

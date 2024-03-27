@@ -18,8 +18,12 @@ class Appointment extends Model
         'appointment_datetime',
         'notes',
         'appointment_code',
+        'concern',
+        'file_path',
     ];
-
+    protected $casts = [
+        'appointment_datetime' => 'datetime',
+    ];
     // Relationship to a user
     public function user()
     {

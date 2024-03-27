@@ -27,7 +27,7 @@ $(document).ready(function() {
             if(classesArray.length > 0) {
                 classesArray.forEach(function(cl) {
                     var sec_name = cl.section_name.slice(0,3) + ' ' + cl.section_name.slice(-1);
-                    var classInfo = `<div class="mb-2 p-2"><span class="text-md font-semibold">${sec_name} ${cl.subject_name}</span> <p class="text-sm">(${cl.time}) ${cl.professor}</p></div>`;
+                    var classInfo = `<div class="mb-2 p-2"><span class="text-sm font-semibold">${sec_name} ${cl.subject_name}</span> <p class="text-xs">(${cl.time}) ${cl.professor}</p></div>`;
                     container.append(classInfo);
                 });
             } else {

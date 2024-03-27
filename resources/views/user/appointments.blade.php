@@ -1,5 +1,15 @@
-<div x-data='{requestForm: false,
-        viewQRCodeModal: false}'>
+<div x-data='{
+    requestForm: false,
+    viewQRCodeModal: false,
+    selectSchedule: false,
+    selectedDate: null,
+    selectedTimeSlot: null,
+}'
+    @keydown.escape.window="
+    requestForm=false;
+    viewQRCodeModal=false;
+    selectSchedule= false;
+">
 <x-app-layout>
     <x-alert-message />
     <x-slot name="header">
@@ -7,7 +17,11 @@
             {{ __('Appointments Dashboard') }}
         </h2>
         <span class="text-sm">Got any concerns? </span>
+        @if($settings->isAvailable)
         <button @click="requestForm=true" class="bg-sky-500 text-white text-sm p-1 rounded hover:bg-sky-600 transition ease-in-out duration-150">Request Appointment</button>
+        @else
+        <button @click="requestForm=true" class="bg-slate-400 text-white text-sm p-1 rounded" disabled>Registrar Unavailable</button>
+        @endif
     </x-slot>
     
     <div x-data="{ 
@@ -23,7 +37,7 @@
                                     @if($mostRecentAppointment)
                                     <div class="flex gap-4 mb-6">
                                         <div class="w-1/2 text-sm">
-                                            <p><strong>Service ID: </strong> {{ $mostRecentAppointment->service->service_name }}</p>
+                                            <p><strong>Concern: </strong> {{ $mostRecentAppointment->concern }}</p>
                                             <p><strong>Date & Time: </strong> {{ \Carbon\Carbon::parse($mostRecentAppointment->appointment_datetime)->format('M d, Y g:i A') }}</p>
                                         </div>
                                         <div class="w-1/2">
@@ -59,8 +73,8 @@
                         
                         <div id="user-appointment-history" class="border-solid border-2 border-round sm:min-h-[43vh]">
                             @foreach($appointments as $appointment)
-                            <div @click="selectedAppointment = {service_name: '{{ $appointment->service->service_name }}', appointment_datetime: '{{ \Carbon\Carbon::parse($appointment->appointment_datetime)->format('M d, Y g:i A') }}'}" class="cursor-pointer hover:bg-gray-100 p-2 overflow-y-auto nice-scroll">
-                                <p><strong>Service: </strong> {{ $appointment->service->service_name }}</p>
+                            <div class="cursor-pointer hover:bg-gray-100 p-2 overflow-y-auto nice-scroll">
+                                <p><strong>Concern: </strong> {{ $appointment->concern }}</p>
                                 <p><strong>Appt. Sched: </strong>{{ \Carbon\Carbon::parse($appointment->appointment_datetime)->format('M d, Y g:i A') }}</p>
                             </div>
                             @endforeach
@@ -70,28 +84,149 @@
             </div>
         </div>
     </div>
+    
     <!-- Request Form Modal -->
-    <div x-cloak x-show="requestForm" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center px-4 z-50">
-        <div class="modal-content bg-white p-8 rounded-lg shadow-lg overflow-auto max-w-md w-full max-h-[80vh]">
-            <h3 class="text-lg font-bold mb-4">Registrar Request Form</h3>
-            
-            <form action="{{route('appointments.request')}}" method="POST" class="space-y-4">
-                @csrf
-                <input type="hidden" name="user_id" value="{{session('user_id')}}">
-                <div>
-                    <select id="request-service" name="service_id" style="width: 100%;"></select>
-                </div>
-                <div>
-                <label for="notes" class="block text-sm font-medium text-gray-700">Additional Notes:</label>
-                    <textarea name="notes" id="notes" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></textarea>
-                </div>
-                <div class="flex justify-end space-x-4">
-                    <button type="button" @click="requestForm = false" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition ease-in-out duration-150">Cancel</button>
-                    <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition ease-in-out duration-150">Submit Request</button>
-                </div>
-            </form>
+    <form action="{{route('appointments.submit-appt-request')}}" method="POST" enctype="multipart/form-data">
+        <div x-cloak x-show="requestForm" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center px-4 z-50">
+            <div class="modal-content bg-white p-8 rounded-lg shadow-lg overflow-auto max-w-md w-full min-h-[50vh]">
+                <h3 class="text-lg font-bold mb-4">Registrar Request Form</h3>
+                    @csrf
+                    <input type="hidden" name="user_id" value="{{session('user_id')}}">
+                    <div class="mb-4">
+                        <label for="concern" class="block text-sm font-medium text-gray-700">Request:</label>
+                        <input type="text" id="concern" name="concern" placeholder="Enter request concern" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                    </div>
+                    <!-- <div>
+                        <select id="request-service" name="service_id" style="width: 100%;" required></select>
+                    </div> -->
+                    <div class="mb-4">
+                        <label for="add_file" class="block text-sm font-medium text-gray-700">Add Relevant File:</label>
+                        <input type="file" id="add_file" name="add_file" class="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-gray-700">
+                    </div>
+                    <div class="mb-4">
+                        <label for="notes" class="block text-sm font-medium text-gray-700">Message/Notes:</label>
+                        <textarea name="notes" id="notes" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></textarea>
+                    </div>
+                    <div class="flex justify-end space-x-4">
+                        <button type="button" @click="requestForm = false" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition ease-in-out duration-150">Cancel</button>
+                        <!-- <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition ease-in-out duration-150">Submit Request</button> -->
+                        <button type="button" @click="requestForm = false;selectSchedule=true" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition ease-in-out duration-150">Next</button>
+                    </div>
+
+            </div>
         </div>
-    </div>
+        
+        <!-- Select Schedule -->
+        <div x-cloak x-show="selectSchedule" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center px-4 z-50">
+            <div class="modal-content bg-white p-8 rounded-lg shadow-lg overflow-auto max-w-lg w-full min-h-[85vh] max-h-[805h]">
+                <h3>Select schedule</h3>
+                {{-- Calendar Container --}}
+                @php
+                    $today = date('Y-m-d'); 
+                    $availableSchedules = json_decode($settings->available_schedules);
+                @endphp
+                <div class="calendar-container cursor-default">
+                    @php
+                        $year = date('Y');
+                        $month = date('m');
+                        $monthName = date('M');
+                        $firstDayOfMonth = mktime(0, 0, 0, $month, 1, $year);
+                        $numberDays = date('t', $firstDayOfMonth);
+                        $dateComponents = getdate($firstDayOfMonth);
+                        $monthName = $dateComponents['month'];
+                        $dayOfWeek = $dateComponents['wday'];
+                    @endphp
+                    <div class="mb-4">
+                        <h3>{{$monthName . ' ' . $year}} </h3>
+                    </div>
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead>
+                            <tr>
+                                <th>Sun</th>
+                                <th>Mon</th>
+                                <th>Tue</th>
+                                <th>Wed</th>
+                                <th>Thu</th>
+                                <th>Fri</th>
+                                <th>Sat</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        @php
+                            $currentDay = 1;
+                            $dayOfWeek = $dateComponents['wday'];
+                            $calendar = "";
+                            
+                            // Fill empty cells at the beginning of the first week
+                            if ($dayOfWeek > 0) {
+                                $calendar .= "<tr>";
+                                for ($k = 0; $k < $dayOfWeek; $k++) {
+                                    $calendar .= "<td class='border px-4 py-2'></td>";
+                                }
+                            }
+                            
+                            while ($currentDay <= $numberDays) {
+                                if ($dayOfWeek == 7) {
+                                    $dayOfWeek = 0;
+                                    $calendar .= "</tr><tr>";
+                                }
+
+                                $currentDayRel = str_pad($currentDay, 2, "0", STR_PAD_LEFT);
+                                $date = "$year-$month-$currentDayRel";
+                                $dt = new DateTime($date);
+                                $dayName = $dt->format('l');
+                                $isPast = $date < $today;
+                                $isAvailable = in_array($dayName, $availableSchedules) && !$isPast && $date !== $today;
+
+                                // Styling classes
+                                $dateClass = 'border px-4 py-2 text-xs ';
+                                if ($date === $today || $isPast || !in_array($dayName, $availableSchedules)) {
+                                    $dateClass .= 'bg-gray-200 text-gray-500 cursor-not-allowed';
+                                } else {
+                                    $dateClass .= 'cursor-pointer';
+                                }
+
+                                // Click handler adjustment
+                                $onClick = $isAvailable ? "@click='selectedDate = \"$date\"'" : "";
+                                $bindingClass = $isAvailable ? "x-bind:class=\"{'bg-red-500 text-white': selectedDate === '$date'}\"" : "";
+
+                                $calendar .= "<td class='$dateClass clickable-date' data-date='$date' rel='$date' $onClick $bindingClass>$currentDay</td>";
+
+                                $currentDay++;
+                                $dayOfWeek++;
+                            }
+
+                            // Fill in the remaining days of the last week
+                            if ($dayOfWeek != 7) {
+                                $remainingDays = 7 - $dayOfWeek;
+                                for ($l = 0; $l < $remainingDays; $l++) {
+                                    $calendar .= "<td class='border px-4 py-2'></td>";
+                                }
+                            }
+
+                            $calendar .= $dayOfWeek == 7 ? "" : "</tr>";
+                        @endphp
+                        {!! $calendar !!}
+                        </tbody>
+                    </table>
+                </div>
+                <div>
+                    <h2>Select Timeslot</h2>
+                    <input type="hidden" id="appointment_date" name="appointment_date">
+                    <select name="timeslot" id="timeslot">
+                        <option value="" hidden>Select a Timeslot</option>
+                    </select>
+                </div>
+
+                <div class="flex justify-end space-x-4 mt-4">
+                    <button type="button" @click="selectSchedule=false;requestForm=true" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition ease-in-out duration-150">Go Back</button>
+                    <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition ease-in-out duration-150">Proceed</button>
+                </div>
+            </div>
+        </div>
+    </form>
+
+
     <!-- QR Code View -->
     <div x-cloak x-show="viewQRCodeModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center px-4 z-50">
         @if($mostRecentAppointment)
@@ -118,5 +253,45 @@
     var appointmentsComplete = "{{url('/user/complete-requests')}}";
     var getStudentsUrl;
     console.log(servicesUrl)
+</script>
+<script>
+    $(document).ready(function() {
+        $('body').on('click', 'td.clickable-date', function() {
+            var selectedDate = $(this).attr('data-date');
+            $('#appointment_date').val(selectedDate);
+            console.log(selectedDate);
+            $.ajax({
+                url: "/user/appointments/limit/",
+                type: "GET",
+                data: {
+                    date: selectedDate,
+                },
+                success: function(response) {
+                    if(response.full) {
+                        alert(response.message);
+                    } else {
+                        // Clear existing options
+                        $('#timeslot').empty().append('<option value="">Select a Timeslot</option>');
+                        // Populate dropdown with available timeslots
+                        response.slots.forEach(function(slot) {
+                            $('#timeslot').append(`<option value="${slot}">${slot}</option>`);
+                        });
+
+                        // console.log('Slots available for ' + selectedDate);
+                        // console.log(response.slots); 
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error checking appointment limit:', error);
+                }
+            });
+        });
+
+        $('#timeslot').change(function() {
+            var selectedTimeSlot = $(this).val();
+            $('#hidden_timeslot').val(selectedTimeSlot);
+            console.log(selectedTimeSlot);
+        });
+    });
 </script>
 <script src="{{ asset('js/appointments.js') }}"></script>

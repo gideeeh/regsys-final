@@ -15,12 +15,12 @@
                         Appointments
                     </a>
                 </li>
-                <li class="menu-nav">
+                <!-- <li class="menu-nav">
                     <a href="{{ request()->routeIs('appointments.services') ? '#' : route('appointments.services') }}" 
                     class="{{ request()->routeIs('appointments.services') ? 'active-main' : '' }} block rounded-md py-2 px-4">
                         Manage Services
                     </a>
-                </li>
+                </li> -->
             </ul>
         </nav>
     </aside>

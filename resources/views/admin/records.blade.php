@@ -30,12 +30,16 @@
                                 </li>
                             </ul>
                         </li>
+                        @endif
                         <li class="menu-nav">
-                            <a href="{{ route('faculty-records') }}" class="{{ request()->routeIs('faculty-records') ? 'active-main' : '' }} block rounded-md py-2 px-4 hover:bg-gray-200">
+                            @if(Auth::check() && Auth::user()->role === 'admin')
+                            <a href="{{ route('faculty-records') }}" class="{{ request()->routeIs('faculty-records') || request()->routeIs('faculty-records.show') ? 'active-main' : '' }} block rounded-md py-2 px-4 hover:bg-gray-200">
+                            @else
+                            <a href="{{ route('dean-access.faculty-records') }}" class="{{ request()->routeIs('dean-access.faculty-records') || request()->routeIs('dean-access.faculty-records.show') ? 'active-main' : '' }} block rounded-md py-2 px-4 hover:bg-gray-200">
+                            @endif
                                 Faculty Records
                             </a>
                         </li>
-                        @endif
                     </ul>
                 </nav>
             </aside>
