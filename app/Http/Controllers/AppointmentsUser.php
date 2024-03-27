@@ -4,12 +4,15 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 use App\Models\Appointment;
+use App\Models\AppointmentResponse;
 use App\Models\ApptMgmtSettings;
 use App\Models\Student;
 use App\Models\User;
 use DateInterval;
 use DateTime;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 
 class AppointmentsUser extends Controller
@@ -18,10 +21,56 @@ class AppointmentsUser extends Controller
     {
         $user = Auth::user();
         $settings = ApptMgmtSettings::findOrFail(1);
-        $appointments = $user->appointments()->orderBy('appointment_datetime', 'desc')->get();
-        $mostRecentAppointment = $appointments->first();
     
-        return view('user.appointments', compact(['appointments','mostRecentAppointment','settings']));
+        $appointments = Appointment::with('user')
+            ->whereHas('user', function($query) use ($user) {
+                $query->where('id', $user->id);
+            })->orderBy('appointment_datetime', 'desc')->get();
+    
+        $appointments_ongoing =Appointment::with('user')
+            ->whereHas('user', function($query) use ($user) {
+                $query->where('id', $user->id);
+            })
+            ->where('status','!=','complete')
+            ->orderBy('appointment_datetime', 'desc')->get();
+
+        $appointments_complete =Appointment::with('user')
+            ->whereHas('user', function($query) use ($user) {
+                $query->where('id', $user->id);
+            })
+            ->where('status','complete')
+            ->orderBy('appointment_datetime', 'desc')->get();
+
+        $appointment_responses = collect();
+
+        if ($appointments->isNotEmpty()) {
+            $mostRecentAppointment = $appointments->first();
+            // Fetch responses only if there is a most recent appointment
+            $appointment_responses = AppointmentResponse::where('appointment_id', $mostRecentAppointment->id)->get();
+        } else {
+            // Optionally handle the case where there are no appointments
+            // For example, set $mostRecentAppointment to null or some default value
+            $mostRecentAppointment = null;
+        }
+
+        $file_path_user = 'app/' . $mostRecentAppointment->file_path;
+        $directoryPath = storage_path($file_path_user);
+        if (File::exists($directoryPath)) {
+            $files = File::files($directoryPath); 
+        } else {
+            $files = []; 
+        }
+    
+        return view('user.appointments', compact([
+            'user', 
+            'files', 
+            'appointments', 
+            'mostRecentAppointment', 
+            'settings', 
+            'appointment_responses',
+            'appointments_ongoing',
+            'appointments_complete',
+        ]));
     }
 
     public function appointment_limit(Request $request)
@@ -83,6 +132,10 @@ class AppointmentsUser extends Controller
 
     public function request_appointment(Request $request)
     {
+        $request->validate([
+            'add_file' => 'file|mimes:jpg,jpeg,png,pdf,doc,docx',
+        ]);
+
         $student = Student::where('user_id', $request->user_id)->first();
     
         if (!$student) {
@@ -101,7 +154,7 @@ class AppointmentsUser extends Controller
         if ($request->hasFile('add_file') && $request->file('add_file')->isValid()) {
             $file = $request->file('add_file');
             
-            $filename = $file->getClientOriginalName();
+            $filename = Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) . '.' . $file->getClientOriginalExtension();
             $filePath = $file->storeAs($appointmentDirectory, $filename);
         }
 

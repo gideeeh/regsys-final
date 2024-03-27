@@ -17,7 +17,7 @@
                             <th class="bg-blue-500 text-white p-1 pl-4 w-2/12">Student Number</th>
                             <th class="bg-blue-500 text-white p-1 w-3/12">Name</th>
                             <th class="bg-blue-500 text-white p-1 w-2/12">Course & Year</th>
-                            <th class="bg-blue-500 text-white p-1 w-2/12">Service Request</th>
+                            <th class="bg-blue-500 text-white p-1 w-2/12">Concern</th>
                             <th class="bg-blue-500 text-white p-1 w-1/12">Status</th>
                             <th class="w-2/12 bg-blue-500 text-white p-1">Date of Request</th>
                             <!-- <th class="bg-blue-500 text-white p-2 w-3/12">Actions</th> -->
@@ -26,7 +26,7 @@
                     <tbody>
                     @if($appointments->isNotEmpty())
                         @foreach($appointments as $appointment)
-                        <tr class="border-b hover:bg-gray-100 cursor-pointer text-sm" @click="window.location.href='{{ route('appointments.manage', $appointment->user_id) }}?highlight={{ $appointment->id }}'">
+                        <tr class="border-b hover:bg-gray-100 cursor-pointer text-sm" @click="window.location.href='{{ route('appointments.manage', $appointment->id) }}'">
                             <td class="border-dashed border-t border-gray-200 pl-4 p-1 py-2">{{$appointment->student_number}}</td>
                             <td class="border-dashed border-t border-gray-200 p-1 py-2">{{$appointment->student_first_name}} {{$appointment->student_last_name}}</td>
                             @if($appointment->program_code && $appointment->year_level)
@@ -34,9 +34,9 @@
                             @else
                             <td class="border-dashed border-t border-gray-200 p-1 py-2">No record</td>
                             @endif                            
-                            <td class="border-dashed border-t border-gray-200 p-1 py-2">{{$appointment->service_name}}</td>
+                            <td class="border-dashed border-t border-gray-200 p-1 py-2">{{ \Illuminate\Support\Str::limit($appointment->concern, 16, '...') }}</td>
                             <td class="border-dashed border-t border-gray-200 p-1 py-2">{{ucfirst($appointment->status)}}</td>
-                            <td class="border-dashed border-t border-gray-200 p-1 py-2">{{ $appointment->created_at->format('M j, Y g:i A') }}</td>
+                            <td class="border-dashed border-t border-gray-200 p-1 py-2">{{ $appointment->appointment_datetime->format('M j, Y g:i A') }}</td>
                         </tr>
                         @endforeach
                     @else

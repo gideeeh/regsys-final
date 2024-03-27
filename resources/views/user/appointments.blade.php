@@ -2,6 +2,7 @@
     requestForm: false,
     viewQRCodeModal: false,
     selectSchedule: false,
+    viewMode: `ongoing`,
     selectedDate: null,
     selectedTimeSlot: null,
 }'
@@ -12,20 +13,31 @@
 ">
 <x-app-layout>
     <x-alert-message />
+    @if($errors->has('add_file'))
+    <div class="alert alert-danger">
+        {{ $errors->first('add_file') }}
+    </div>
+    @endif
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('Appointments Dashboard') }}
-        </h2>
-        <span class="text-sm">Got any concerns? </span>
-        @if($settings->isAvailable)
-        <button @click="requestForm=true" class="bg-sky-500 text-white text-sm p-1 rounded hover:bg-sky-600 transition ease-in-out duration-150">Request Appointment</button>
-        @else
-        <button @click="requestForm=true" class="bg-slate-400 text-white text-sm p-1 rounded" disabled>Registrar Unavailable</button>
-        @endif
+        <div class="flex justify-between">
+            <p class="font-bold text-xl">Appointments Dashboard</p>
+            <div class="flex justify-end items-center gap-2">
+                <span class="text-sm">Got any concerns? </span>
+                @if($settings->isAvailable)
+                <button @click="requestForm=true" class="bg-sky-500 text-white text-sm p-1 rounded hover:bg-sky-600 transition ease-in-out duration-150">Request Appointment</button>
+                @else
+                <button @click="requestForm=true" class="bg-slate-400 text-white text-sm p-1 rounded" disabled>Registrar Unavailable</button>
+                @endif
+            </div>
+        </div>
     </x-slot>
     
     <div x-data="{ 
-        selectedAppointment: @js($mostRecentAppointment)}">
+        selectedAppointment: @js($mostRecentAppointment),
+        updateSelectedAppointment(appointment) {
+        this.selectedAppointment = appointment;
+        }
+    }">
         <div class="py-8">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="flex gap-4 overflow-hidden sm:min-h-[48vh] md:min-h-[54vh] lg:min-h-[60vh] xl:min-h-[66vh]">
@@ -35,26 +47,35 @@
                                 <div>
                                     <h3 class="flex justify-center mb-6 text-lg">Appointment Details</h3>
                                     @if($mostRecentAppointment)
-                                    <div class="flex gap-4 mb-6">
-                                        <div class="w-1/2 text-sm">
+                                    <div class="flex gap-4 mb-6 text-sm">
+                                        <div class="w-1/2">
                                             <p><strong>Concern: </strong> {{ $mostRecentAppointment->concern }}</p>
-                                            <p><strong>Date & Time: </strong> {{ \Carbon\Carbon::parse($mostRecentAppointment->appointment_datetime)->format('M d, Y g:i A') }}</p>
+                                            <p><strong>Appt. Sched: </strong> {{ \Carbon\Carbon::parse($mostRecentAppointment->appointment_datetime)->format('M d, Y g:i A') }}</p>
                                         </div>
                                         <div class="w-1/2">
                                             <p><strong>Status: </strong> {{ ucfirst($mostRecentAppointment->status) }}</p>
+                                            <p><strong>Appt. Code: </strong> {{ ucfirst($mostRecentAppointment->appointment_code) }}</p>
                                         </div>
                                     </div>
                                     @else
                                     <div>No appointment data</div>
                                     @endif
                                 </div>
-                                <div class="mb-4">
-                                    <p><strong>Registrar's Response:</strong></p>
-                                    <p>{{$mostRecentAppointment->response_notes ?? 'No available notes.'}}</p>
-                                </div>
-                                <div>
-                                    <p><strong>File(s) Received:</strong></p>
-                                    <!-- List of Files -->
+                                <p class="mb-2"><strong>Response Log(s):</strong></p>
+                                <div class="mb-4 border sm:min-h-[20vh] md:min-h-[23vh] lg:min-h-[26vh] xl:min-h-[29vh] text-sm">
+                                    @foreach($appointment_responses as $response)
+                                    @if($response->user_id === $user->id)
+                                    <div class="mb-2 overflow-y-scroll nice-scroll p-2">
+                                        <p><span class="font-bold">You: </span><span class="text-xs text-gray-400">[Sent at: {{$response->created_at}}]</span></p>
+                                        <p>{{$response->response_message ?? 'No available notes.'}}</p>
+                                    </div>
+                                    @else
+                                    <div class="mb-2 overflow-y-scroll nice-scroll p-2">
+                                        <p><span class="font-bold">{{$response->user->first_name}} {{$response->user->last_name}}</span><span class="text-xs text-gray-400">[Sent at: {{$response->created_at}}]</span></p>
+                                        <p>{{$response->response_message ?? 'No available notes.'}}</p>
+                                    </div>
+                                    @endif
+                                    @endforeach
                                 </div>
                             </div>
                             <div class="flex justify-end gap-2">
@@ -64,21 +85,85 @@
                             </div>
                         </div>
                     </div>
-                    <div class="w-4/12 p-4 bg-white shadow-sm sm:rounded-lg">
-                        <div class="border-collapse table-auto w-full whitespace-no-wrap bg-white table-striped relative mb-2">
-                            <h3>Registrar Request History</h3>
-                            <button id="btnPending" class="bg-red-500 text-white text-sm px-2 py-1 rounded hover:bg-red-600 transition ease-in-out duration-150">Ongoing</button>
-                            <button id="btnCompleted" class="bg-gray-500 text-white text-sm px-2 py-1 rounded hover:bg-gray-600 transition ease-in-out duration-150">Completed</button>
-                        </div>
-                        
-                        <div id="user-appointment-history" class="border-solid border-2 border-round sm:min-h-[43vh]">
-                            @foreach($appointments as $appointment)
-                            <div class="cursor-pointer hover:bg-gray-100 p-2 overflow-y-auto nice-scroll">
-                                <p><strong>Concern: </strong> {{ $appointment->concern }}</p>
-                                <p><strong>Appt. Sched: </strong>{{ \Carbon\Carbon::parse($appointment->appointment_datetime)->format('M d, Y g:i A') }}</p>
+                    <!-- Side -->
+                    <div class="w-4/12 flex flex-col justify-between">
+                        <div>
+                            <div class="p-4 bg-white shadow-sm rounded-lg min-h-[32vh]">
+                                <div class="mb-2 flex justify-between">
+                                    <h3>Registrar Request History</h3>
+                                    <div>
+                                        <button 
+                                            @click="viewMode = 'ongoing'" 
+                                            :class="{ 'bg-red-600': viewMode === 'ongoing', 'bg-gray-500 hover:bg-gray-600': viewMode !== 'ongoing' }" 
+                                            class="text-white text-xs p-1 rounded transition ease-in-out duration-150"
+                                        >
+                                            Ongoing
+                                        </button>
+                                        <button 
+                                            @click="viewMode = 'complete'" 
+                                            :class="{ 'bg-red-600': viewMode === 'complete', 'bg-gray-500 hover:bg-gray-600': viewMode !== 'complete' }" 
+                                            class="text-white text-xs p-1 rounded transition ease-in-out duration-150"
+                                        >
+                                            Completed
+                                        </button>
+                                    </div>
+                                </div>
+                                <div id="user-appointment-history" class="border-solid border-2 border-round min-h-[20vh] max-h-[20vh] overflow-y-auto nice-scroll">
+                                    <div x-show="viewMode === 'ongoing'">
+                                        @if(!$appointments_ongoing->isEmpty())
+                                        @foreach($appointments_ongoing as $appointment)
+                                        <div class="cursor-pointer hover:bg-gray-100 p-2 text-xs">
+                                            <p><strong>Concern: </strong>{{ $appointment->concern }}</p>
+                                            <p><strong>Appt. Sched: </strong>{{ \Carbon\Carbon::parse($appointment->appointment_datetime)->format('M d, Y g:i A') }}</p>
+                                        </div>
+                                        @endforeach
+                                        @else
+                                        <div class="cursor-pointer hover:bg-gray-100 p-2 text-xs">
+                                            <p>No ongoing appointments</p>
+                                        </div>
+                                        @endif
+                                    </div>
+                                    <div x-show="viewMode === 'complete'">
+                                        @if(!$appointments_complete->isEmpty())
+                                        @foreach($appointments_complete as $appointment)
+                                        <div class="cursor-pointer hover:bg-gray-100 p-2 text-xs">
+                                            <p><strong>Concern: </strong>{{ $appointment->concern }}</p>
+                                            <p><strong>Appt. Sched: </strong>{{ \Carbon\Carbon::parse($appointment->appointment_datetime)->format('M d, Y g:i A') }}</p>
+                                        </div>
+                                        @endforeach
+                                        @else
+                                        <div class="cursor-pointer hover:bg-gray-100 p-2 text-xs">
+                                            <p>No completed appointments</p>
+                                        </div>
+                                        @endif
+                                    </div>
+                                </div>
                             </div>
-                            @endforeach
                         </div>
+
+                        <div>
+                            <div class="p-4 bg-white shadow-sm rounded-lg min-h-[30vh]">
+                                <h3>Shared Files</h3>
+                                <div class="text-sm overflow-y-scroll nice-scroll p-2 border min-h-[18vh] cursor-pointer">
+                                    @forelse($files as $file)
+                                        @php
+                                            $fullName = $file->getFilename();
+                                            $extension = pathinfo($fullName, PATHINFO_EXTENSION);
+                                            $nameWithoutExtension = pathinfo($fullName, PATHINFO_FILENAME);
+                                            $shortName = strlen($nameWithoutExtension) > 25 ? substr($nameWithoutExtension, 0, 25) . '...' : $nameWithoutExtension;
+                                            $displayName = $shortName . '.' . $extension;
+                                        @endphp
+                                        <div class="flex justify-between border-b-2 hover:rounded rounded-none hover:text-white hover:bg-sky-300 hover:border-sky-300 items-center pl-1"
+                                            @click.stop="window.location.href='{{ route('user.appointments.download-file', ['appt_id' => $mostRecentAppointment->id, 'appt_code' => $mostRecentAppointment->appointment_code , 'file_name' => $fullName]) }}'">
+                                            <p>{{ $displayName }}</p>
+                                        </div>
+                                    @empty
+                                        <p>No files found.</p>
+                                    @endforelse
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -94,7 +179,7 @@
                     <input type="hidden" name="user_id" value="{{session('user_id')}}">
                     <div class="mb-4">
                         <label for="concern" class="block text-sm font-medium text-gray-700">Request:</label>
-                        <input type="text" id="concern" name="concern" placeholder="Enter request concern" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                        <input type="text" id="concern" name="concern" maxlength="25" placeholder="Enter request concern (Max. 25 char)" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
                     </div>
                     <!-- <div>
                         <select id="request-service" name="service_id" style="width: 100%;" required></select>
@@ -105,7 +190,7 @@
                     </div>
                     <div class="mb-4">
                         <label for="notes" class="block text-sm font-medium text-gray-700">Message/Notes:</label>
-                        <textarea name="notes" id="notes" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></textarea>
+                        <textarea name="notes" id="notes" maxlength="50" placeholder="(Max. 50 char)" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></textarea>
                     </div>
                     <div class="flex justify-end space-x-4">
                         <button type="button" @click="requestForm = false" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition ease-in-out duration-150">Cancel</button>
@@ -294,4 +379,3 @@
         });
     });
 </script>
-<script src="{{ asset('js/appointments.js') }}"></script>

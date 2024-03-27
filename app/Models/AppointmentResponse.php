@@ -17,6 +17,7 @@ class AppointmentResponse extends Model
         'user_id',
         'response_message',
         'file_path',
+        'file_name',
     ];
 
     public function appointment()

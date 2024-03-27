@@ -51,7 +51,7 @@ $(document).ready(function() {
             if(queueSchedArray.length > 0) {
                 queueSchedArray.forEach(function(qs) {
                     var appointee = qs.student_last_name.slice(0,1) + '. ' + qs.student_first_name;
-                    var queueSchedInfo = `<a href="/admin/appointments/manage/${qs.user_id}?highlight=${qs.id}" target="_blank"><div class="mb-2 p-1"><p class="text-xs font-semibold">${qs.student_number}-${appointee}</p> <p class="text-sm">${qs.service_name}</p></div></a>`;
+                    var queueSchedInfo = `<a href="/admin/appointments/manage/${qs.user_id}?highlight=${qs.id}" target="_blank"><div class="mb-2 p-1"><p class="text-xs font-semibold">${qs.student_number}-${appointee}</p> <p class="text-sm">${qs.concern}</p></div></a>`;
                     var test = `<div>Has appointments in queue</div>`
                     container.append(queueSchedInfo);
                     // console.log('true');
@@ -77,7 +77,7 @@ $(document).ready(function() {
             if(pendingDayArray.length > 0) {
                 pendingDayArray.forEach(function(pd) {
                     var appointee = pd.student_last_name.slice(0,1) + '. ' + pd.student_first_name;
-                    var pendingDayInfo = `<a href="/admin/appointments/manage/${pd.user_id}?highlight=${pd.id}" target="_blank"><div class="mb-2 p-1"><p class="text-xs font-semibold">${pd.student_number}-${appointee}</p> <p class="text-sm">${pd.service_name}</p></div></a>`;
+                    var pendingDayInfo = `<a href="/admin/appointments/manage/${pd.user_id}?highlight=${pd.id}" target="_blank"><div class="mb-2 p-1"><p class="text-xs font-semibold">${pd.student_number}-${appointee}</p> <p class="text-sm">${pd.concern}</p></div></a>`;
                     var test = `<div>Has pending appointments</div>`
                     container.append(pendingDayInfo);
                     // console.log('true');

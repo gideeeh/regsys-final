@@ -111,7 +111,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/appointments/generate-qr/{qr_code}', [AppointmentsController::class, 'generate_qr'])->name('appointments.generate-qr');
     Route::get('/appointments/retrieve_qr/{qr_code}', [AppointmentsController::class, 'retrieveByQRCode'])->name('appointments.retrieve-qr');
     Route::get('/public/api/get_services', [ServicesController::class, 'all_services_json'])->name('all_services_json');
-    
+    Route::get('/appointments/download_file/{appt_id}/{appt_code}/{file_name}/download', [AppointmentsController::class, 'download_file'])->name('appointments.download-file');
+    Route::get('user/appointments/download_file/{appt_id}/{appt_code}/{file_name}/download', [AppointmentsController::class, 'download_file'])->name('user.appointments.download-file');
+
     // User-specific appointment requests
     Route::get('/user/pending-requests', [AppointmentsController::class, 'getUserAppointments'])->name('user.pending-requests');
     Route::get('/user/complete-requests', [AppointmentsController::class, 'getUserCompletedAppointments'])->name('user.complete-requests');
@@ -216,7 +218,7 @@ Route::middleware(['auth','isAdminUser'])->group(function() {
     Route::get('/admin/course-listings/{course}', [CourseListingsController::class, 'show'])->name('course-listings.show');
 /* Enrollments */
     Route::get('/admin/enrollment-records', [EnrollmentsController::class, 'index'])->name('enrollment-records');
-    Route::get('/admin/enrollment-records/{enrollment_id}', [EnrollmentsController::class, 'show'])->name('enrollment-records.show');
+    Route::get('/admin/enrollment-records/{student_id}', [EnrollmentsController::class, 'show'])->name('enrollment-records.show');
     Route::get('/admin/enrollments/enroll', [EnrollmentsController::class, 'enroll'])->name('enrollments.enroll');
     Route::get('/admin/enrollments/credit-subject', [EnrollmentsController::class, 'credit_student'])->name('enrollments.credit-subject');
     Route::post('/admin/enrollments/enroll/enroll_student',[EnrollmentsController::class, 'store'])->name('enrollments.store');
@@ -279,12 +281,14 @@ Route::middleware(['auth','isAdminUser'])->group(function() {
     Route::get('admin/appointments/queue-json', [AppointmentsDashboardController::class, 'appointmentsQueue'])->name('appointments.queue');
     Route::get('admin/appointments/latest-appt-json', [AppointmentsDashboardController::class, 'latestAppointment'])->name('appointments.queue-latest');
     Route::patch('/admin/dashboard/save-appt-mgmt-settings', [AppointmentsDashboardController::class, 'saveMgmtSettings'])->name('appointments.save-mgmt-settings');
-    Route::get('admin/appointments/manage/{id}', [AppointmentsController::class, 'manage'])->name('appointments.manage');
+    Route::get('admin/appointments/manage/{appointment_id}', [AppointmentsController::class, 'manage'])->name('appointments.manage');
     Route::get('admin/appointments/appointments-list', [AppointmentsController::class, 'appointments'])->name('appointments');
     Route::get('admin/appointments/services', [ServicesController::class, 'index'])->name('appointments.services');
+    
     Route::post('admin/appointments/services/create', [ServicesController::class, 'store'])->name('appointments.create-service');
     Route::patch('admin/appointments/services/update/{service_id}', [ServicesController::class, 'update'])->name('appointments.update');
     Route::delete('admin/appointments/services/delete/{service_id}', [ServicesController::class, 'delete'])->name('appointments.delete');
+    Route::post('/admin/appointments/appointment-response', [AppointmentsController::class, 'appointment_response'])->name('appointments.response');
 /* Local APIs */
     Route::get('/admin/students/get-students/', [StudentRecordsController::class, 'student_json'])->name('students.json');
     Route::get('/admin/students/get-students/{student_id}', [StudentRecordsController::class, 'fetch_student_json'])->name('students.fetch');

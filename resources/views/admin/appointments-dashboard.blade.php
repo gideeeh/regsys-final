@@ -166,8 +166,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
             tippy(info.el, {
                 content: `Student: ${info.event.title}<br>
-                          Date: ${startString}<br>
-                          Service: ${info.event.extendedProps.service_name}`, 
+                          Appt. Date: ${startString}<br>
+                          Concern: ${info.event.extendedProps.concern}`, 
                 allowHTML: true,
             });
         },

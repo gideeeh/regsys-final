@@ -39,14 +39,13 @@ class AppointmentsDashboardController extends Controller
                 'students.last_name as student_last_name',
                 'users.email',
                 'students.student_number',
-                'services.service_name',
+                'appointments.concern',
                 'appointments.status',
                 'appointments.created_at',
                 'appointments.appointment_datetime',
             ])
             ->join('users', 'appointments.user_id', '=', 'users.id')
-            ->leftjoin('students', 'users.id', '=', 'students.user_id')
-            ->join('services', 'appointments.service_id', '=', 'services.id');
+            ->leftjoin('students', 'users.id', '=', 'students.user_id');
 
         $baseQuery = Appointment::query()
             ->select([
@@ -56,7 +55,7 @@ class AppointmentsDashboardController extends Controller
                 'students.last_name as student_last_name',
                 'users.email',
                 'students.student_number',
-                'services.service_name',
+                'appointments.concern',
                 'appointments.status',
                 'appointments.created_at',
                 'appointments.appointment_datetime',
@@ -64,7 +63,6 @@ class AppointmentsDashboardController extends Controller
             ])
             ->join('users', 'appointments.user_id', '=', 'users.id')
             ->leftjoin('students', 'users.id', '=', 'students.user_id')
-            ->join('services', 'appointments.service_id', '=', 'services.id')
             ->leftJoin(DB::raw("({$latestEnrollmentsSubquery}) as enrollments"), 'students.student_id', '=', 'enrollments.student_id')
             ->where('enrollments.rn', '=', 1)
             ->leftjoin('programs', 'enrollments.program_id', '=', 'programs.program_id')
@@ -109,12 +107,11 @@ class AppointmentsDashboardController extends Controller
                 'students.first_name as student_first_name',
                 'students.last_name as student_last_name',
                 'students.student_number',
-                'services.service_name',
+                'appointments.concern',
                 'appointments.appointment_datetime',
             ])
             ->join('users', 'appointments.user_id', '=', 'users.id')
             ->join('students', 'users.id', '=', 'students.user_id')
-            ->join('services', 'appointments.service_id', '=', 'services.id')
             ->orderBy('appointment_datetime','desc')->first();
     
         return response()->json($latestAppointment);

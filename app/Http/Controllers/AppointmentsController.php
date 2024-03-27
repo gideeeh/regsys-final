@@ -3,12 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Models\Appointment;
+use App\Models\AppointmentResponse;
 use App\Models\ApptMgmtSettings;
+use App\Models\Enrollment;
 use App\Models\Student;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class AppointmentsController extends Controller
@@ -48,14 +54,14 @@ class AppointmentsController extends Controller
                 'students.last_name as student_last_name',
                 'users.email',
                 'students.student_number',
-                'services.service_name',
+                'appointments.concern',
+                'appointments.appointment_datetime',
                 'appointments.status',
                 'appointments.created_at',
                 DB::raw('programs.program_name, enrollments.year_level, enrollments.enrollment_date')
             ])
             ->join('users', 'appointments.user_id', '=', 'users.id')
             ->join('students', 'users.id', '=', 'students.user_id')
-            ->join('services', 'appointments.service_id', '=', 'services.id')
             ->leftJoin(DB::raw("({$latestEnrollmentsSubquery}) as enrollments"), function($join) {
                 $join->on('students.student_id', '=', 'enrollments.student_id')
                     ->where('enrollments.rn', '=', 1);
@@ -64,16 +70,16 @@ class AppointmentsController extends Controller
             ->mergeBindings(DB::table('enrollments'))
             ->get() 
             ->map(function ($appointment) {
-                $createdAt = $appointment->created_at instanceof \Illuminate\Support\Carbon
-                            ? $appointment->created_at->toDateTimeString()
-                            : $appointment->created_at;
+                $createdAt = $appointment->appointment_datetime instanceof \Illuminate\Support\Carbon
+                            ? $appointment->appointment_datetime->toDateTimeString()
+                            : $appointment->appointment_datetime;
     
                 return [
                     'title' => $appointment->student_number . ' ' . $appointment->student_last_name . ', ' . substr($appointment->student_first_name, 0, 1) . '.', // Format title
                     'start' => $createdAt,
                     'end' => $createdAt,
                     'extendedProps' => [
-                        'service_name' => $appointment->service_name,
+                        'concern' => $appointment->concern,
                         'student_number' => $appointment->student_number,
                         'id' => $appointment->id,
                         'user_id' => $appointment->user_id,
@@ -86,95 +92,29 @@ class AppointmentsController extends Controller
         return response()->json($formattedAppointments);
     }
 
-    public function manage($id, Request $request) {
-        $latestEnrollmentDatesSubquery = DB::table('enrollments')
-            ->selectRaw('MAX(enrollment_date) as latest_enrollment_date, student_id')
-            ->groupBy('student_id');
-
-        $latestEnrollmentsSubquery = DB::table('enrollments')
-            ->joinSub($latestEnrollmentDatesSubquery, 'latest_dates', function($join) {
-                $join->on('enrollments.student_id', '=', 'latest_dates.student_id')
-                    ->on('enrollments.enrollment_date', '=', 'latest_dates.latest_enrollment_date');
-            })
-            ->select('enrollments.student_id', 'enrollments.program_id', 'enrollments.year_level');
-
-        $student = DB::table('students')
-            ->leftJoinSub($latestEnrollmentsSubquery, 'latest_enrollments', function($join) {
-                $join->on('students.student_id', '=', 'latest_enrollments.student_id');
-            })
-            ->leftJoin('programs', 'latest_enrollments.program_id', '=', 'programs.program_id')
-            ->select([
-                'students.student_id',
-                'students.user_id',
-                'students.student_number',
-                'students.first_name',
-                'students.middle_name',
-                'students.last_name',
-                'students.suffix',
-                'students.personal_email',
-                'latest_enrollments.year_level',
-                'latest_enrollments.program_id',
-                'programs.program_name',
-                'programs.program_code'
-            ])
-            ->where('students.user_id', $id)
-            ->first();
-
-        $user = User::findOrFail($id);
-        // $student = Student::where('user_id', $id)->first();
-        $appointments = Appointment::query()
-            ->select([
-                'appointments.id',
-                'appointments.user_id',
-                'appointments.status',
-                'appointments.viewed_date',
-                'appointments.complete_date',
-                'appointments.service_id',
-                'appointments.appointment_datetime',
-                'appointments.notes',
-                'appointments.created_at',
-                'services.service_name',
-            ])
-            ->join('services','appointments.service_id','=','services.id')
-            ->where('user_id', $id)
-            ->get();
-
-        $highlightId = $request->query('highlight');
-        $highlightedAppointment = null;
-        if ($highlightId) {
-            $highlightedAppointment = Appointment::query()
-                ->select([
-                    'appointments.id',
-                    'appointments.user_id',
-                    'appointments.status',
-                    'appointments.viewed_date',
-                    'appointments.complete_date',
-                    'appointments.service_id',
-                    'appointments.appointment_datetime',
-                    'appointments.notes',
-                    'appointments.created_at',
-                    'services.service_name',
-                ])
-                ->join('services', 'appointments.service_id', '=', 'services.id')
-                ->where('appointments.user_id', $id)
-                ->where('appointments.id', $highlightId) // Specific to the highlighted appointment
-                ->first();
-                
-            if ($highlightedAppointment && $highlightedAppointment->status === 'pending') {
-                $highlightedAppointment->update([
-                    'status' => 'viewed',
-                    'viewed_date' => now(), 
-                ]);
-
-                $highlightedAppointment = $highlightedAppointment->fresh();
-            }
+    public function manage($appointment_id, Request $request) {
+        $appointment = Appointment::findOrFail($appointment_id);
+        $user = Auth::user();
+        $student_user = User::with(['student','student.latestEnrollment'])->findOrFail($appointment->user_id);
+        // $current_program = Enrollment::where('student_id',$student_user->student->student_id)->orderBy('created_at','desc')->first();
+        $appt_history = Appointment::where('user_id',$appointment->user_id)->get();
+        $appointment_responses = AppointmentResponse::where('appointment_id', $appointment_id)->get();
+        
+        $file_path_user = 'app/' . $appointment->file_path;
+        $directoryPath = storage_path($file_path_user);
+        if (File::exists($directoryPath)) {
+            $files = File::files($directoryPath); 
+        } else {
+            $files = []; 
         }
 
         return view('admin.manage-appointment', [
-            'appointments' => $appointments,
+            'appt_history' => $appt_history,
+            'appointment' => $appointment,
+            'student' => $student_user,
             'user' => $user,
-            'highlightedAppointment' => $highlightedAppointment,
-            'student' => $student,
+            'appointment_responses' => $appointment_responses,
+            'files' => $files,
         ]);
     }
 
@@ -205,14 +145,14 @@ class AppointmentsController extends Controller
                 'students.last_name as student_last_name',
                 'users.email',
                 'students.student_number',
-                'services.service_name',
+                'appointments.concern',
+                'appointments.appointment_datetime',
                 'appointments.status',
                 'appointments.created_at',
                 DB::raw('programs.program_name, programs.program_code, enrollments.year_level, enrollments.enrollment_date')
             ])
             ->join('users', 'appointments.user_id', '=', 'users.id')
             ->leftJoin('students', 'users.id', '=', 'students.user_id')
-            ->join('services', 'appointments.service_id', '=', 'services.id')
             ->leftJoin(DB::raw("({$latestEnrollmentsSubquery}) as enrollments"), function($join) {
                 $join->on('students.student_id', '=', 'enrollments.student_id')
                     ->where('enrollments.rn', '=', 1);
@@ -354,4 +294,47 @@ class AppointmentsController extends Controller
         return view('admin.appointments-details', compact('appointment', 'student'));
     }
     
+    public function appointment_response(Request $request)
+    {
+        $request->validate([
+            'appointment_id' => 'required',
+            'user_id' => 'required',
+            'response_file' => 'file|mimes:jpg,jpeg,png,pdf,doc,docx',
+            'response_message' => 'required'
+        ]);
+
+        if ($request->hasFile('response_file') && $request->file('response_file')->isValid()) {
+            $file = $request->file('response_file');
+            $filename = Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) . '.' . $file->getClientOriginalExtension();
+            $filePath = $file->storeAs($request->file_path, $filename); 
+        }
+
+        $response = AppointmentResponse::create([
+            'appointment_id' => $request->appointment_id,
+            'user_id' => $request->user_id,
+            'response_message' => $request->response_message,
+            'file_path' => isset($filePath) ? $filePath : null,
+            'file_name' => isset($filename) ? $filename : null,
+        ]);
+
+        return back()->with('success', 'Response successfully completed.');
+    }
+
+    public function download_file($appt_id, $appt_code, $file_name)
+    {
+        $appointment = Appointment::findOrFail($appt_id);
+        $currentUser = auth()->user();
+    
+        if ($currentUser->id !== $appointment->user_id && $currentUser->role !== 'admin') {
+            abort(403, "You're not authorized to access this file.");
+        }
+    
+        $filePath = $appointment->file_path . '/' . $file_name;
+        Log::debug("File path: $filePath");
+        if (Storage::exists($filePath)) {
+            return Storage::download($filePath, $file_name);
+        } else {
+            abort(404, 'File not found.');
+        }
+    }
 }

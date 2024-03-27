@@ -10,7 +10,7 @@
                     </a>
                 </li>
                 <li class="menu-nav">
-                    <a href="{{ request()->routeIs('appointments') ? '#' : route('appointments') }}" 
+                    <a href="{{ route('appointments') }}" 
                     class="{{ request()->routeIs('appointments') || request()->routeIs('appointments.manage') ? 'active-main' : '' }} block rounded-md py-2 px-4">
                         Appointments
                     </a>
